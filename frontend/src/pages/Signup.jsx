@@ -1,4 +1,3 @@
-// src/pages/SignUp.jsx
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -18,11 +17,14 @@ export default function SignUp() {
   const handleUseLocation = () => {
     if (navigator.geolocation) {
       setLocationStatus('Acquiring location...');
+      console.log("Requesting location...");
       navigator.geolocation.getCurrentPosition(
         (position) => {
+          console.log("Location acquired:", position);
           const { latitude, longitude } = position.coords;
           setFormData({ ...formData, latitude, longitude });
-          setLocationUsed(true); 
+          console.log("Latitude:", latitude, "Longitude:", longitude);
+          setLocationUsed(true);
           setLocationStatus('Location acquired successfully!');
           setLocationMethod('auto');
         },
@@ -30,6 +32,10 @@ export default function SignUp() {
           console.error("Error obtaining location:", error);
           setError(true);
           setLocationStatus('Failed to acquire location.');
+        },
+        {
+          timeout: 10000000000, 
+          maximumAge: 0,  
         }
       );
     } else {
@@ -41,6 +47,10 @@ export default function SignUp() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const { latitude, longitude, ...restFormData } = formData;
+    const location = latitude && longitude ? { latitude, longitude } : {};
+    const finalFormData = { ...restFormData, location };
+    console.log("Form Data before submit:", finalFormData);
     try {
       setLoading(true);
       setError(false);
@@ -49,7 +59,7 @@ export default function SignUp() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(finalFormData),
       });
       const data = await res.json();
       setLoading(false);
@@ -105,8 +115,6 @@ export default function SignUp() {
             Enter Manually
           </button>
         </div>
-
-        {/* Conditionally render City and State Inputs */}
         {locationMethod === 'manual' && !locationUsed && (
           <>
             <input
@@ -125,8 +133,6 @@ export default function SignUp() {
             />
           </>
         )}
-
-        {/* Conditionally render Use Location Button */}
         {locationMethod === 'auto' && !locationUsed && (
           <button
             type='button'
@@ -136,13 +142,9 @@ export default function SignUp() {
             Use Location
           </button>
         )}
-
-        {/* Location Status Message */}
         {locationStatus && (
           <p className='text-blue-500 mt-2'>{locationStatus}</p>
         )}
-
-        {/* Submit Button */}
         <button
           disabled={loading}
           className='bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80'
