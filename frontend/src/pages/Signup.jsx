@@ -6,6 +6,9 @@ export default function SignUp() {
   const [formData, setFormData] = useState({});
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [locationUsed, setLocationUsed] = useState(false);
+  const [locationStatus, setLocationStatus] = useState('');
+  const [locationMethod, setLocationMethod] = useState('auto');
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -14,20 +17,25 @@ export default function SignUp() {
 
   const handleUseLocation = () => {
     if (navigator.geolocation) {
+      setLocationStatus('Acquiring location...');
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
           setFormData({ ...formData, latitude, longitude });
-          console.log("Latitude:", latitude, "Longitude:", longitude);
+          setLocationUsed(true); 
+          setLocationStatus('Location acquired successfully!');
+          setLocationMethod('auto');
         },
         (error) => {
           console.error("Error obtaining location:", error);
           setError(true);
+          setLocationStatus('Failed to acquire location.');
         }
       );
     } else {
       console.error("Geolocation is not supported by this browser.");
       setError(true);
+      setLocationStatus('Geolocation is not supported by this browser.');
     }
   };
 
@@ -49,7 +57,7 @@ export default function SignUp() {
         setError(true);
         return;
       }
-      navigate('/signin'); // Correct usage of navigate
+      navigate('/signin');
     } catch (error) {
       setLoading(false);
       setError(true);
@@ -81,31 +89,58 @@ export default function SignUp() {
           className='bg-slate-100 p-3 rounded-lg'
           onChange={handleChange}
         />
+        <div className='flex gap-4 mb-4'>
+          <button
+            type='button'
+            onClick={() => setLocationMethod('auto')}
+            className={`p-2 rounded-lg ${locationMethod === 'auto' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+          >
+            Use Current Location
+          </button>
+          <button
+            type='button'
+            onClick={() => setLocationMethod('manual')}
+            className={`p-2 rounded-lg ${locationMethod === 'manual' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+          >
+            Enter Manually
+          </button>
+        </div>
 
-        {/* City and State Inputs */}
-        <input
-          type='text'
-          placeholder='City'
-          id='city'
-          className='bg-slate-100 p-3 rounded-lg'
-          onChange={handleChange}
-        />
-        <input
-          type='text'
-          placeholder='State'
-          id='state'
-          className='bg-slate-100 p-3 rounded-lg'
-          onChange={handleChange}
-        />
+        {/* Conditionally render City and State Inputs */}
+        {locationMethod === 'manual' && !locationUsed && (
+          <>
+            <input
+              type='text'
+              placeholder='City'
+              id='city'
+              className='bg-slate-100 p-3 rounded-lg'
+              onChange={handleChange}
+            />
+            <input
+              type='text'
+              placeholder='State'
+              id='state'
+              className='bg-slate-100 p-3 rounded-lg'
+              onChange={handleChange}
+            />
+          </>
+        )}
 
-        {/* Use Location Button */}
-        <button
-          type='button'
-          onClick={handleUseLocation}
-          className='bg-blue-500 text-white p-2 rounded-lg mt-2'
-        >
-          Use Location
-        </button>
+        {/* Conditionally render Use Location Button */}
+        {locationMethod === 'auto' && !locationUsed && (
+          <button
+            type='button'
+            onClick={handleUseLocation}
+            className='bg-blue-500 text-white p-2 rounded-lg mt-2'
+          >
+            Use Location
+          </button>
+        )}
+
+        {/* Location Status Message */}
+        {locationStatus && (
+          <p className='text-blue-500 mt-2'>{locationStatus}</p>
+        )}
 
         {/* Submit Button */}
         <button
