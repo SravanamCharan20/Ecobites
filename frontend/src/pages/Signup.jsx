@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 export default function SignUp() {
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({
+    location: {}, // Initialize location object to store city and state
+  });
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [locationUsed, setLocationUsed] = useState(false);
@@ -11,7 +13,24 @@ export default function SignUp() {
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.id]: e.target.value });
+    const { id, value } = e.target;
+
+    if (id === 'city' || id === 'state') {
+      // Update city or state within the location object
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        location: {
+          ...prevFormData.location,
+          [id]: value,
+        },
+      }));
+    } else {
+      // Update other fields normally
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [id]: value,
+      }));
+    }
   };
 
   const handleUseLocation = () => {
@@ -22,7 +41,10 @@ export default function SignUp() {
         (position) => {
           console.log("Location acquired:", position);
           const { latitude, longitude } = position.coords;
-          setFormData({ ...formData, latitude, longitude });
+          setFormData((prevFormData) => ({
+            ...prevFormData,
+            location: { ...prevFormData.location, latitude, longitude },
+          }));
           console.log("Latitude:", latitude, "Longitude:", longitude);
           setLocationUsed(true);
           setLocationStatus('Location acquired successfully!');
@@ -47,10 +69,7 @@ export default function SignUp() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { latitude, longitude, ...restFormData } = formData;
-    const location = latitude && longitude ? { latitude, longitude } : {};
-    const finalFormData = { ...restFormData, location };
-    console.log("Form Data before submit:", finalFormData);
+    console.log("Form Data before submit:", formData);
     try {
       setLoading(true);
       setError(false);
@@ -59,7 +78,7 @@ export default function SignUp() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(finalFormData),
+        body: JSON.stringify(formData),
       });
       const data = await res.json();
       setLoading(false);
