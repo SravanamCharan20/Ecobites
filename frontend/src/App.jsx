@@ -7,11 +7,14 @@ import Signin from './pages/Signin';
 import Home from './pages/Home';
 import PrivateRoute from './components/Privateroute';
 import Avl from './pages/Avl';
+import Header from './components/Header';
+
 
 function App() {
   return (
     <Provider store={store}>
       <BrowserRouter>
+      <Header/>
         <Routes>
           <Route path='/signup' element={<Signup />} />
           <Route path='/signin' element={<Signin />} />

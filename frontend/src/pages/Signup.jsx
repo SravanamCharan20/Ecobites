@@ -69,7 +69,6 @@ export default function SignUp() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form Data before submit:", formData);
     try {
       setLoading(true);
       setError(false);

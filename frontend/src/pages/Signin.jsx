@@ -1,12 +1,15 @@
 // src/pages/SignIn.jsx
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setUser } from '../reducers/userSlice';
 
 export default function SignIn() {
   const [formData, setFormData] = useState({});
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -30,6 +33,11 @@ export default function SignIn() {
         setError(true);
         return;
       }
+      
+      // Assuming `data.user` contains the user info
+      dispatch(setUser(data.user));
+
+      // Navigate to home or any other page
       navigate('/');
     } catch (error) {
       setLoading(false);
