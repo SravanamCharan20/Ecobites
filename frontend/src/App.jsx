@@ -6,8 +6,9 @@ import Signup from './pages/Signup';
 import Signin from './pages/Signin';
 import Home from './pages/Home';
 import PrivateRoute from './components/Privateroute';
-import Avl from './pages/Avl';
 import Header from './components/Header';
+import DonorForm from './pages/Donate';
+import AvailableFoodList from './pages/Avl';
 
 
 function App() {
@@ -19,7 +20,8 @@ function App() {
           <Route path='/signup' element={<Signup />} />
           <Route path='/signin' element={<Signin />} />
           <Route path='/' element={<Home />} />
-          <Route path='/avl' element={<Avl />} />
+          <Route path='/avl' element={<AvailableFoodList />} />
+          <Route path='/donate' element={<DonorForm />} />
           {/* <Route element={<PrivateRoute />}>
           </Route> */}
         </Routes>

@@ -20,6 +20,16 @@ const Header = () => {
       {/* Navigation Links */}
       <nav className="flex-grow flex justify-center space-x-4">
         <Link
+          to="/avl"
+          className={`px-4 py-2 rounded-md ${
+            location.pathname === '/avl'
+              ? 'bg-slate-700 text-white'
+              : 'text-gray-300 hover:bg-slate-700 hover:text-white'
+          }`}
+        >
+          Avl
+        </Link>
+        <Link
           to="/donate"
           className={`px-4 py-2 rounded-md ${
             location.pathname === '/donate'
