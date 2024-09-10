@@ -9,6 +9,7 @@ import PrivateRoute from './components/Privateroute';
 import Header from './components/Header';
 import DonorForm from './pages/Donate';
 import AvailableFoodList from './pages/Avl';
+import Fooddetails from './pages/Fooddetails';
 
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
           <Route path='/' element={<Home />} />
           <Route path='/avl' element={<AvailableFoodList />} />
           <Route path='/donate' element={<DonorForm />} />
+          <Route path="/food-details/:id" element={<Fooddetails />} />
           {/* <Route element={<PrivateRoute />}>
           </Route> */}
         </Routes>

@@ -23,3 +23,15 @@ export const avldatalist = async (req, res) => {
       res.status(500).json({ error: 'Failed to fetch donated food items' });
     }
   };
+
+export const getid =  async (req, res) => {
+  try {
+    const donor = await Donor.findById(req.params.id);
+    if (!donor) {
+      return res.status(404).json({ error: 'Donor not found' });
+    }
+    res.json(donor);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+}

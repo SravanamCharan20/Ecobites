@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const AvailableFoodList = () => {
   const [foodItems, setFoodItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const navigate = useNavigate(); // Use useNavigate instead of useHistory
 
   useEffect(() => {
     const fetchFoodItems = async () => {
@@ -24,8 +26,8 @@ const AvailableFoodList = () => {
     fetchFoodItems();
   }, []);
 
-  const handleRequest = (itemId) => {
-    console.log('Request button clicked for item:', itemId);
+  const handleViewDetails = (id) => {
+    navigate(`/food-details/${id}`); // Use navigate to change routes
   };
 
   const formatLocation = (latitude, longitude) => {
@@ -51,61 +53,37 @@ const AvailableFoodList = () => {
         <table className="min-w-full bg-white border border-gray-200">
           <thead>
             <tr>
-              <th className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100">Food Name</th>
-              <th className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100">Food Details</th>
-              <th className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100">Available Until</th>
-              <th className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100">Donor</th>
-              <th className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100">Location</th>
+              <th className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100">S. No</th>
+              <th className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100">Food Item Name</th>
+              <th className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100">Address</th>
+              <th className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100">State</th>
+              <th className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100">City</th>
+              <th className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100">Creation Date</th>
               <th className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100">Actions</th>
             </tr>
           </thead>
           <tbody>
             {foodItems.map((item, index) => (
-              <tr key={index} className="hover:bg-gray-50">
+              <tr key={item._id} className="hover:bg-gray-50">
+                <td className="py-2 px-4 border-b">{index + 1}</td>
                 <td className="py-2 px-4 border-b">{item.name}</td>
-                <td className="py-2 px-4 border-b">
-                  {item.foodItems && item.foodItems.length > 0 ? (
-                    item.foodItems.map((foodItem, foodIndex) => (
-                      <div
-                        key={foodIndex}
-                        className={`mb-2 p-2 rounded ${foodIndex % 2 === 0 ? 'bg-blue-50' : 'bg-blue-100'} border border-blue-200`}
-                      >
-                        <p><strong>Type:</strong> {foodItem.type}</p>
-                        <p><strong>Quantity:</strong> {foodItem.quantity} {foodItem.unit}</p>
-                        <p><strong>Expiry Date:</strong> {formatDate(foodItem.expiryDate)}</p>
-                      </div>
-                    ))
-                  ) : (
-                    <p>No food items provided.</p>
-                  )}
-                </td>
-                <td className="py-2 px-4 border-b">{formatDate(item.availableUntil)}</td>
-                <td className="py-2 px-4 border-b">{item.name || 'Anonymous'}</td>
                 <td className="py-2 px-4 border-b">
                   {item.address ? (
                     <>
-                      <p><strong>Street:</strong> {item.address.street}</p>
-                      <p><strong>City:</strong> {item.address.city}</p>
-                      <p><strong>State:</strong> {item.address.state}</p>
-                      <p><strong>Postal Code:</strong> {item.address.postalCode}</p>
-                      <p><strong>Country:</strong> {item.address.country}</p>
+                      <p>{item.address.street}</p>
+                      <p>{item.address.city}</p>
                     </>
-                  ) : item.location ? (
-                    <>
-                      <p>{formatLocation(item.location.latitude, item.location.longitude)}</p>
-                      <p><strong>City:</strong> {item.location.city || 'N/A'}</p>
-                      <p><strong>State:</strong> {item.location.state || 'N/A'}</p>
-                    </>
-                  ) : (
-                    <p>Location details not provided</p>
-                  )}
+                  ) : 'No address provided'}
                 </td>
+                <td className="py-2 px-4 border-b">{item.address?.state || 'N/A'}</td>
+                <td className="py-2 px-4 border-b">{item.address?.city || 'N/A'}</td>
+                <td className="py-2 px-4 border-b">{formatDate(item.createdAt)}</td>
                 <td className="py-2 px-4 border-b">
                   <button
-                    onClick={() => handleRequest(item._id)}
-                    className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                    onClick={() => handleViewDetails(item._id)}
+                    className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600"
                   >
-                    Request
+                    View Details
                   </button>
                 </td>
               </tr>

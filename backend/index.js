@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import userRouter from './routes/user.route.js'
 import authRouter from './routes/auth.route.js'
 import DonorForm from './routes/donor.route.js';
+import Donor from '../backend/models/donor.model.js'
 
 dotenv.config();
 const PORT = 6001;
@@ -23,8 +24,8 @@ app.use((err, req, res, next) => {
       success: false,
       message,
       statusCode,
-    });
   });
+});
 
 mongoose.connect(process.env.MONGO).then(()=>{
     console.log("Connected to DB")
