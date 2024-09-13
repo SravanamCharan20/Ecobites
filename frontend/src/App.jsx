@@ -11,7 +11,7 @@ import DonorForm from './pages/Donate';
 import AvailableFoodList from './pages/Avl';
 import Fooddetails from './pages/Fooddetails';
 import Addfood from './pages/Addfood';
-import Managefood from './pages/Managefood';
+// import Managefood from './pages/Managefood';
 
 
 function App() {
@@ -27,7 +27,7 @@ function App() {
           <Route path='/donate' element={<DonorForm />} />
           <Route path="/food-details/:id" element={<Fooddetails />} />
           <Route path="/addfood" element={<Addfood />} />
-          <Route path="/managefood" element={<Managefood />} />
+          {/* <Route path="/managefood" element={<Managefood />} /> */}
           {/* <Route element={<PrivateRoute />}>
           </Route> */}
         </Routes>

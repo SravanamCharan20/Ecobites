@@ -4,6 +4,7 @@ import react from '@vitejs/plugin-react-swc'
 // https://vitejs.dev/config/
 export default defineConfig({
   server: {
+    host: '172.18.6.55',
     proxy: {
       '/api': {
         target: 'http://localhost:6001',
