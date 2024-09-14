@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { initializeUser } from './reducers/userSlice';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import store from './store/store';
@@ -12,9 +14,14 @@ import AvailableFoodList from './pages/Avl';
 import Fooddetails from './pages/Fooddetails';
 import Addfood from './pages/Addfood';
 import Managefood from './pages/Managefood';
-// import Managefood from './pages/Managefood';
 
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(initializeUser());
+  }, [dispatch]);
+
   return (
     <Provider store={store}>
       <BrowserRouter>
@@ -28,7 +35,6 @@ function App() {
           <Route path='/food-details/:id' element={<Fooddetails />} />
           <Route path='/addfood' element={<Addfood />} />
           <Route path='/managefood' element={<Managefood />} />
-          {/* <Route path='/managefood' element={<PrivateRoute element={<Managefood />} />} /> */}
         </Routes>
       </BrowserRouter>
     </Provider>

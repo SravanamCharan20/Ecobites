@@ -1,5 +1,20 @@
-// src/reducers/userSlice.js
 import { createSlice } from '@reduxjs/toolkit';
+
+// Custom JWT decoder
+function parseJwt(token) {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+
+    return JSON.parse(jsonPayload);
+  } catch (error) {
+    console.error('Invalid token:', error);
+    return null;
+  }
+}
 
 const userSlice = createSlice({
   name: 'user',
@@ -11,18 +26,32 @@ const userSlice = createSlice({
     setUser(state, action) {
       state.currentUser = action.payload;
       state.isAuthenticated = true;
-      localStorage.setItem('access_token', action.payload.token); // Save token to localStorage
+      localStorage.setItem('access_token', action.payload.token); 
     },
     logout(state) {
       state.currentUser = null;
       state.isAuthenticated = false;
-      localStorage.removeItem('access_token'); // Clear token on logout
+      localStorage.removeItem('access_token'); 
     },
     initializeUser(state) {
       const token = localStorage.getItem('access_token');
+
       if (token) {
-        state.currentUser = { token };
-        state.isAuthenticated = true;
+        try {
+          const decoded = parseJwt(token); 
+          const currentTime = Date.now() / 1000; 
+
+          if (decoded && decoded.exp > currentTime) {
+            state.currentUser = { token };
+            state.isAuthenticated = true;
+          } else {
+            state.isAuthenticated = false;
+            localStorage.removeItem('access_token');
+          }
+        } catch (error) {
+          console.error('Failed to decode token', error);
+          state.isAuthenticated = false;
+        }
       } else {
         state.isAuthenticated = false;
       }
