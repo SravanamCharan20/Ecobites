@@ -1,19 +1,6 @@
 // src/reducers/userSlice.js
 import { createSlice } from '@reduxjs/toolkit';
 
-const decodeToken = (token) => {
-  try {
-    // Split the token into parts
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = atob(base64);
-    return JSON.parse(jsonPayload);
-  } catch (error) {
-    console.error('Error decoding token:', error);
-    return null;
-  }
-};
-
 const userSlice = createSlice({
   name: 'user',
   initialState: {
@@ -34,13 +21,8 @@ const userSlice = createSlice({
     initializeUser(state) {
       const token = localStorage.getItem('access_token');
       if (token) {
-        const user = decodeToken(token); // Decode the token to get user details
-        if (user) {
-          state.currentUser = user;
-          state.isAuthenticated = true;
-        } else {
-          state.isAuthenticated = false;
-        }
+        state.currentUser = { token };
+        state.isAuthenticated = true;
       } else {
         state.isAuthenticated = false;
       }

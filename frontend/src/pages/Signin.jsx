@@ -19,6 +19,7 @@ export default function SignIn() {
     try {
       setLoading(true);
       setError('');
+
       const res = await fetch('/api/auth/signin', {
         method: 'POST',
         headers: {
@@ -33,13 +34,13 @@ export default function SignIn() {
         // Store the token in localStorage
         localStorage.setItem('access_token', data.token);
 
-        // Dispatch user data to Redux store
-        dispatch(setUser(data.user));
+        // Dispatch token and user data to Redux store
+        dispatch(setUser({ token: data.token, user: data.user }));
 
         // Navigate to home or any other page
         navigate('/');
       } else {
-        setError(data.message || 'Something went wrong!');
+        setError(data.message || 'Invalid credentials, please try again.');
       }
     } catch (error) {
       setLoading(false);
@@ -57,6 +58,7 @@ export default function SignIn() {
           id='email'
           className='bg-slate-100 p-3 rounded-lg'
           onChange={handleChange}
+          required
           aria-label='Email'
         />
         <input
@@ -65,6 +67,7 @@ export default function SignIn() {
           id='password'
           className='bg-slate-100 p-3 rounded-lg'
           onChange={handleChange}
+          required
           aria-label='Password'
         />
         <button
