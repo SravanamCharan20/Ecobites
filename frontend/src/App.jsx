@@ -25,7 +25,7 @@ function App() {
           <Route path='/avl' element={<AvailableFoodList />} />
           <Route path='/donate' element={<PrivateRoute element={<DonorForm />} />} />
           <Route path='/food-details/:id' element={<PrivateRoute element={<Fooddetails />} />} />
-          <Route path='/addfood' element={<PrivateRoute element={<Addfood />} />} />
+          <Route path='/addfood' element={<Addfood />} />
           {/* <Route path='/managefood' element={<PrivateRoute element={<Managefood />} />} /> */}
         </Routes>
       </BrowserRouter>
