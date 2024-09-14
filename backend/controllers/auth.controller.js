@@ -35,7 +35,7 @@ export const signin = async (req, res, next) => {
         : { latitude: location?.latitude, longitude: location?.longitude }),
     };
 
-    const token = jwt.sign(tokenPayload, process.env.JWT_SECRET, { expiresIn: '10h' });
+    const token = jwt.sign(tokenPayload, process.env.JWT_SECRET, { expiresIn: '7d' });
 
     const { password: hashedPassword, ...rest } = validUser._doc;
     res.status(200).json({ token, user: rest });

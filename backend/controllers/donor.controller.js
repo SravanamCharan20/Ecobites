@@ -6,12 +6,17 @@ export const donationform = async (req, res) => {
     const donoremail = req.body.email;
     const existingUser = await User.findOne({ email: donoremail });
     if (!existingUser) 
-      return res.status(400).json({ message: 'Email is not there please sign up' });
-    const donor = new Donor(req.body);
+      return res.status(400).json({ message: 'Email is not registered. Please sign up.' });
+
+    const donor = new Donor({
+      ...req.body,
+      userId: existingUser._id
+    });
+
     const savedDonor = await donor.save();
     res.status(201).json(savedDonor);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'Failed to create donation.', error });
   }
 };
 
@@ -20,7 +25,7 @@ export const avldatalist = async (req, res) => {
     const donatedFoodItems = await Donor.find();
     res.json(donatedFoodItems);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch donated food items' });
+    res.status(500).json({ message: 'Failed to fetch donated food items.', error });
   }
 };
 
@@ -28,22 +33,32 @@ export const getid = async (req, res) => {
   try {
     const donor = await Donor.findById(req.params.id);
     if (!donor) {
-      return res.status(404).json({ error: 'Donor not found' });
+      return res.status(404).json({ message: 'Donor not found.' });
     }
     res.json(donor);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ message: 'Server error.', error });
   }
 };
 
 export const updateDonor = async (req, res) => {
   try {
-    const donor = await Donor.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const donor = await Donor.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
     if (!donor) {
-      return res.status(404).json({ error: 'Donor not found' });
+      return res.status(404).json({ message: 'Donor not found.' });
     }
     res.json(donor);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ message: 'Failed to update donation.', error });
+  }
+};
+
+export const getDonationsByUserId = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const donations = await Donor.find({ userId });
+    res.json(donations);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch donations for this user.', error });
   }
 };

@@ -45,7 +45,7 @@ export default function Donate() {
         </li>
       </ul>
     </div>
-    <div className='text-6xl font-bold text-teal-700'>donate and make poor lives heplful</div>
+    <div className='text-6xl ml-4 font-bold text-teal-700'>Donate and make poor lives helpful</div>
     </div>
     </>
   )
