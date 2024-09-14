@@ -13,23 +13,20 @@ import Fooddetails from './pages/Fooddetails';
 import Addfood from './pages/Addfood';
 // import Managefood from './pages/Managefood';
 
-
 function App() {
   return (
     <Provider store={store}>
       <BrowserRouter>
-      <Header/>
+        <Header />
         <Routes>
           <Route path='/signup' element={<Signup />} />
           <Route path='/signin' element={<Signin />} />
           <Route path='/' element={<Home />} />
           <Route path='/avl' element={<AvailableFoodList />} />
-          <Route path='/donate' element={<DonorForm />} />
-          <Route path="/food-details/:id" element={<Fooddetails />} />
-          <Route path="/addfood" element={<Addfood />} />
-          {/* <Route path="/managefood" element={<Managefood />} /> */}
-          {/* <Route element={<PrivateRoute />}>
-          </Route> */}
+          <Route path='/donate' element={<PrivateRoute element={<DonorForm />} />} />
+          <Route path='/food-details/:id' element={<PrivateRoute element={<Fooddetails />} />} />
+          <Route path='/addfood' element={<PrivateRoute element={<Addfood />} />} />
+          {/* <Route path='/managefood' element={<PrivateRoute element={<Managefood />} />} /> */}
         </Routes>
       </BrowserRouter>
     </Provider>

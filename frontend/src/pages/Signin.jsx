@@ -1,4 +1,3 @@
-// src/pages/SignIn.jsx
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
@@ -6,7 +5,7 @@ import { setUser } from '../reducers/userSlice';
 
 export default function SignIn() {
   const [formData, setFormData] = useState({});
-  const [error, setError] = useState(false);
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -19,7 +18,7 @@ export default function SignIn() {
     e.preventDefault();
     try {
       setLoading(true);
-      setError(false);
+      setError('');
       const res = await fetch('/api/auth/signin', {
         method: 'POST',
         headers: {
@@ -29,19 +28,22 @@ export default function SignIn() {
       });
       const data = await res.json();
       setLoading(false);
-      if (data.success === false) {
-        setError(true);
-        return;
-      }
-      
-      // Assuming `data.user` contains the user info
-      dispatch(setUser(data.user));
 
-      // Navigate to home or any other page
-      navigate('/');
+      if (res.ok) {
+        // Store the token in localStorage
+        localStorage.setItem('access_token', data.token);
+
+        // Dispatch user data to Redux store
+        dispatch(setUser(data.user));
+
+        // Navigate to home or any other page
+        navigate('/');
+      } else {
+        setError(data.message || 'Something went wrong!');
+      }
     } catch (error) {
       setLoading(false);
-      setError(true);
+      setError('An unexpected error occurred.');
     }
   };
 
@@ -78,7 +80,7 @@ export default function SignIn() {
           <span className='text-blue-500'>Sign Up</span>
         </Link>
       </div>
-      {error && <p className='text-red-700 mt-5' aria-live='assertive'>Something went wrong!</p>}
+      {error && <p className='text-red-700 mt-5' aria-live='assertive'>{error}</p>}
     </div>
   );
 }

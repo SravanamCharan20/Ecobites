@@ -1,16 +1,18 @@
 // src/components/Logout.jsx
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../reducers/userSlice';
-import Cookies from 'js-cookie'; // Assuming you're using js-cookie for managing cookies
 
 const Logout = () => {
   const dispatch = useDispatch();
+  const isAuthenticated = useSelector((state) => state.user.isAuthenticated);
 
   const handleLogout = () => {
-    Cookies.remove('token'); // Remove token from cookies
-    dispatch(logout()); // Dispatch logout action to clear user from Redux store
+    localStorage.removeItem('access_token');
+    dispatch(logout());
   };
+
+  if (!isAuthenticated) return null; // If not authenticated, don't show the button
 
   return (
     <button

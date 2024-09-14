@@ -1,12 +1,12 @@
 // src/components/PrivateRoute.jsx
 import React from 'react';
+import { Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { Outlet, Navigate } from 'react-router-dom';
 
-const PrivateRoute = () => {
-  const { currentUser } = useSelector((state) => state.user);
+const PrivateRoute = ({ element: Component, ...rest }) => {
+  const isAuthenticated = useSelector((state) => state.user.isAuthenticated);
 
-  return currentUser ? <Outlet /> : <Navigate to='/signup' />;
+  return isAuthenticated ? Component : <Navigate to="/signin" />;
 };
 
 export default PrivateRoute;

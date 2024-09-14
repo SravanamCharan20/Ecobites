@@ -26,7 +26,7 @@ export const signin = async (req, res, next) => {
 
     const validPassword = bcryptjs.compareSync(password, validUser.password);
     if (!validPassword) return next(errorHandler(401, 'Wrong credentials'));
-    
+
     const location = validUser.location;
     const tokenPayload = {
       id: validUser._id,
@@ -38,12 +38,7 @@ export const signin = async (req, res, next) => {
     const token = jwt.sign(tokenPayload, process.env.JWT_SECRET, { expiresIn: '1h' });
 
     const { password: hashedPassword, ...rest } = validUser._doc;
-    const expiryDate = new Date(Date.now() + 3600000);
-
-    res
-      .cookie('access_token', token, { httpOnly: true, expires: expiryDate })
-      .status(200)
-      .json(rest);
+    res.status(200).json({ token, user: rest });
   } catch (error) {
     next(error);
   }
