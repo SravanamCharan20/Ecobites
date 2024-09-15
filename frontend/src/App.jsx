@@ -14,6 +14,7 @@ import AvailableFoodList from './pages/Avl';
 import Fooddetails from './pages/Fooddetails';
 import Addfood from './pages/Addfood';
 import Managefood from './pages/Managefood';
+import MyRequests from './pages/MyRequests';
 
 function App() {
   const dispatch = useDispatch();
@@ -35,6 +36,7 @@ function App() {
           <Route path='/food-details/:id' element={<Fooddetails />} />
           <Route path='/addfood' element={<Addfood />} />
           <Route path='/managefood' element={<Managefood />} />
+          <Route path="/donor/requests/:userId" element={<MyRequests />} />
         </Routes>
       </BrowserRouter>
     </Provider>

@@ -7,6 +7,8 @@ const FoodDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showRequestForm, setShowRequestForm] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(''); // Define this state
+  const [successMessage, setSuccessMessage] = useState(''); // Define this state
   const [formData, setFormData] = useState({
     name: '',
     contactNumber: '',
@@ -122,9 +124,54 @@ const FoodDetails = () => {
 
   const handleRequestSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission logic here
-    console.log('Request Form Data:', formData);
+    try {
+      const response = await fetch('/api/donor/request', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          donorId: foodDetails._id,
+          name: formData.name,
+          contactNumber: formData.contactNumber,
+          address: {
+            street: formData.address.street,
+            city: formData.address.city,
+            state: formData.address.state,
+            postalCode: formData.address.postalCode,
+            country: formData.address.country,
+          },
+          latitude: formData.latitude || null, 
+          longitude: formData.longitude || null, 
+          description: formData.description,
+        }),
+      });
+  
+      const result = await response.json();
+      if (response.ok) {
+        setSuccessMessage(result.message);
+        setFormData({
+          name: '',
+          contactNumber: '',
+          address: {
+            street: '',
+            city: '',
+            state: '',
+            postalCode: '',
+            country: '',
+          },
+          latitude: '',
+          longitude: '',
+          description: '',
+        });
+      } else {
+        setErrorMessage(result.message || 'Failed to submit request.');
+      }
+    } catch (error) {
+      setErrorMessage('An error occurred while submitting the request.');
+    }
   };
+
 
   if (loading) return <p className="text-center text-gray-500">Loading...</p>;
   if (error) return <p className="text-center text-red-500">{error}</p>;

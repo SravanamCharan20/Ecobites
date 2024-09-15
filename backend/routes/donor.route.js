@@ -1,12 +1,16 @@
 import express from 'express';
-import { avldatalist, donationform, getid, updateDonor, getDonationsByUserId } from '../controllers/donor.controller.js';
+import { avldatalist, donationform, getid, updateDonor, getDonationsByUserId, requestFood, getUserDonations, getRequestsForDonor } from '../controllers/donor.controller.js';
 
 const router = express.Router();
 
 router.post('/donorform', donationform);
-router.get('/donorform', avldatalist); // For fetching all donations
-router.get('/userdonations/:userId', getDonationsByUserId); // New route
+router.get('/donorform', avldatalist); 
+router.get('/userdonations/:userId', getDonationsByUserId);
 router.get('/:id', getid);
 router.put('/:id', updateDonor);
+router.post('/request', requestFood);
+router.get('/userdonations/:userId', getUserDonations); 
+router.get('/requests/:userId', getRequestsForDonor);
+
 
 export default router;

@@ -1,6 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-// Custom JWT decoder
 function parseJwt(token) {
   try {
     const base64Url = token.split('.')[1];
@@ -24,9 +23,12 @@ const userSlice = createSlice({
   },
   reducers: {
     setUser(state, action) {
-      state.currentUser = action.payload;
-      state.isAuthenticated = true;
-      localStorage.setItem('access_token', action.payload.token); 
+      const user = parseJwt(action.payload.token); 
+      if (user) {
+        state.currentUser = { ...user, token: action.payload.token }; 
+        state.isAuthenticated = true;
+        localStorage.setItem('access_token', action.payload.token); 
+      }
     },
     logout(state) {
       state.currentUser = null;
@@ -35,14 +37,13 @@ const userSlice = createSlice({
     },
     initializeUser(state) {
       const token = localStorage.getItem('access_token');
-
       if (token) {
         try {
           const decoded = parseJwt(token); 
           const currentTime = Date.now() / 1000; 
 
           if (decoded && decoded.exp > currentTime) {
-            state.currentUser = { token };
+            state.currentUser = { ...decoded, token }; 
             state.isAuthenticated = true;
           } else {
             state.isAuthenticated = false;
