@@ -6,6 +6,23 @@ const FoodDetails = () => {
   const [foodDetails, setFoodDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [showRequestForm, setShowRequestForm] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    contactNumber: '',
+    address: {
+      street: '',
+      city: '',
+      state: '',
+      postalCode: '',
+      country: '',
+    },
+    latitude: '',
+    longitude: '',
+    description: '',
+  });
+  const [locationMethod, setLocationMethod] = useState('manual'); // 'manual' or 'auto'
+  const [locationStatus, setLocationStatus] = useState('');
 
   useEffect(() => {
     const fetchFoodDetails = async () => {
@@ -25,6 +42,89 @@ const FoodDetails = () => {
 
     fetchFoodDetails();
   }, [id]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    if (['street', 'city', 'state', 'postalCode', 'country'].includes(name)) {
+      setFormData((prevData) => ({
+        ...prevData,
+        address: {
+          ...prevData.address,
+          [name]: value,
+        },
+      }));
+    } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
+  };
+
+  const handleLocationMethodChange = (method) => {
+    setLocationMethod(method);
+    if (method === 'auto') {
+      handleUseLocation();
+    }
+  };
+
+  const handleUseLocation = () => {
+    if (navigator.geolocation) {
+      setLocationStatus('Acquiring location...');
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+          setFormData((prevData) => ({
+            ...prevData,
+            latitude,
+            longitude,
+          }));
+
+          try {
+            const response = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`
+            );
+            const data = await response.json();
+            if (data && data.address) {
+              const { road, county, state, postcode, country } = data.address;
+              setFormData((prevData) => ({
+                ...prevData,
+                address: {
+                  street: road || '',
+                  city: county || '',
+                  state: state || '',
+                  postalCode: postcode || '',
+                  country: country || '',
+                },
+              }));
+              setLocationStatus('Location acquired successfully!');
+            } else {
+              setLocationStatus('Failed to retrieve address.');
+            }
+          } catch (error) {
+            console.error('Error fetching address:', error);
+            setLocationStatus('Failed to acquire address.');
+          }
+        },
+        (error) => {
+          console.error('Error obtaining location:', error);
+          setLocationStatus('Failed to acquire location.');
+        },
+        {
+          timeout: 10000,
+          maximumAge: 0,
+        }
+      );
+    } else {
+      setLocationStatus('Geolocation is not supported by this browser.');
+    }
+  };
+
+  const handleRequestSubmit = async (e) => {
+    e.preventDefault();
+    // Handle form submission logic here
+    console.log('Request Form Data:', formData);
+  };
 
   if (loading) return <p className="text-center text-gray-500">Loading...</p>;
   if (error) return <p className="text-center text-red-500">{error}</p>;
@@ -52,7 +152,114 @@ const FoodDetails = () => {
         <p><strong>Donor Name:</strong> {foodDetails.name || 'N/A'}</p>
         <p><strong>Contact Number:</strong> {foodDetails.contactNumber || 'N/A'}</p>
         <p><strong>Address:</strong> {foodDetails.address?.street || 'N/A'}, {foodDetails.address?.city || 'N/A'}, {foodDetails.address?.state || 'N/A'}, {foodDetails.address?.postalCode || 'N/A'}, {foodDetails.address?.country || 'N/A'}</p>
-        {/* Add more fields if necessary */}
+        <button
+          onClick={() => setShowRequestForm((prev) => !prev)}
+          className="bg-blue-500 text-white p-2 rounded mt-4"
+        >
+          {showRequestForm ? 'Cancel Request' : 'Request This Food'}
+        </button>
+
+        {showRequestForm && (
+          <form onSubmit={handleRequestSubmit} className="mt-4 p-4 border border-gray-200 rounded">
+            <h3 className="text-lg font-semibold mb-2">Request Form</h3>
+            <input
+              type="text"
+              name="name"
+              placeholder="Name"
+              value={formData.name}
+              onChange={handleInputChange}
+              className="bg-gray-100 p-2 rounded mb-2 w-full"
+              required
+            />
+            <input
+              type="tel"
+              name="contactNumber"
+              placeholder="Contact Number"
+              value={formData.contactNumber}
+              onChange={handleInputChange}
+              className="bg-gray-100 p-2 rounded mb-2 w-full"
+              required
+            />
+            
+            <div className="flex gap-4 mb-4">
+              <button
+                type="button"
+                onClick={() => handleLocationMethodChange('auto')}
+                className={`p-2 rounded-lg ${locationMethod === 'auto' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+              >
+                Use Current Location
+              </button>
+              <button
+                type="button"
+                onClick={() => handleLocationMethodChange('manual')}
+                className={`p-2 rounded-lg ${locationMethod === 'manual' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+              >
+                Enter Address Manually
+              </button>
+            </div>
+
+            {locationMethod === 'manual' && (
+              <>
+                <input
+                  type="text"
+                  name="street"
+                  placeholder="Street"
+                  value={formData.address.street}
+                  onChange={handleInputChange}
+                  className="bg-gray-100 p-2 rounded mb-2 w-full"
+                />
+                <input
+                  type="text"
+                  name="city"
+                  placeholder="City"
+                  value={formData.address.city}
+                  onChange={handleInputChange}
+                  className="bg-gray-100 p-2 rounded mb-2 w-full"
+                />
+                <input
+                  type="text"
+                  name="state"
+                  placeholder="State"
+                  value={formData.address.state}
+                  onChange={handleInputChange}
+                  className="bg-gray-100 p-2 rounded mb-2 w-full"
+                />
+                <input
+                  type="text"
+                  name="postalCode"
+                  placeholder="Postal Code"
+                  value={formData.address.postalCode}
+                  onChange={handleInputChange}
+                  className="bg-gray-100 p-2 rounded mb-2 w-full"
+                />
+                <input
+                  type="text"
+                  name="country"
+                  placeholder="Country"
+                  value={formData.address.country}
+                  onChange={handleInputChange}
+                  className="bg-gray-100 p-2 rounded mb-2 w-full"
+                />
+              </>
+            )}
+
+            <div className="text-sm text-gray-600 mb-2">{locationStatus}</div>
+
+            <textarea
+              name="description"
+              placeholder="Description"
+              value={formData.description}
+              onChange={handleInputChange}
+              className="bg-gray-100 p-2 rounded mb-2 w-full"
+            />
+            <button
+              type="submit"
+              className="bg-blue-500 text-white p-2 rounded"
+            >
+              Submit Request
+            </button>
+          </form>
+        )}
       </div>
     </div>
   );
