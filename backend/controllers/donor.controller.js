@@ -3,6 +3,29 @@ import User from '../models/user.model.js';
 import Request from '../models/request.model.js'
 import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+import twilio from 'twilio';
+
+dotenv.config();
+
+const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+
+export const sendSmsNotification = async (phoneNumber, message) => {
+  try {
+    const formattedPhoneNumber = phoneNumber.startsWith('+') ? phoneNumber : `+91${phoneNumber}`;
+    if (formattedPhoneNumber.length !== 13) { 
+      throw new Error('Invalid phone number length');
+    }
+
+    await client.messages.create({
+      body: message,
+      from: process.env.TWILIO_PHONE_NUMBER,
+      to: formattedPhoneNumber
+    });
+  } catch (error) {
+    console.error('Failed to send SMS:', error.message);
+  }
+};
 
 export const donationform = async (req, res) => {
   try {
@@ -131,5 +154,38 @@ export const getRequestsForDonor = async (req, res) => {
     res.status(200).json(requests);
   } catch (error) {
     res.status(500).json({ message: 'Failed to fetch requests', error });
+  }
+};
+
+export const getStatus = async (req, res) => {
+  const { requestId } = req.params;
+  const { status } = req.body;
+
+  try {
+    // Update the request status
+    const request = await Request.findByIdAndUpdate(
+      requestId,
+      { status },
+      { new: true }
+    );
+
+    if (!request) {
+      return res.status(404).json({ message: 'Request not found' });
+    }
+
+    // Determine message to send based on status
+    let message;
+    if (status === 'Accepted') {
+      message = `Hi ${request.requesterName}, your food request has been accepted!`;
+    } else if (status === 'Rejected') {
+      message = `Hi ${request.requesterName}, your food request has been rejected.`;
+    }
+
+    // Send SMS notification using Twilio
+    await sendSmsNotification(request.contactNumber, message);
+
+    res.json(request);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to update request status and send SMS' });
   }
 };

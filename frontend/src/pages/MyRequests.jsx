@@ -6,6 +6,8 @@ const MyRequests = () => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [loadingRequestId, setLoadingRequestId] = useState(null); // Track which request is being updated
+  const [loadingAction, setLoadingAction] = useState(''); // Track the action (accept/reject) for loading
 
   useEffect(() => {
     if (!userId) {
@@ -16,7 +18,7 @@ const MyRequests = () => {
 
     const fetchRequests = async () => {
       try {
-        const response = await fetch(`/api/donor/requests/${userId}`); 
+        const response = await fetch(`/api/donor/requests/${userId}`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -31,6 +33,36 @@ const MyRequests = () => {
 
     fetchRequests();
   }, [userId]);
+
+  const handleStatusChange = async (requestId, status) => {
+    setLoadingRequestId(requestId); // Set loading for this request
+    setLoadingAction(status); // Set loading action (Accept/Reject)
+    try {
+      const response = await fetch(`/api/donor/requests/${requestId}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update status');
+      }
+
+      setRequests(prevRequests =>
+        prevRequests.map(request =>
+          request._id === requestId ? { ...request, status } : request
+        )
+      );
+    } catch (error) {
+      console.error('Error updating status:', error);
+      setError('Failed to update request status.');
+    } finally {
+      setLoadingRequestId(null); // Reset loading for this request
+      setLoadingAction(''); // Reset loading action
+    }
+  };
 
   if (loading) return <p className="text-center text-gray-500">Loading...</p>;
   if (error) return <p className="text-center text-red-500">{error}</p>;
@@ -48,6 +80,43 @@ const MyRequests = () => {
               <p><strong>Description:</strong> {request.description}</p>
               <p><strong>Latitude:</strong> {request.latitude || 'N/A'}</p>
               <p><strong>Longitude:</strong> {request.longitude || 'N/A'}</p>
+              <p><strong>Status:</strong> {request.status || 'Pending'}</p>
+              <div className="flex gap-2 mt-2">
+                {request.status === 'Pending' && (
+                  <>
+                    <button
+                      className="bg-green-500 text-white px-4 py-2 rounded"
+                      onClick={() => handleStatusChange(request._id, 'Accepted')}
+                      disabled={loadingRequestId === request._id && loadingAction !== 'Accepted'}
+                    >
+                      {loadingRequestId === request._id && loadingAction === 'Accepted' ? 'Accepting...' : 'Accept'}
+                    </button>
+                    <button
+                      className="bg-red-500 text-white px-4 py-2 rounded"
+                      onClick={() => handleStatusChange(request._id, 'Rejected')}
+                      disabled={loadingRequestId === request._id && loadingAction !== 'Rejected'}
+                    >
+                      {loadingRequestId === request._id && loadingAction === 'Rejected' ? 'Rejecting...' : 'Reject'}
+                    </button>
+                  </>
+                )}
+                {request.status === 'Accepted' && (
+                  <button
+                    className="bg-green-500 text-white px-4 py-2 rounded"
+                    disabled
+                  >
+                    Accepted
+                  </button>
+                )}
+                {request.status === 'Rejected' && (
+                  <button
+                    className="bg-red-500 text-white px-4 py-2 rounded"
+                    disabled
+                  >
+                    Rejected
+                  </button>
+                )}
+              </div>
             </div>
           ))
         ) : (
