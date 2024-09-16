@@ -102,6 +102,11 @@ export const requestFood = async (req, res) => {
       return res.status(404).json({ message: 'Donor not found.' });
     }
 
+    const existingRequest = await Request.findOne({ donorId, contactNumber });
+    if (existingRequest) {
+      return res.status(400).json({ message: 'You have already requested this food item.' });
+    }
+
     const newRequest = new Request({
       donorId,
       userId: donor.userId, 

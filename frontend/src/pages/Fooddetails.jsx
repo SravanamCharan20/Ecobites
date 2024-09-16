@@ -7,8 +7,8 @@ const FoodDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showRequestForm, setShowRequestForm] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(''); // Define this state
-  const [successMessage, setSuccessMessage] = useState(''); // Define this state
+  const [errorMessage, setErrorMessage] = useState(''); // For form errors
+  const [successMessage, setSuccessMessage] = useState(''); // For success messages
   const [formData, setFormData] = useState({
     name: '',
     contactNumber: '',
@@ -29,7 +29,7 @@ const FoodDetails = () => {
   useEffect(() => {
     const fetchFoodDetails = async () => {
       try {
-        const response = await fetch(`/api/donor/${id}`); // Adjust API endpoint to match your route
+        const response = await fetch(`/api/donor/${id}`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -124,6 +124,9 @@ const FoodDetails = () => {
 
   const handleRequestSubmit = async (e) => {
     e.preventDefault();
+    setErrorMessage(''); // Clear any previous error
+    setSuccessMessage(''); // Clear any previous success
+
     try {
       const response = await fetch('/api/donor/request', {
         method: 'POST',
@@ -141,12 +144,12 @@ const FoodDetails = () => {
             postalCode: formData.address.postalCode,
             country: formData.address.country,
           },
-          latitude: formData.latitude || null, 
-          longitude: formData.longitude || null, 
+          latitude: formData.latitude || null,
+          longitude: formData.longitude || null,
           description: formData.description,
         }),
       });
-  
+
       const result = await response.json();
       if (response.ok) {
         setSuccessMessage(result.message);
@@ -165,13 +168,17 @@ const FoodDetails = () => {
           description: '',
         });
       } else {
-        setErrorMessage(result.message || 'Failed to submit request.');
+        // Check for specific error message like "Request already exists"
+        if (result.message === 'Request already exists') {
+          setErrorMessage('You have already requested this food item.');
+        } else {
+          setErrorMessage(result.message || 'Failed to submit request.');
+        }
       }
     } catch (error) {
       setErrorMessage('An error occurred while submitting the request.');
     }
   };
-
 
   if (loading) return <p className="text-center text-gray-500">Loading...</p>;
   if (error) return <p className="text-center text-red-500">{error}</p>;
@@ -209,40 +216,49 @@ const FoodDetails = () => {
         {showRequestForm && (
           <form onSubmit={handleRequestSubmit} className="mt-4 p-4 border border-gray-200 rounded">
             <h3 className="text-lg font-semibold mb-2">Request Form</h3>
+            
+            {/* Display error and success messages */}
+            {errorMessage && <p className="text-red-500 mb-4">{errorMessage}</p>}
+            {successMessage && <p className="text-green-500 mb-4">{successMessage}</p>}
+            
             <input
               type="text"
               name="name"
               placeholder="Name"
               value={formData.name}
               onChange={handleInputChange}
-              className="bg-gray-100 p-2 rounded mb-2 w-full"
+              className="block w-full p-2 border border-gray-300 rounded mb-4"
               required
             />
             <input
-              type="tel"
+              type="text"
               name="contactNumber"
               placeholder="Contact Number"
               value={formData.contactNumber}
               onChange={handleInputChange}
-              className="bg-gray-100 p-2 rounded mb-2 w-full"
+              className="block w-full p-2 border border-gray-300 rounded mb-4"
               required
             />
-            
-            <div className="flex gap-4 mb-4">
-              <button
-                type="button"
-                onClick={() => handleLocationMethodChange('auto')}
-                className={`p-2 rounded-lg ${locationMethod === 'auto' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-              >
-                Use Current Location
-              </button>
-              <button
-                type="button"
-                onClick={() => handleLocationMethodChange('manual')}
-                className={`p-2 rounded-lg ${locationMethod === 'manual' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-              >
-                Enter Address Manually
-              </button>
+
+            {/* Location Method Selector */}
+            <div className="mb-4">
+              <label className="block mb-2">Location Method</label>
+              <div>
+                <button
+                  type="button"
+                  className={`mr-4 p-2 rounded-lg ${locationMethod === 'auto' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                  onClick={() => handleLocationMethodChange('auto')}
+                >
+                  Use Current Location
+                </button>
+                <button
+                  type="button"
+                  className={`p-2 rounded-lg ${locationMethod === 'manual' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                  onClick={() => handleLocationMethodChange('manual')}
+                >
+                  Enter Address Manually
+                </button>
+              </div>
             </div>
 
             {locationMethod === 'manual' && (
@@ -253,7 +269,7 @@ const FoodDetails = () => {
                   placeholder="Street"
                   value={formData.address.street}
                   onChange={handleInputChange}
-                  className="bg-gray-100 p-2 rounded mb-2 w-full"
+                  className="block w-full p-2 border border-gray-300 rounded mb-4"
                 />
                 <input
                   type="text"
@@ -261,7 +277,7 @@ const FoodDetails = () => {
                   placeholder="City"
                   value={formData.address.city}
                   onChange={handleInputChange}
-                  className="bg-gray-100 p-2 rounded mb-2 w-full"
+                  className="block w-full p-2 border border-gray-300 rounded mb-4"
                 />
                 <input
                   type="text"
@@ -269,7 +285,7 @@ const FoodDetails = () => {
                   placeholder="State"
                   value={formData.address.state}
                   onChange={handleInputChange}
-                  className="bg-gray-100 p-2 rounded mb-2 w-full"
+                  className="block w-full p-2 border border-gray-300 rounded mb-4"
                 />
                 <input
                   type="text"
@@ -277,7 +293,7 @@ const FoodDetails = () => {
                   placeholder="Postal Code"
                   value={formData.address.postalCode}
                   onChange={handleInputChange}
-                  className="bg-gray-100 p-2 rounded mb-2 w-full"
+                  className="block w-full p-2 border border-gray-300 rounded mb-4"
                 />
                 <input
                   type="text"
@@ -285,7 +301,7 @@ const FoodDetails = () => {
                   placeholder="Country"
                   value={formData.address.country}
                   onChange={handleInputChange}
-                  className="bg-gray-100 p-2 rounded mb-2 w-full"
+                  className="block w-full p-2 border border-gray-300 rounded mb-4"
                 />
               </>
             )}
@@ -294,15 +310,13 @@ const FoodDetails = () => {
 
             <textarea
               name="description"
-              placeholder="Description"
+              placeholder="Describe why you need this food item"
               value={formData.description}
               onChange={handleInputChange}
-              className="bg-gray-100 p-2 rounded mb-2 w-full"
+              className="block w-full p-2 border border-gray-300 rounded mb-4"
+              required
             />
-            <button
-              type="submit"
-              className="bg-blue-500 text-white p-2 rounded"
-            >
+            <button type="submit" className="bg-green-500 text-white p-2 rounded">
               Submit Request
             </button>
           </form>
