@@ -3,31 +3,143 @@ import { useNavigate } from 'react-router-dom';
 
 const AvailableFoodList = () => {
   const [foodItems, setFoodItems] = useState([]);
+  const [sortedFoodItems, setSortedFoodItems] = useState([]);
+  const [userLocation, setUserLocation] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [loadingDistances, setLoadingDistances] = useState(false);
   const [error, setError] = useState('');
-  const navigate = useNavigate(); // Use useNavigate instead of useHistory
+  const [locationError, setLocationError] = useState('');
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchFoodItems = async () => {
-      try {
-        const response = await fetch('/api/donor/donorform');
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-        setFoodItems(data);
-      } catch (error) {
-        setError('Failed to load food items.');
-      } finally {
-        setLoading(false);
+  // Function to calculate distance between two coordinates (Haversine formula)
+  const calculateDistance = (lat1, lon1, lat2, lon2) => {
+    const R = 6371; // Radius of the Earth in kilometers
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c; // Distance in kilometers
+    return distance;
+  };
+
+  // Get coordinates from address using OpenStreetMap's Nominatim API
+  const getCoordinatesFromAddress = async (address) => {
+    if (!address || !address.city || !address.state || !address.country) {
+      console.error('Incomplete address:', address);
+      return null;
+    }
+
+    const query = `${address.street ? address.street + ' ' : ''}${address.city} ${address.state} ${address.country}`;
+    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1`;
+
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
       }
-    };
+      const data = await response.json();
+      if (data.length > 0) {
+        const { lat, lon } = data[0];
+        return { lat: parseFloat(lat), lon: parseFloat(lon) };
+      } else {
+        console.warn('No coordinates found for query:', query);
+        return null;
+      }
+    } catch (error) {
+      console.error('Error fetching coordinates:', error);
+      return null;
+    }
+  };
 
+  // Get user location (ask for location permission)
+  const getUserLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserLocation({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          });
+          setLocationError('');
+        },
+        (error) => {
+          console.error('Error getting user location:', error);
+          setLocationError('Failed to get user location.');
+        }
+      );
+    } else {
+      alert('Geolocation is not supported by this browser.');
+    }
+  };
+
+  // Function to fetch food items
+  const fetchFoodItems = async () => {
+    try {
+      const response = await fetch('/api/donor/donorform');
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      setFoodItems(data);
+    } catch (error) {
+      setError('Failed to load food items.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Calculate distances and sort food items
+  const calculateAndSortFoodItems = async () => {
+    if (!userLocation || foodItems.length === 0) return;
+
+    setLoadingDistances(true);
+
+    const sortedItems = await Promise.all(
+      foodItems.map(async (item) => {
+        let itemCoords;
+
+        if (item.address.latitude && item.address.longitude) {
+          itemCoords = { lat: item.address.latitude, lon: item.address.longitude };
+        } else {
+          itemCoords = await getCoordinatesFromAddress(item.address);
+        }
+
+        if (!itemCoords) return null;
+
+        const distance = calculateDistance(
+          userLocation.latitude,
+          userLocation.longitude,
+          itemCoords.lat,
+          itemCoords.lon
+        );
+
+        return { ...item, distance };
+      })
+    );
+
+    const sorted = sortedItems.filter(item => item !== null).sort((a, b) => a.distance - b.distance);
+    setSortedFoodItems(sorted);
+    setLoadingDistances(false);
+  };
+
+  // Initial data fetching and location request
+  useEffect(() => {
     fetchFoodItems();
+    getUserLocation();
   }, []);
 
+  // Recalculate and sort food items whenever userLocation or foodItems change
+  useEffect(() => {
+    if (userLocation && foodItems.length > 0) {
+      calculateAndSortFoodItems();
+    }
+  }, [userLocation, foodItems]);
+
   const handleViewDetails = (id) => {
-    navigate(`/food-details/${id}`); 
+    navigate(`/food-details/${id}`);
   };
 
   const formatDate = (dateString) => {
@@ -44,9 +156,17 @@ const AvailableFoodList = () => {
   return (
     <div className="p-4 max-w-7xl mx-auto">
       <h1 className="text-3xl font-bold mb-6 text-center">Available Food List</h1>
-      {loading && <p className="text-center text-gray-500">Loading...</p>}
+      {locationError ? (
+        <p className="text-center text-red-500">{locationError}</p>
+      ) : userLocation ? (
+        <p className="text-center">Location acquired successfully.</p>
+      ) : (
+        <p className="text-center">Fetching your location...</p>
+      )}
+      {loading && <p className="text-center text-gray-500">Loading food items...</p>}
+      {loadingDistances && !loading && <p className="text-center text-gray-500">Calculating distances...</p>}
       {error && <p className="text-center text-red-500">{error}</p>}
-      {foodItems.length === 0 && !loading && (
+      {sortedFoodItems.length === 0 && !loading && !loadingDistances && (
         <p className="text-center text-gray-500">No donated food items available.</p>
       )}
 
@@ -58,12 +178,13 @@ const AvailableFoodList = () => {
               <th className="py-3 px-6 text-left border-b-2 border-gray-200 bg-gray-100">Donor</th>
               <th className="py-3 px-6 text-left border-b-2 border-gray-200 bg-gray-100">Food Items</th>
               <th className="py-3 px-6 text-left border-b-2 border-gray-200 bg-gray-100">Full Address</th>
+              <th className="py-3 px-6 text-left border-b-2 border-gray-200 bg-gray-100">Distance (km)</th>
               <th className="py-3 px-6 text-left border-b-2 border-gray-200 bg-gray-100">Creation Date</th>
               <th className="py-3 px-6 text-left border-b-2 border-gray-200 bg-gray-100">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {foodItems.map((item, index) => (
+            {sortedFoodItems.map((item, index) => (
               <tr key={item._id} className="hover:bg-gray-50">
                 <td className="py-3 px-6 border-b text-left">{index + 1}</td>
                 <td className="py-3 px-6 border-b text-left">{item.name}</td>
@@ -73,6 +194,7 @@ const AvailableFoodList = () => {
                   ))}
                 </td>
                 <td className="py-3 px-6 border-b text-left">{formatFullAddress(item.address)}</td>
+                <td className="py-3 px-6 border-b text-left">{item.distance ? item.distance.toFixed(2) : 'N/A'}</td>
                 <td className="py-3 px-6 border-b text-left">{formatDate(item.createdAt)}</td>
                 <td className="py-3 px-6 border-b text-left">
                   <button
