@@ -27,17 +27,18 @@ const AvailableFoodList = () => {
   }, []);
 
   const handleViewDetails = (id) => {
-    navigate(`/food-details/${id}`); // Use navigate to change routes
-  };
-
-  const formatLocation = (latitude, longitude) => {
-    return `Lat: ${latitude}, Long: ${longitude}`;
+    navigate(`/food-details/${id}`); 
   };
 
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     const date = new Date(dateString);
     return isNaN(date) ? 'Invalid Date' : date.toLocaleDateString(undefined, options);
+  };
+
+  const formatFullAddress = (address) => {
+    const { street, city, state, postalCode, country } = address || {};
+    return `${street}, ${city}, ${state} - ${postalCode}, ${country}`;
   };
 
   return (
@@ -53,32 +54,27 @@ const AvailableFoodList = () => {
         <table className="min-w-full bg-white border border-gray-200">
           <thead>
             <tr>
-              <th className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100">S. No</th>
-              <th className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100">Food Item Name</th>
-              <th className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100">Address</th>
-              <th className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100">State</th>
-              <th className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100">City</th>
-              <th className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100">Creation Date</th>
-              <th className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100">Actions</th>
+              <th className="py-3 px-6 text-left border-b-2 border-gray-200 bg-gray-100">S. No</th>
+              <th className="py-3 px-6 text-left border-b-2 border-gray-200 bg-gray-100">Donor</th>
+              <th className="py-3 px-6 text-left border-b-2 border-gray-200 bg-gray-100">Food Items</th>
+              <th className="py-3 px-6 text-left border-b-2 border-gray-200 bg-gray-100">Full Address</th>
+              <th className="py-3 px-6 text-left border-b-2 border-gray-200 bg-gray-100">Creation Date</th>
+              <th className="py-3 px-6 text-left border-b-2 border-gray-200 bg-gray-100">Actions</th>
             </tr>
           </thead>
           <tbody>
             {foodItems.map((item, index) => (
               <tr key={item._id} className="hover:bg-gray-50">
-                <td className="py-2 px-4 border-b">{index + 1}</td>
-                <td className="py-2 px-4 border-b">{item.name}</td>
-                <td className="py-2 px-4 border-b">
-                  {item.address ? (
-                    <>
-                      <p>{item.address.street}</p>
-                      <p>{item.address.city}</p>
-                    </>
-                  ) : 'No address provided'}
+                <td className="py-3 px-6 border-b text-left">{index + 1}</td>
+                <td className="py-3 px-6 border-b text-left">{item.name}</td>
+                <td className="py-3 px-6 border-b text-left">
+                  {item.foodItems.map((food, i) => (
+                    <span key={i}>{food.name}{i < item.foodItems.length - 1 ? ', ' : ''}</span>
+                  ))}
                 </td>
-                <td className="py-2 px-4 border-b">{item.address?.state || 'N/A'}</td>
-                <td className="py-2 px-4 border-b">{item.address?.city || 'N/A'}</td>
-                <td className="py-2 px-4 border-b">{formatDate(item.createdAt)}</td>
-                <td className="py-2 px-4 border-b">
+                <td className="py-3 px-6 border-b text-left">{formatFullAddress(item.address)}</td>
+                <td className="py-3 px-6 border-b text-left">{formatDate(item.createdAt)}</td>
+                <td className="py-3 px-6 border-b text-left">
                   <button
                     onClick={() => handleViewDetails(item._id)}
                     className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600"

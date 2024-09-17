@@ -15,7 +15,7 @@ const ManageFood = () => {
       try {
         const token = localStorage.getItem('access_token');
         if (!token) {
-          setError('No token found');
+          setError('No Donations found');
           setLoading(false);
           return;
         }

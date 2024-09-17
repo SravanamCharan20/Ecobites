@@ -36,7 +36,7 @@ function App() {
           <Route path='/food-details/:id' element={<Fooddetails />} />
           <Route path='/addfood' element={<Addfood />} />
           <Route path='/managefood' element={<Managefood />} />
-          <Route path="/donor/requests/:userId" element={<MyRequests />} />
+          <Route path="/donor/requests/:userId" element={<PrivateRoute element={MyRequests} />} />
         </Routes>
       </BrowserRouter>
     </Provider>
