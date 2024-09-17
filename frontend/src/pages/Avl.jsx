@@ -11,9 +11,8 @@ const AvailableFoodList = () => {
   const [locationError, setLocationError] = useState('');
   const navigate = useNavigate();
 
-  // Function to calculate distance between two coordinates (Haversine formula)
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
-    const R = 6371; // Radius of the Earth in kilometers
+    const R = 6371;
     const dLat = (lat2 - lat1) * Math.PI / 180;
     const dLon = (lon2 - lon1) * Math.PI / 180;
     const a =
@@ -21,11 +20,9 @@ const AvailableFoodList = () => {
       Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
       Math.sin(dLon / 2) * Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const distance = R * c; // Distance in kilometers
-    return distance;
+    return R * c;
   };
 
-  // Get coordinates from address using OpenStreetMap's Nominatim API
   const getCoordinatesFromAddress = async (address) => {
     if (!address || !address.city || !address.state || !address.country) {
       console.error('Incomplete address:', address);
@@ -54,7 +51,6 @@ const AvailableFoodList = () => {
     }
   };
 
-  // Get user location (ask for location permission)
   const getUserLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -75,7 +71,6 @@ const AvailableFoodList = () => {
     }
   };
 
-  // Function to fetch food items
   const fetchFoodItems = async () => {
     try {
       const response = await fetch('/api/donor/donorform');
@@ -91,11 +86,13 @@ const AvailableFoodList = () => {
     }
   };
 
-  // Calculate distances and sort food items
+  // Function to calculate distances and filter/sort by expiry date
   const calculateAndSortFoodItems = async () => {
     if (!userLocation || foodItems.length === 0) return;
 
     setLoadingDistances(true);
+
+    const currentDate = new Date();
 
     const sortedItems = await Promise.all(
       foodItems.map(async (item) => {
@@ -116,22 +113,32 @@ const AvailableFoodList = () => {
           itemCoords.lon
         );
 
-        return { ...item, distance };
+        const validFoodItems = item.foodItems.filter(food => new Date(food.expiryDate) >= currentDate);
+
+        if (validFoodItems.length === 0) return null;
+
+        return { ...item, distance, foodItems: validFoodItems };
       })
     );
 
-    const sorted = sortedItems.filter(item => item !== null).sort((a, b) => a.distance - b.distance);
+    const sorted = sortedItems
+      .filter(item => item !== null)
+      .sort((a, b) => {
+        // Sort by the nearest expiry date
+        const expiryA = new Date(a.foodItems[0].expiryDate);
+        const expiryB = new Date(b.foodItems[0].expiryDate);
+        return expiryA - expiryB;
+      });
+
     setSortedFoodItems(sorted);
     setLoadingDistances(false);
   };
 
-  // Initial data fetching and location request
   useEffect(() => {
     fetchFoodItems();
     getUserLocation();
   }, []);
 
-  // Recalculate and sort food items whenever userLocation or foodItems change
   useEffect(() => {
     if (userLocation && foodItems.length > 0) {
       calculateAndSortFoodItems();
@@ -179,6 +186,7 @@ const AvailableFoodList = () => {
               <th className="py-3 px-6 text-left border-b-2 border-gray-200 bg-gray-100">Food Items</th>
               <th className="py-3 px-6 text-left border-b-2 border-gray-200 bg-gray-100">Full Address</th>
               <th className="py-3 px-6 text-left border-b-2 border-gray-200 bg-gray-100">Distance (km)</th>
+              <th className="py-3 px-6 text-left border-b-2 border-gray-200 bg-gray-100">Expiry Date</th>
               <th className="py-3 px-6 text-left border-b-2 border-gray-200 bg-gray-100">Creation Date</th>
               <th className="py-3 px-6 text-left border-b-2 border-gray-200 bg-gray-100">Actions</th>
             </tr>
@@ -190,11 +198,16 @@ const AvailableFoodList = () => {
                 <td className="py-3 px-6 border-b text-left">{item.name}</td>
                 <td className="py-3 px-6 border-b text-left">
                   {item.foodItems.map((food, i) => (
-                    <span key={i}>{food.name}{i < item.foodItems.length - 1 ? ', ' : ''}</span>
+                    <div key={i}>
+                      {food.name} (Expiry: {formatDate(food.expiryDate)})
+                    </div>
                   ))}
                 </td>
                 <td className="py-3 px-6 border-b text-left">{formatFullAddress(item.address)}</td>
                 <td className="py-3 px-6 border-b text-left">{item.distance ? item.distance.toFixed(2) : 'N/A'}</td>
+                <td className="py-3 px-6 border-b text-left">
+                  {formatDate(item.foodItems[0].expiryDate)}
+                </td>
                 <td className="py-3 px-6 border-b text-left">{formatDate(item.createdAt)}</td>
                 <td className="py-3 px-6 border-b text-left">
                   <button
