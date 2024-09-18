@@ -70,6 +70,10 @@ const donorSchema = new Schema({
     type: Date,
     required: false,
   },
+  isAccepted: {
+    type: Boolean,
+    default: false
+  }
 }, { timestamps: true });
 
 export default model('Donor', donorSchema);

@@ -48,7 +48,7 @@ export const donationform = async (req, res) => {
 
 export const avldatalist = async (req, res) => {
   try {
-    const donatedFoodItems = await Donor.find();
+    const donatedFoodItems = await Donor.find({isAccepted: false});
     res.json(donatedFoodItems);
   } catch (error) {
     res.status(500).json({ message: 'Failed to fetch donated food items.', error });
@@ -181,6 +181,14 @@ export const getStatus = async (req, res) => {
     // Determine message to send based on status
     let message;
     if (status === 'Accepted') {
+      const donorId = request.donorId;
+      console.log(donorId);
+      const updatedDonation = await Donor.findByIdAndUpdate(
+        donorId,
+        {isAccepted: true},
+        {new: true}
+      );
+      console.log(updatedDonation)
       message = `Hi ${request.requesterName}, your food request has been accepted!`;
     } else if (status === 'Rejected') {
       message = `Hi ${request.requesterName}, your food request has been rejected.`;
