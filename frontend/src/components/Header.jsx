@@ -1,4 +1,3 @@
-// src/components/Header.jsx
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -9,77 +8,54 @@ const Header = () => {
   const { currentUser } = useSelector((state) => state.user);
 
   // Extract userId from currentUser
-  const userId = currentUser?.id; // Ensure userId is correctly set
+  const userId = currentUser?.id;
 
   return (
-    <header className="bg-blue-500 text-white shadow-md p-4 flex items-center justify-between">
-      <div className="flex-shrink-0">
-        <Link to="/" className="text-4xl font-mono p-4">
-          Ecobites
-        </Link>
-      </div>
-
-      <nav className="flex-grow flex justify-center space-x-4">
+    <header className="fixed top-6 left-1/2 transform -translate-x-1/2 w-10/12 md:w-1/3 bg-opacity-55 bg-[rgba(57,57,57,0.55)] text-white rounded-full shadow-lg backdrop-blur-lg z-50 p-3 h-16 mb-44 transition-all duration-300 ease-in-out hover:scale-105">
+      <div className="flex items-center justify-center space-x-4">
         <Link
           to="/avl"
-          className={`px-4 py-2 rounded-md ${
+          className={`px-3 md:px-4 py-1 md:py-2 rounded-md ${
             location.pathname === '/avl'
-              ? 'bg-slate-700 text-white'
-              : 'text-gray-300 hover:bg-slate-700 hover:text-white'
+              ? 'text-teal-50 '
+              : 'text-gray-300 hover:text-teal-50'
           }`}
         >
           Avl
         </Link>
         <Link
           to="/donate"
-          className={`px-4 py-2 rounded-md ${
+          className={`px-3 md:px-4 py-1 md:py-2 rounded-md ${
             location.pathname === '/donate'
-              ? 'bg-slate-700 text-white'
-              : 'text-gray-300 hover:bg-slate-700 hover:text-white'
+              ? 'text-teal-50 '
+              : 'text-gray-300 hover:text-teal-50'
           }`}
         >
           Donate
         </Link>
-
         {currentUser && (
           <Link
-          to={`/donor/requests/${currentUser?.id}`}  // Use userId instead of donorId
-          className={`px-4 py-2 rounded-md ${
-            location.pathname === `/donor/requests/${currentUser?.id}`
-              ? 'bg-slate-700 text-white'
-              : 'text-gray-300 hover:bg-slate-700 hover:text-white'
-          }`}
-        >
-          My Requests
-        </Link>
+            to={`/donor/requests/${userId}`}
+            className={`px-3 md:px-4 py-1 md:py-2 rounded-md ${
+              location.pathname === `/donor/requests/${userId}`
+                ? 'text-teal-50 '
+                : 'text-gray-300 hover:text-teal-50 '
+            }`}
+          >
+            My Requests
+          </Link>
         )}
-
         <Link
           to="/about"
-          className={`px-4 py-2 rounded-md ${
+          className={`px-3 md:px-4 py-1 md:py-2 rounded-md ${
             location.pathname === '/about'
-              ? 'bg-slate-700 text-white'
-              : 'text-gray-300 hover:bg-slate-700 hover:text-white'
+              ? 'text-teal-50 '
+              : 'text-gray-300 hover:text-teal-50 '
           }`}
         >
           About
         </Link>
-
-        {currentUser ? (
-          <Logout />
-        ) : (
-          <Link
-            to="/signup"
-            className={`px-4 py-2 rounded-md ${
-              location.pathname === '/signup'
-                ? 'bg-slate-700 text-white'
-                : 'text-gray-300 hover:bg-slate-700 hover:text-white'
-            }`}
-          >
-            Signup
-          </Link>
-        )}
-      </nav>
+      </div>
     </header>
   );
 };

@@ -11,6 +11,8 @@ const AvailableFoodList = () => {
   const [locationError, setLocationError] = useState('');
   const navigate = useNavigate();
 
+  // Other unchanged functions...
+
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
     const R = 6371;
     const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -86,7 +88,6 @@ const AvailableFoodList = () => {
     }
   };
 
-  // Function to calculate distances and filter/sort by expiry date
   const calculateAndSortFoodItems = async () => {
     if (!userLocation || foodItems.length === 0) return;
 
@@ -124,7 +125,6 @@ const AvailableFoodList = () => {
     const sorted = sortedItems
       .filter(item => item !== null)
       .sort((a, b) => {
-        // Sort by the nearest expiry date
         const expiryA = new Date(a.foodItems[0].expiryDate);
         const expiryB = new Date(b.foodItems[0].expiryDate);
         return expiryA - expiryB;
@@ -161,7 +161,7 @@ const AvailableFoodList = () => {
   };
 
   return (
-    <div className="p-4 max-w-7xl mx-auto">
+    <div className="p-8 max-w-7xl mx-auto text-black bg-white">
       <h1 className="text-3xl font-bold mb-6 text-center">Available Food List</h1>
       {locationError ? (
         <p className="text-center text-red-500">{locationError}</p>
@@ -178,22 +178,38 @@ const AvailableFoodList = () => {
       )}
 
       <div className="overflow-x-auto">
-        <table className="min-w-full bg-white border border-gray-200">
+        <table className="min-w-full bg-white border border-gray-200 text-black">
           <thead>
             <tr>
-              <th className="py-3 px-6 text-left border-b-2 border-gray-200 bg-gray-100">S. No</th>
-              <th className="py-3 px-6 text-left border-b-2 border-gray-200 bg-gray-100">Donor</th>
-              <th className="py-3 px-6 text-left border-b-2 border-gray-200 bg-gray-100">Food Items</th>
-              <th className="py-3 px-6 text-left border-b-2 border-gray-200 bg-gray-100">Full Address</th>
-              <th className="py-3 px-6 text-left border-b-2 border-gray-200 bg-gray-100">Distance (km)</th>
-              <th className="py-3 px-6 text-left border-b-2 border-gray-200 bg-gray-100">Expiry Date</th>
-              <th className="py-3 px-6 text-left border-b-2 border-gray-200 bg-gray-100">Creation Date</th>
-              <th className="py-3 px-6 text-left border-b-2 border-gray-200 bg-gray-100">Actions</th>
+              <th className="py-3 px-6 text-left border-b-2 border-gray-200 bg-gray-100 text-sm uppercase font-medium text-gray-700">
+                S. No
+              </th>
+              <th className="py-3 px-6 text-left border-b-2 border-gray-200 bg-gray-100 text-sm uppercase font-medium text-gray-700">
+                Donor
+              </th>
+              <th className="py-3 px-6 text-left border-b-2 border-gray-200 bg-gray-100 text-sm uppercase font-medium text-gray-700">
+                Food Items
+              </th>
+              <th className="py-3 px-6 text-left border-b-2 border-gray-200 bg-gray-100 text-sm uppercase font-medium text-gray-700">
+                Full Address
+              </th>
+              <th className="py-3 px-6 text-left border-b-2 border-gray-200 bg-gray-100 text-sm uppercase font-medium text-gray-700">
+                Distance (km)
+              </th>
+              <th className="py-3 px-6 text-left border-b-2 border-gray-200 bg-gray-100 text-sm uppercase font-medium text-gray-700">
+                Expiry Date
+              </th>
+              <th className="py-3 px-6 text-left border-b-2 border-gray-200 bg-gray-100 text-sm uppercase font-medium text-gray-700">
+                Creation Date
+              </th>
+              <th className="py-3 px-6 text-left border-b-2 border-gray-200 bg-gray-100 text-sm uppercase font-medium text-gray-700">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>
             {sortedFoodItems.map((item, index) => (
-              <tr key={item._id} className="hover:bg-gray-50">
+              <tr key={item._id} className="hover:bg-gray-50 transition-all duration-300 ease-in-out">
                 <td className="py-3 px-6 border-b text-left">{index + 1}</td>
                 <td className="py-3 px-6 border-b text-left">{item.name}</td>
                 <td className="py-3 px-6 border-b text-left">
@@ -212,7 +228,7 @@ const AvailableFoodList = () => {
                 <td className="py-3 px-6 border-b text-left">
                   <button
                     onClick={() => handleViewDetails(item._id)}
-                    className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600"
+                    className="bg-black text-white py-2 px-4 rounded hover:bg-gray-700 transition-all duration-200 ease-in-out"
                   >
                     View Details
                   </button>

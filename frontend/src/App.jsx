@@ -15,6 +15,8 @@ import Fooddetails from './pages/Fooddetails';
 import Addfood from './pages/Addfood';
 import Managefood from './pages/Managefood';
 import MyRequests from './pages/MyRequests';
+import Logo from './components/Logo';
+import SignupButton from './components/SIgnupbutton';
 
 function App() {
   const dispatch = useDispatch();
@@ -26,7 +28,11 @@ function App() {
   return (
     <Provider store={store}>
       <BrowserRouter>
-        <Header />
+      <div className='relative mb-24'>
+          <Logo />
+          <Header />
+          <SignupButton />
+        </div>
         <Routes>
           <Route path='/signup' element={<Signup />} />
           <Route path='/signin' element={<Signin />} />
