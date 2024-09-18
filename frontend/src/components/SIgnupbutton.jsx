@@ -9,16 +9,16 @@ const SignupButton = () => {
   const { currentUser } = useSelector((state) => state.user);
 
   return (
-    <div className="fixed top-3 p-4 h-16 mb-44 right-4 z-50">
+    <div className="fixed top-4 p-6 h-16 mb-44 right-4 z-50">
       {currentUser ? (
         <Logout />
       ) : (
         <Link
           to="/signup"
-          className={`px-3 py-2 rounded-md ${
+          className={`px-6 py-5 rounded-full ${
             location.pathname === '/signup'
-              ? 'bg-teal-500 text-white'
-              : 'bg-gray-800 text-white hover:bg-teal-500'
+              ? 'bg-[#dff35d] text-black'
+              : 'bg-[#e6f391] text-black hover:bg-[#e3fe35] hover:translate-x-1 hover:translate-y-1'
           }`}
         >
           Signup

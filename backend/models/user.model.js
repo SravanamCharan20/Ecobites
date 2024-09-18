@@ -14,26 +14,6 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-  },
-  location: {
-    latitude: {
-      type: Number,
-      required: false, 
-    },
-    longitude: {
-      type: Number,
-      required: false,
-    },
-    city: {
-      type: String,
-      required: false, 
-      trim: true,
-    },
-    state: {
-      type: String,
-      required: false, 
-      trim: true,
-    },
   }
 }, { timestamps: true });
 

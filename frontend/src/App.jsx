@@ -28,7 +28,7 @@ function App() {
   return (
     <Provider store={store}>
       <BrowserRouter>
-      <div className='relative mb-24'>
+      <div className='mb-28'>
           <Logo />
           <Header />
           <SignupButton />

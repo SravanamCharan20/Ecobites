@@ -50,7 +50,7 @@ export default function SignIn() {
 
   return (
     <div className='p-3 max-w-lg mx-auto'>
-      <h1 className='text-3xl text-center font-semibold my-7'>Sign In</h1>
+      <h1 className='text-3xl text-gray-200 text-center font-semibold my-7'>Sign In</h1>
       <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
         <input
           type='email'
@@ -72,15 +72,15 @@ export default function SignIn() {
         />
         <button
           disabled={loading}
-          className='bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80'
+          className='bg-[#dff35d] text-black p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80'
         >
           {loading ? 'Loading...' : 'Sign In'}
         </button>
       </form>
       <div className='flex gap-2 mt-5'>
-        <p>Don't have an account?</p>
+        <p className='text-gray-200'>Don't have an account?</p>
         <Link to='/signup'>
-          <span className='text-blue-500'>Sign Up</span>
+          <span className='text-[#dff35d] hover:underline'>Sign Up</span>
         </Link>
       </div>
       {error && <p className='text-red-700 mt-5' aria-live='assertive'>{error}</p>}

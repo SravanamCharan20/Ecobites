@@ -32,13 +32,7 @@ const Addfood = () => {
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [dropdown, setDropdown] = useState(null);
 
-
-  const handleDropdownToggle = (dropdownName) => {
-    setDropdown(dropdown === dropdownName ? null : dropdownName);
-  };
-  
   // Handle input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -211,49 +205,9 @@ const Addfood = () => {
   };
 
   return (
-    <div className="flex">
-      {/* Sidebar */}
-      <div className="w-1/5 bg-blue-500 text-white p-4">
-      <ul>
-        {/* Requests Dropdown */}
-        <li>
-          <button
-            onClick={() => handleDropdownToggle('requests')}
-            className="w-full text-left py-2 px-4 hover:bg-gray-700 rounded focus:outline-none"
-          >
-            Requests
-          </button>
-          {dropdown === 'requests' && (
-            <ul className="bg-blue-600 rounded mt-1">
-              <li><a href="#new" className="block py-2 px-4 hover:bg-gray-700 rounded">New</a></li>
-              <li><a href="#picked" className="block py-2 px-4 hover:bg-gray-700 rounded">Picked/Completed</a></li>
-              <li><a href="#rejected" className="block py-2 px-4 hover:bg-gray-700 rounded">Rejected</a></li>
-              <li><a href="#all" className="block py-2 px-4 hover:bg-gray-700 rounded">All</a></li>
-            </ul>
-          )}
-        </li>
-
-        {/* List Your Food Details Dropdown */}
-        <li>
-          <button
-            onClick={() => handleDropdownToggle('foodDetails')}
-            className="w-full text-left py-2 px-4 hover:bg-gray-700 rounded focus:outline-none"
-          >
-            List Your Food Details
-          </button>
-          {dropdown === 'foodDetails' && (
-            <ul className="bg-blue-600 rounded mt-1">
-              <li><a href="#" className="block py-2 px-4 hover:bg-gray-700 rounded">Add Food</a></li>
-              <li><a href="/managefood" className="block py-2 px-4 hover:bg-gray-700 rounded">Manage Food</a></li>
-            </ul>
-          )}
-        </li>
-      </ul>
-    </div>
-
-      {/* Main Content */}
-      <div className="flex-1 p-4 max-w-2xl mx-auto">
-        <h1 className="text-2xl font-semibold mb-4">Donor Form</h1>
+    <div className="flex justify-center items-center min-h-screen bg-gray-900">
+      <div className="p-6 max-w-lg w-full bg-[#131313] text-white rounded-lg shadow-md">
+        <h1 className="text-2xl text-[#dff35d] font-semibold mb-6">Donor Form</h1>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           {/* Personal Information */}
           <input
@@ -262,7 +216,7 @@ const Addfood = () => {
             placeholder="Name"
             value={formData.name}
             onChange={handleInputChange}
-            className="bg-gray-100 p-2 rounded"
+            className="bg-gray-800 p-2 rounded text-white"
           />
           <input
             type="email"
@@ -270,7 +224,7 @@ const Addfood = () => {
             placeholder="Email"
             value={formData.email}
             onChange={handleInputChange}
-            className="bg-gray-100 p-2 rounded"
+            className="bg-gray-800 p-2 rounded text-white"
           />
           <input
             type="tel"
@@ -278,7 +232,7 @@ const Addfood = () => {
             placeholder="Contact Number"
             value={formData.contactNumber}
             onChange={handleInputChange}
-            className="bg-gray-100 p-2 rounded"
+            className="bg-gray-800 p-2 rounded text-white"
           />
 
           {/* Location Method Selection */}
@@ -286,14 +240,18 @@ const Addfood = () => {
             <button
               type="button"
               onClick={() => handleLocationMethodChange('auto')}
-              className={`p-2 rounded-lg ${locationMethod === 'auto' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+              className={`p-3 rounded-full ${
+                locationMethod === 'auto' ? 'bg-[#dff35d]' : 'bg-gray-800'
+              } text-black`}
             >
               Use Current Location
             </button>
             <button
               type="button"
               onClick={() => handleLocationMethodChange('manual')}
-              className={`p-2 rounded-lg ${locationMethod === 'manual' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+              className={`p-3 rounded-full ${
+                locationMethod === 'manual' ? 'bg-[#dff35d]' : 'bg-gray-800'
+              } text-black`}
             >
               Enter Address Manually
             </button>
@@ -308,7 +266,7 @@ const Addfood = () => {
                 placeholder="Street"
                 value={formData.address.street}
                 onChange={handleInputChange}
-                className="bg-gray-100 p-2 rounded"
+                className="bg-gray-800 p-2 rounded text-white"
               />
               <input
                 type="text"
@@ -316,7 +274,7 @@ const Addfood = () => {
                 placeholder="City"
                 value={formData.address.city}
                 onChange={handleInputChange}
-                className="bg-gray-100 p-2 rounded"
+                className="bg-gray-800 p-2 rounded text-white"
               />
               <input
                 type="text"
@@ -324,7 +282,7 @@ const Addfood = () => {
                 placeholder="State"
                 value={formData.address.state}
                 onChange={handleInputChange}
-                className="bg-gray-100 p-2 rounded"
+                className="bg-gray-800 p-2 rounded text-white"
               />
               <input
                 type="text"
@@ -332,7 +290,7 @@ const Addfood = () => {
                 placeholder="Postal Code"
                 value={formData.address.postalCode}
                 onChange={handleInputChange}
-                className="bg-gray-100 p-2 rounded"
+                className="bg-gray-800 p-2 rounded text-white"
               />
               <input
                 type="text"
@@ -340,55 +298,68 @@ const Addfood = () => {
                 placeholder="Country"
                 value={formData.address.country}
                 onChange={handleInputChange}
-                className="bg-gray-100 p-2 rounded"
+                className="bg-gray-800 p-2 rounded text-white"
               />
             </>
           )}
 
-          <div className="text-sm text-gray-600">{locationStatus}</div>
+          <div className="text-sm text-gray-400">{locationStatus}</div>
 
           {/* Food Items */}
           {formData.foodItems.map((item, index) => (
-            <div key={index} className="border p-4 rounded">
+            <div key={index} className="flex flex-col gap-2 p-4 border border-gray-700 rounded-lg">
               <input
                 type="text"
                 name="name"
-                placeholder="Food Item Name"
+                placeholder="Food Name"
                 value={item.name}
                 onChange={(e) => handleFoodItemChange(index, e)}
-                className="bg-gray-100 p-2 rounded mb-2"
+                className="bg-gray-800 p-2 rounded text-white"
               />
-              <input
-                type="number"
-                name="quantity"
-                placeholder="Quantity"
-                value={item.quantity}
-                onChange={(e) => handleFoodItemChange(index, e)}
-                className="bg-gray-100 p-2 rounded mb-2"
-              />
+              <div className="flex gap-2">
+                <input
+                  type="number"
+                  name="quantity"
+                  placeholder="Quantity"
+                  value={item.quantity}
+                  onChange={(e) => handleFoodItemChange(index, e)}
+                  className="bg-gray-800 p-2 rounded text-white w-1/2"
+                />
+                <select
+                  name="unit"
+                  value={item.unit}
+                  onChange={(e) => handleFoodItemChange(index, e)}
+                  className="bg-gray-800 p-2 rounded text-white w-1/2"
+                >
+                  <option value="kg">kg</option>
+                  <option value="liters">liters</option>
+                  <option value="pieces">pieces</option>
+                </select>
+              </div>
               <input
                 type="date"
                 name="expiryDate"
                 placeholder="Expiry Date"
                 value={item.expiryDate}
                 onChange={(e) => handleFoodItemChange(index, e)}
-                className="bg-gray-100 p-2 rounded mb-2"
+                className="bg-gray-800 p-2 rounded text-white"
               />
               <button
                 type="button"
                 onClick={() => removeFoodItem(index)}
-                className="bg-red-500 text-white p-2 rounded"
+                className="text-red-500 underline text-sm"
               >
-                Remove Food Item
+                Remove
               </button>
             </div>
           ))}
+
           <button
             type="button"
             onClick={addFoodItem}
-            className="bg-green-500 text-white p-2 rounded"
+            className="bg-[#dff35d] text-black p-2 rounded-full"
           >
-            Add Food Item
+            Add Another Food Item
           </button>
 
           <input
@@ -397,18 +368,18 @@ const Addfood = () => {
             placeholder="Available Until"
             value={formData.availableUntil}
             onChange={handleInputChange}
-            className="bg-gray-100 p-2 rounded"
+            className="bg-gray-800 p-2 rounded text-white"
           />
 
-          {loading && <div>Loading...</div>}
-          {successMessage && <div className="text-green-500">{successMessage}</div>}
-          {errorMessage && <div className="text-red-500">{errorMessage}</div>}
-
+          {/* Form Submission */}
+          {errorMessage && <div className="text-red-500 text-sm">{errorMessage}</div>}
+          {successMessage && <div className="text-teal-500 text-sm">{successMessage}</div>}
           <button
             type="submit"
-            className="bg-blue-500 text-white p-2 rounded"
+            className="bg-[#dff35d] text-black p-2 rounded-full"
+            disabled={loading}
           >
-            Submit
+            {loading ? 'Submitting...' : 'Submit'}
           </button>
         </form>
       </div>

@@ -180,7 +180,7 @@ const FoodDetails = () => {
     }
   };
 
-  if (loading) return <p className="text-center text-gray-500">Loading...</p>;
+  if (loading) return <p className="text-center text-white">Loading...</p>;
   if (error) return <p className="text-center text-red-500">{error}</p>;
 
   if (!foodDetails) return <p className="text-center text-gray-500">No details available for this item.</p>;
@@ -192,7 +192,7 @@ const FoodDetails = () => {
 
   return (
     <div className="p-4 max-w-4xl mx-auto">
-      <h2 className="text-2xl font-bold mb-4 text-center">Food Details</h2>
+      <h2 className="text-2xl text-gray-100 font-bold mb-4 text-center">Food Details</h2>
       <div className="bg-white shadow-md rounded px-8 py-6">
         <strong>Food Item Name:</strong> {foodDetails.foodItems?.map(item => (
           <div key={item._id} className="mb-4">

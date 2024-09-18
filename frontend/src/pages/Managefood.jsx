@@ -184,50 +184,11 @@ const ManageFood = () => {
 
   return (
     <div className="flex">
-      {/* Sidebar */}
-      <div className="w-1/5 bg-blue-500 text-white p-4">
-        <ul>
-          {/* Requests Dropdown */}
-          <li>
-            <button
-              onClick={() => handleDropdownToggle('requests')}
-              className="w-full text-left py-2 px-4 hover:bg-gray-700 rounded focus:outline-none"
-            >
-              Requests
-            </button>
-            {dropdown === 'requests' && (
-              <ul className="bg-blue-600 rounded mt-1">
-                <li><a href="#new" className="block py-2 px-4 hover:bg-gray-700 rounded">New</a></li>
-                <li><a href="#picked" className="block py-2 px-4 hover:bg-gray-700 rounded">Picked/Completed</a></li>
-                <li><a href="#rejected" className="block py-2 px-4 hover:bg-gray-700 rounded">Rejected</a></li>
-                <li><a href="#all" className="block py-2 px-4 hover:bg-gray-700 rounded">All</a></li>
-              </ul>
-            )}
-          </li>
-
-          {/* List Your Food Details Dropdown */}
-          <li>
-            <button
-              onClick={() => handleDropdownToggle('foodDetails')}
-              className="w-full text-left py-2 px-4 hover:bg-gray-700 rounded focus:outline-none"
-            >
-              List Your Food Details
-            </button>
-            {dropdown === 'foodDetails' && (
-              <ul className="bg-blue-600 rounded mt-1">
-                <li><a href="#" className="block py-2 px-4 hover:bg-gray-700 rounded">Add Food</a></li>
-                <li><a href="/managefood" className="block py-2 px-4 hover:bg-gray-700 rounded">Manage Food</a></li>
-              </ul>
-            )}
-          </li>
-        </ul>
-      </div>
-
       {/* Main Content */}
       <div className="flex-1 p-4 max-w-2xl mx-auto">
-        <h1 className="text-2xl font-semibold mb-4">Manage Donations</h1>
+        <h1 className="text-2xl text-gray-200 font-semibold mb-4">Manage Donations</h1>
         {donations.length === 0 ? (
-          <p>No donations found.</p>
+          <p className='text-white'>No donations found.</p>
         ) : (
           <ul>
             {donations.map((donation) => (
@@ -240,7 +201,7 @@ const ManageFood = () => {
                       placeholder="Name"
                       value={currentDonor.name}
                       onChange={handleChange}
-                      className="bg-gray-100 p-2 rounded mb-2 w-full"
+                      className="bg-gray-300 p-2 rounded mb-2 w-full"
                     />
                     <input
                       type="email"
@@ -248,7 +209,7 @@ const ManageFood = () => {
                       placeholder="Email"
                       value={currentDonor.email}
                       onChange={handleChange}
-                      className="bg-gray-100 p-2 rounded mb-2 w-full"
+                      className="bg-gray-300 p-2 rounded mb-2 w-full"
                     />
                     <input
                       type="tel"
@@ -256,7 +217,7 @@ const ManageFood = () => {
                       placeholder="Contact Number"
                       value={currentDonor.contactNumber}
                       onChange={handleChange}
-                      className="bg-gray-100 p-2 rounded mb-2 w-full"
+                      className="bg-gray-300 p-2 rounded mb-2 w-full"
                     />
 
                     {/* Location Method Selection */}
@@ -286,7 +247,7 @@ const ManageFood = () => {
                           placeholder="Street"
                           value={currentDonor.address?.street || ''}
                           onChange={handleChange}
-                          className="bg-gray-100 p-2 rounded mb-2 w-full"
+                          className="bg-gray-300 p-2 rounded mb-2 w-full"
                         />
                         <input
                           type="text"
@@ -294,7 +255,7 @@ const ManageFood = () => {
                           placeholder="City"
                           value={currentDonor.address?.city || ''}
                           onChange={handleChange}
-                          className="bg-gray-100 p-2 rounded mb-2 w-full"
+                          className="bg-gray-300 p-2 rounded mb-2 w-full"
                         />
                         <input
                           type="text"
@@ -302,7 +263,7 @@ const ManageFood = () => {
                           placeholder="State"
                           value={currentDonor.address?.state || ''}
                           onChange={handleChange}
-                          className="bg-gray-100 p-2 rounded mb-2 w-full"
+                          className="bg-gray-300 p-2 rounded mb-2 w-full"
                         />
                         <input
                           type="text"
@@ -310,7 +271,7 @@ const ManageFood = () => {
                           placeholder="Postal Code"
                           value={currentDonor.address?.postalCode || ''}
                           onChange={handleChange}
-                          className="bg-gray-100 p-2 rounded mb-2 w-full"
+                          className="bg-gray-300 p-2 rounded mb-2 w-full"
                         />
                         <input
                           type="text"
@@ -318,12 +279,12 @@ const ManageFood = () => {
                           placeholder="Country"
                           value={currentDonor.address?.country || ''}
                           onChange={handleChange}
-                          className="bg-gray-100 p-2 rounded mb-2 w-full"
+                          className="bg-gray-300 p-2 rounded mb-2 w-full"
                         />
                       </>
                     )}
 
-                    <div className="text-sm text-gray-600">{locationStatus}</div>
+                    <div className="text-sm text-white">{locationStatus}</div>
 
                     {/* Food Items */}
                     {currentDonor.foodItems.map((item, index) => (
@@ -334,7 +295,7 @@ const ManageFood = () => {
                           placeholder="Food Item Name"
                           value={item.name}
                           onChange={(e) => handleFoodItemChange(index, e)}
-                          className="bg-gray-100 p-2 rounded mb-2 w-full"
+                          className="bg-gray-300 p-2 rounded mb-2 w-full"
                         />
                         <input
                           type="number"
@@ -342,7 +303,7 @@ const ManageFood = () => {
                           placeholder="Quantity"
                           value={item.quantity}
                           onChange={(e) => handleFoodItemChange(index, e)}
-                          className="bg-gray-100 p-2 rounded mb-2 w-full"
+                          className="bg-gray-300 p-2 rounded mb-2 w-full"
                         />
                         <input
                           type="date"
@@ -350,7 +311,7 @@ const ManageFood = () => {
                           placeholder="Expiry Date"
                           value={item.expiryDate}
                           onChange={(e) => handleFoodItemChange(index, e)}
-                          className="bg-gray-100 p-2 rounded mb-2 w-full"
+                          className="bg-gray-300 p-2 rounded mb-2 w-full"
                         />
                         <button
                           type="button"
@@ -375,7 +336,7 @@ const ManageFood = () => {
                       placeholder="Available Until"
                       value={currentDonor.availableUntil}
                       onChange={handleChange}
-                      className="bg-gray-100 p-2 rounded mt-4 w-full"
+                      className="bg-gray-300 p-2 rounded mt-4 w-full"
                     />
 
                     <button
@@ -394,22 +355,24 @@ const ManageFood = () => {
                   </form>
                 ) : (
                   <>
-                    <p><strong>Name:</strong> {donation.name}</p>
-                    <p><strong>Email:</strong> {donation.email}</p>
-                    <p><strong>Contact Number:</strong> {donation.contactNumber}</p>
-                    <p><strong>Address:</strong> {donation.address?.street}, {donation.address?.city}, {donation.address?.state}, {donation.address?.postalCode}, {donation.address?.country}</p>
-                    <p><strong>Available Until:</strong> {donation.availableUntil}</p>
+                    <p className='text-white'><strong>Name:</strong> {donation.name}</p>
+                    <p className='text-white'><strong>Email:</strong> {donation.email}</p>
+                    <p className='text-white'><strong>Contact Number:</strong> {donation.contactNumber}</p>
+                    <p className='text-white'><strong>Address:</strong> {donation.address?.street}, {donation.address?.city}, {donation.address?.state}, {donation.address?.postalCode}, {donation.address?.country}</p>
+                    <p className='text-white'><strong>Available Until:</strong> {donation.availableUntil}</p>
+                    <div><h1 className='font-serif mt-2  text-gray-200'>FOOD ITEMS</h1></div>
                     {donation.foodItems.map((item, index) => (
-                      <div key={index} className="border p-4 mb-2 rounded">
-                        <p><strong>Food Item Name:</strong> {item.name}</p>
-                        <p><strong>Quantity:</strong> {item.quantity} {item.unit}</p>
-                        <p><strong>Expiry Date:</strong> {item.expiryDate}</p>
+                    
+                      <div key={index} className="border mt-2 p-4 mb-2 rounded">
+                        <p className='text-white'><strong>Food Item Name:</strong> {item.name}</p>
+                        <p className='text-white'><strong>Quantity:</strong> {item.quantity} {item.unit}</p>
+                        <p className='text-white'><strong>Expiry Date:</strong> {item.expiryDate}</p>
                       </div>
                     ))}
                     <button
                       type="button"
                       onClick={() => handleEditClick(donation)}
-                      className="bg-blue-500 text-white p-2 rounded"
+                      className="bg-[#dff35d] hover:bg-[#e4ff33] text-black mt-2 p-4 rounded-full"
                     >
                       Edit
                     </button>
