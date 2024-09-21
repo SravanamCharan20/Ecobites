@@ -4,5 +4,8 @@
 @tailwind utilities;
 
 body{
-    background-color: rgb(13, 13, 13);
+    background-color: rgb(255, 255, 255);
 }
+.button-transition {
+    transition: background-color 0.4s ease, color 0.4s ease;
+  }

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { FiSearch } from "react-icons/fi";
 import { motion } from 'framer-motion';
 
 const MyRequests = () => {
@@ -7,8 +8,10 @@ const MyRequests = () => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [loadingRequestId, setLoadingRequestId] = useState(null); // Track which request is being updated
-  const [loadingAction, setLoadingAction] = useState(''); // Track the action (accept/reject) for loading
+  const [loadingRequestId, setLoadingRequestId] = useState(null);
+  const [loadingAction, setLoadingAction] = useState('');
+  const [filter, setFilter] = useState('accepted'); // 'accepted', 'rejected', or 'pending'
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     if (!userId) {
@@ -36,8 +39,8 @@ const MyRequests = () => {
   }, [userId]);
 
   const handleStatusChange = async (requestId, status) => {
-    setLoadingRequestId(requestId); // Set loading for this request
-    setLoadingAction(status); // Set loading action (Accept/Reject)
+    setLoadingRequestId(requestId);
+    setLoadingAction(status);
     try {
       const response = await fetch(`/api/donor/requests/${requestId}/status`, {
         method: 'PATCH',
@@ -60,88 +63,102 @@ const MyRequests = () => {
       console.error('Error updating status:', error);
       setError('Failed to update request status.');
     } finally {
-      setLoadingRequestId(null); // Reset loading for this request
-      setLoadingAction(''); // Reset loading action
+      setLoadingRequestId(null);
+      setLoadingAction('');
     }
   };
+
+  const filteredRequests = requests.filter(request => {
+    const matchesFilter = 
+      (filter === 'accepted' && request.status === 'Accepted') ||
+      (filter === 'rejected' && request.status === 'Rejected') ||
+      (filter === 'pending' && request.status === 'Pending');
+
+    const matchesSearchTerm = request.requesterName.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    return matchesFilter && matchesSearchTerm;
+  });
 
   if (loading) return <p className="text-center text-gray-500">Loading...</p>;
   if (error) return <p className="text-center text-red-500">{error}</p>;
 
-  // Ensure we have enough items to fill the grid
-  const fillGrid = (items) => {
-    const gridItems = [...items];
-    while (gridItems.length < 9) {
-      gridItems.push({}); // Add empty items to fill the grid
-    }
-    return gridItems;
-  };
-
-  const gridItems = fillGrid(requests);
-
   return (
     <div className="p-4 max-w-4xl mx-auto">
       <h2 className="text-2xl font-bold mb-4 text-center">My Requests</h2>
-      <div className="grid grid-cols-3 gap-4">
-        {gridItems.map((request, index) => (
-          <motion.div
-            key={index}
-            className="bg-white shadow-lg rounded-lg p-4 flex flex-col justify-between"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.3 }}
+        <div className="flex justify-between mb-4">
+          <div className="flex items-center border-2 rounded-full w-1/3 p-2">
+            <FiSearch className="mr-2" />
+            <input
+              type="text"
+              placeholder="Search"
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+              className="outline-none w-full"
+            />
+          </div>
+        <div>
+          <button
+            onClick={() => setFilter('accepted')}
+            className={`px-4 py-2 rounded-full button-transition ${filter === 'accepted' ? 'bg-teal-600 text-white' : ''}`}
           >
-            {request._id ? (
-              <>
-                <p><strong>Requester Name:</strong> {request.requesterName}</p>
-                <p><strong>Contact Number:</strong> {request.contactNumber}</p>
-                <p><strong>Address:</strong> {`${request.address?.street || 'N/A'}, ${request.address?.city || 'N/A'}, ${request.address?.state || 'N/A'}, ${request.address?.postalCode || 'N/A'}, ${request.address?.country || 'N/A'}`}</p>
-                <p><strong>Description:</strong> {request.description}</p>
-                <p><strong>Latitude:</strong> {request.latitude || 'N/A'}</p>
-                <p><strong>Longitude:</strong> {request.longitude || 'N/A'}</p>
-                <p><strong>Status:</strong> {request.status || 'Pending'}</p>
-                <div className="flex gap-2 mt-2">
-                  {request.status === 'Pending' && (
-                    <>
-                      <button
-                        className="bg-green-500 text-white px-4 py-2 rounded"
-                        onClick={() => handleStatusChange(request._id, 'Accepted')}
-                        disabled={loadingRequestId === request._id && loadingAction !== 'Accepted'}
-                      >
-                        {loadingRequestId === request._id && loadingAction === 'Accepted' ? 'Accepting...' : 'Accept'}
-                      </button>
-                      <button
-                        className="bg-red-500 text-white px-4 py-2 rounded"
-                        onClick={() => handleStatusChange(request._id, 'Rejected')}
-                        disabled={loadingRequestId === request._id && loadingAction !== 'Rejected'}
-                      >
-                        {loadingRequestId === request._id && loadingAction === 'Rejected' ? 'Rejecting...' : 'Reject'}
-                      </button>
-                    </>
-                  )}
-                  {request.status === 'Accepted' && (
+            Accepted
+          </button>
+          <button
+            onClick={() => setFilter('rejected')}
+            className={`px-4 py-2 rounded-full button-transition ${filter === 'rejected' ? 'bg-red-500 text-white' : ''}`}
+          >
+            Rejected
+          </button>
+          <button
+            onClick={() => setFilter('pending')}
+            className={`px-4 py-2 rounded-full button-transition ${filter === 'pending' ? 'bg-yellow-500 text-white' : ''}`}
+          >
+            Pending
+          </button>
+        </div>
+      </div>
+      <div className="grid grid-cols-1 gap-4">
+        {filteredRequests.length === 0 ? (
+          <p className="text-center text-gray-500">No requests found.</p>
+        ) : (
+          filteredRequests.map(request => (
+            <motion.div
+              key={request._id}
+              className="border-b border-gray-300 py-4"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
+            >
+              <p><strong>Requester Name:</strong> {request.requesterName}</p>
+              <p><strong>Contact Number:</strong> {request.contactNumber}</p>
+              <p><strong>Address:</strong> {`${request.address?.street || 'N/A'}, ${request.address?.city || 'N/A'}, ${request.address?.state || 'N/A'}, ${request.address?.postalCode || 'N/A'}, ${request.address?.country || 'N/A'}`}</p>
+              <p><strong>Description:</strong> {request.description}</p>
+              <p className={`mt-1 ${request.status === 'Accepted' ? 'text-teal-600' : request.status === 'Rejected' ? 'text-red-500' : 'text-yellow-500'}`}>
+                <strong>Status:</strong> {request.status}
+              </p>
+              <div className="flex gap-2 mt-2">
+                {request.status === 'Pending' && (
+                  <>
                     <button
-                      className="bg-green-500 text-white px-4 py-2 rounded"
-                      disabled
+                      className="border rounded px-4 py-2"
+                      onClick={() => handleStatusChange(request._id, 'Accepted')}
+                      disabled={loadingRequestId === request._id && loadingAction !== 'Accepted'}
                     >
-                      Accepted
+                      {loadingRequestId === request._id && loadingAction === 'Accepted' ? 'Accepting...' : 'Accept'}
                     </button>
-                  )}
-                  {request.status === 'Rejected' && (
                     <button
-                      className="bg-red-500 text-white px-4 py-2 rounded"
-                      disabled
+                      className="border rounded px-4 py-2"
+                      onClick={() => handleStatusChange(request._id, 'Rejected')}
+                      disabled={loadingRequestId === request._id && loadingAction !== 'Rejected'}
                     >
-                      Rejected
+                      {loadingRequestId === request._id && loadingAction === 'Rejected' ? 'Rejecting...' : 'Reject'}
                     </button>
-                  )}
-                </div>
-              </>
-            ) : (
-              <p className="text-gray-500 text-center">No Request Data</p>
-            )}
-          </motion.div>
-        ))}
+                  </>
+                )}
+              </div>
+            </motion.div>
+          ))
+        )}
       </div>
     </div>
   );

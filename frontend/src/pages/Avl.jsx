@@ -11,8 +11,6 @@ const AvailableFoodList = () => {
   const [locationError, setLocationError] = useState('');
   const navigate = useNavigate();
 
-  // Other unchanged functions...
-
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
     const R = 6371;
     const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -161,50 +159,65 @@ const AvailableFoodList = () => {
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto rounded-lg text-white bg-[rgba(13,13,13)]">
-      <h1 className="text-4xl text-[#dff35d] font-bold mb-6 text-center">Available Food List</h1>
+    <div className="p-8 max-w-7xl mx-auto rounded-lg text-gray-800">
+      <h1 className="text-4xl text-gray-800 font-bold mb-2 text-center">Available Food List</h1>
       {locationError ? (
         <p className="text-center text-red-500">{locationError}</p>
       ) : userLocation ? (
-        <p className="text-center text-[#effaa2] opacity-50 p-3">Location acquired successfully.</p>
+        <p className="text-center text-gray-800 opacity-50">Location acquired successfully.</p>
       ) : (
-        <p className="text-center text-[#effaa2]">Fetching your location...</p>
+        <p className="text-center text-gray-800">Fetching your location...</p>
       )}
-      {loading && <p className="text-center text-[#effaa2] opacity-50">Loading food items...</p>}
-      {loadingDistances && !loading && <p className="text-center text-[#effaa2] opacity-50">Calculating distances...</p>}
+      {loading && <p className="text-center text-gray-800 opacity-50">Loading food items...</p>}
+      {loadingDistances && !loading && <p className="text-center text-gray-800 opacity-50">Calculating distances...</p>}
       {error && <p className="text-center text-red-500">{error}</p>}
       {sortedFoodItems.length === 0 && !loading && !loadingDistances && (
-        <p className="text-center text-[#effaa2]">No donated food items available.</p>
+        <p className="text-center text-gray-800">No donated food items available.</p>
       )}
 
-      <div className="flex flex-wrap justify-center gap-6">
-        {sortedFoodItems.map((item, index) => (
-          <div
-            key={item._id}
-            className="bg-black-400 text-white border-2 border-gray-100 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out"
-          >
-            <h2 className="text-xl font-bold mb-2">Donor: {item.name}</h2>
-            <p className="mb-2">Food Items:</p>
-            <ul className="list-disc ml-5 mb-2">
-              {item.foodItems.map((food, i) => (
-                <li key={i}>
-                  {food.name} (Expiry: {formatDate(food.expiryDate)})
-                </li>
-              ))}
-            </ul>
-            <p className="mb-2">Full Address: {formatFullAddress(item.address)}</p>
-            <p className="mb-2">Distance: {item.distance ? item.distance.toFixed(2) : 'N/A'} km</p>
-            <p className="mb-2">Expiry Date: {formatDate(item.foodItems[0].expiryDate)}</p>
-            <p className="mb-2">Creation Date: {formatDate(item.createdAt)}</p>
-            <button
-              onClick={() => handleViewDetails(item._id)}
-              className="bg-[#dff35d] text-black py-2 px-4 rounded-full hover:bg-[#e4ff32] hover:translate-x-1 hover:translate-y-1 transition-all duration-200 ease-in-out"
-            >
-              View Details
-            </button>
-          </div>
-        ))}
-      </div>
+      {/* Professional Table format for food items */}
+      {sortedFoodItems.length > 0 && (
+       <table id="target-section" className="min-w-full border-collapse rounded-lg overflow-hidden">
+       <thead>
+         <tr className="bg-teal-800 text-white text-left rounded-t-lg">
+           <th className="px-4 py-3 border-b-2 border-gray-300">Donor</th>
+           <th className="px-4 py-3 border-b-2 border-gray-300">Food Items</th>
+           <th className="px-4 py-3 border-b-2 border-gray-300">Expiry Date</th>
+           <th className="px-4 py-3 border-b-2 border-gray-300">Distance (km)</th>
+           <th className="px-4 py-3 border-b-2 border-gray-300">Address</th>
+           <th className="px-4 py-3 border-b-2 border-gray-300 rounded-tr-lg">Actions</th>
+         </tr>
+       </thead>
+       <tbody>
+         {sortedFoodItems.map((item, index) => (
+           <tr
+             key={item._id}
+             className={`border-t border-gray-300 ${index === sortedFoodItems.length - 1 ? 'rounded-b-lg' : ''}`}
+           >
+             <td className="px-4 py-4">{item.name}</td>
+             <td className="px-4 py-4">
+               <ul>
+                 {item.foodItems.map((food, i) => (
+                   <li key={i}>{food.name}</li>
+                 ))}
+               </ul>
+             </td>
+             <td className="px-4 py-4">{formatDate(item.foodItems[0].expiryDate)}</td>
+             <td className="px-4 py-4">{item.distance ? item.distance.toFixed(2) : 'N/A'}</td>
+             <td className="px-4 py-4">{formatFullAddress(item.address)}</td>
+             <td className="px-4 py-4">
+               <button
+                 onClick={() => handleViewDetails(item._id)}
+                 className="bg-gray-800 text-white p-3 rounded-full hover:bg-teal-600 transition duration-300"
+               >
+                 View Details
+               </button>
+             </td>
+           </tr>
+         ))}
+       </tbody>
+     </table>
+      )}
     </div>
   );
 };
