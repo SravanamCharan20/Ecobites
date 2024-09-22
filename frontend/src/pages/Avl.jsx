@@ -177,7 +177,7 @@ const AvailableFoodList = () => {
 
       {/* Professional Table format for food items */}
       {sortedFoodItems.length > 0 && (
-       <table id="target-section" className="min-w-full border-collapse rounded-lg overflow-hidden">
+       <table id="target-section" className="min-w-full border-collapse mt-4 rounded-lg overflow-hidden">
        <thead>
          <tr className="bg-teal-700 text-white text-left rounded-t-lg">
            <th className="px-4 py-3 border-b-2 border-gray-300">Donor</th>
