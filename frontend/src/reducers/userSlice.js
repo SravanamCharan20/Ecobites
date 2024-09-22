@@ -23,35 +23,38 @@ const userSlice = createSlice({
   },
   reducers: {
     setUser(state, action) {
-      const user = parseJwt(action.payload.token); 
+      const user = parseJwt(action.payload.token);
       if (user) {
-        state.currentUser = { ...user, token: action.payload.token }; 
-        state.isAuthenticated = true;
-        localStorage.setItem('access_token', action.payload.token); 
+        const currentTime = Date.now() / 1000; // Current time in seconds
+        if (user.exp && user.exp > currentTime) {
+          state.currentUser = { ...user, token: action.payload.token }; 
+          state.isAuthenticated = true;
+          localStorage.setItem('access_token', action.payload.token); 
+        } else {
+          console.warn('Token has expired');
+          state.isAuthenticated = false;
+          localStorage.removeItem('access_token'); 
+        }
       }
     },
     logout(state) {
       state.currentUser = null;
       state.isAuthenticated = false;
-      localStorage.removeItem('access_token'); 
+      localStorage.removeItem('access_token');
     },
     initializeUser(state) {
       const token = localStorage.getItem('access_token');
       if (token) {
-        try {
-          const decoded = parseJwt(token); 
-          const currentTime = Date.now() / 1000; 
+        const decoded = parseJwt(token); 
+        const currentTime = Date.now() / 1000; 
 
-          if (decoded && decoded.exp > currentTime) {
-            state.currentUser = { ...decoded, token }; 
-            state.isAuthenticated = true;
-          } else {
-            state.isAuthenticated = false;
-            localStorage.removeItem('access_token');
-          }
-        } catch (error) {
-          console.error('Failed to decode token', error);
+        if (decoded && decoded.exp > currentTime) {
+          state.currentUser = { ...decoded, token }; 
+          state.isAuthenticated = true;
+        } else {
+          console.warn('Token has expired during initialization');
           state.isAuthenticated = false;
+          localStorage.removeItem('access_token'); // Remove expired token
         }
       } else {
         state.isAuthenticated = false;

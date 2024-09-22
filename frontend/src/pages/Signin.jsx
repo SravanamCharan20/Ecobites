@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../reducers/userSlice';
+import { SyncLoader } from 'react-spinners'; 
 
 export default function SignIn() {
   const [formData, setFormData] = useState({});
-  const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -18,7 +19,7 @@ export default function SignIn() {
     e.preventDefault();
     try {
       setLoading(true);
-      setError('');
+      setMessage('');
 
       const res = await fetch('/api/auth/signin', {
         method: 'POST',
@@ -31,32 +32,28 @@ export default function SignIn() {
       setLoading(false);
 
       if (res.ok) {
-        // Store the token in localStorage
         localStorage.setItem('access_token', data.token);
-
-        // Dispatch token and user data to Redux store
         dispatch(setUser({ token: data.token, user: data.user }));
-
-        // Navigate to home or any other page
         navigate('/');
+        alert('Sign-in successful!');
       } else {
-        setError(data.message || 'Invalid credentials, please try again.');
+        setMessage(data.message || 'Invalid credentials, please try again.'); 
       }
     } catch (error) {
       setLoading(false);
-      setError('An unexpected error occurred.');
+      setMessage('An unexpected error occurred.');
     }
   };
 
   return (
     <div className='p-3 max-w-lg mx-auto'>
-      <h1 className='text-3xl text-gray-200 text-center font-semibold my-7'>Sign In</h1>
+      <h1 className='text-3xl text-gray-800 text-center font-semibold my-11'>Sign In</h1>
       <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
         <input
           type='email'
           placeholder='Email'
           id='email'
-          className='bg-slate-100 p-3 rounded-lg'
+          className='text-gray-900 p-3 rounded-full border-2 border-teal-600 focus:outline-none transition-all duration-1000 ease-out'
           onChange={handleChange}
           required
           aria-label='Email'
@@ -65,25 +62,25 @@ export default function SignIn() {
           type='password'
           placeholder='Password'
           id='password'
-          className='bg-slate-100 p-3 rounded-lg'
+          className='text-gray-900 p-3 rounded-full border-2 border-teal-600 focus:outline-none transition-all duration-1000 ease-out'
           onChange={handleChange}
           required
           aria-label='Password'
         />
         <button
           disabled={loading}
-          className='bg-[#dff35d] text-black p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80'
+          className='bg-teal-600 text-white p-3 mt-1 rounded-lg uppercase hover:opacity-95 disabled:opacity-80'
         >
-          {loading ? 'Loading...' : 'Sign In'}
+          {loading ? <SyncLoader size={6} color="#fff" /> : 'Sign In'}
         </button>
       </form>
       <div className='flex gap-2 mt-5'>
-        <p className='text-gray-200'>Don't have an account?</p>
+        <p className='text-gray-800'>Don't have an account?</p>
         <Link to='/signup'>
-          <span className='text-[#dff35d] hover:underline'>Sign Up</span>
+          <span className='text-teal-800 hover:underline'>Sign Up</span>
         </Link>
       </div>
-      {error && <p className='text-red-700 mt-5' aria-live='assertive'>{error}</p>}
+      {message && <p className='text-red-700 mt-5' aria-live='assertive'>{message}</p>}
     </div>
   );
 }

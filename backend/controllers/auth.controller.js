@@ -15,6 +15,9 @@ export const signup = async (req, res, next) => {
     await newUser.save();
     res.status(201).json({ success: true, message: 'User created successfully' });
   } catch (error) {
+    if (error.code === 11000) {
+      return res.status(409).json({ success: false, message: 'This email is already in use. Please use a different email.' });
+    }
     next(error);
   }
 };
