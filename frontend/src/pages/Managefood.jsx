@@ -192,7 +192,7 @@ const ManageFood = () => {
       <div className="flex-1 p-4 max-w-2xl mx-auto">
         <h1 className="text-2xl text-gray-800 font-semibold mb-4">Manage Donations</h1>
 
-        <div className="flex items-center border-2 mb-3 rounded-full w-1/3 p-2">
+        <div className="flex items-center border-2 mb-3 rounded-full w-auto p-2">
           <FiSearch className="mr-2" />
           <input
             type="text"
@@ -204,7 +204,7 @@ const ManageFood = () => {
         </div>
 
         {filteredDonations.length === 0 ? (
-          <p className='text-red-500'>No donations found.</p>
+          <p className='text-red-500 ml-2'>No donations found.</p>
         ) : (
           <ul className="grid grid-cols-1 gap-4">
             {filteredDonations.map((donation) => (

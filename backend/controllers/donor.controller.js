@@ -125,6 +125,8 @@ export const requestFood = async (req, res) => {
     });
 
     await newRequest.save();
+    const message = `New request from ${name} for your food item. Contact them at ${contactNumber}.`;
+    await sendSmsNotification(donor.contactNumber, message);
     res.status(200).json({ message: 'Request submitted successfully.' });
   } catch (error) {
     console.error('Error submitting request:', error);
@@ -182,13 +184,11 @@ export const getStatus = async (req, res) => {
     let message;
     if (status === 'Accepted') {
       const donorId = request.donorId;
-      console.log(donorId);
       const updatedDonation = await Donor.findByIdAndUpdate(
         donorId,
         {isAccepted: true},
         {new: true}
       );
-      console.log(updatedDonation)
       message = `Hi ${request.requesterName}, your food request has been accepted!`;
     } else if (status === 'Rejected') {
       message = `Hi ${request.requesterName}, your food request has been rejected.`;

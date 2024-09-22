@@ -141,14 +141,14 @@ const MyRequests = () => {
                 {request.status === 'Pending' && (
                   <>
                     <button
-                      className="border rounded px-4 py-2"
+                      className="border rounded-full bg-teal-600 hover:bg-teal-800 text-white px-4 py-2"
                       onClick={() => handleStatusChange(request._id, 'Accepted')}
                       disabled={loadingRequestId === request._id && loadingAction !== 'Accepted'}
                     >
                       {loadingRequestId === request._id && loadingAction === 'Accepted' ? 'Accepting...' : 'Accept'}
                     </button>
                     <button
-                      className="border rounded px-4 py-2"
+                      className="border rounded-full bg-red-500 hover:bg-red-600 text-white  px-4 py-2"
                       onClick={() => handleStatusChange(request._id, 'Rejected')}
                       disabled={loadingRequestId === request._id && loadingAction !== 'Rejected'}
                     >

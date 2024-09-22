@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
 
 const FoodDetails = () => {
   const { id } = useParams();
@@ -18,15 +17,16 @@ const FoodDetails = () => {
       postalCode: '',
       country: '',
     },
-    latitude: '',
-    longitude: '',
+    location: {
+      latitude: '',
+      longitude: '',
+    },
     description: '',
   });
   const [locationMethod, setLocationMethod] = useState('manual');
   const [locationStatus, setLocationStatus] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-  const [googleMapsUrl, setGoogleMapsUrl] = useState('');
 
   useEffect(() => {
     const fetchFoodDetails = async () => {
@@ -37,13 +37,6 @@ const FoodDetails = () => {
         }
         const data = await response.json();
         setFoodDetails(data);
-
-        if (data.location) {
-          const { latitude, longitude } = data.location;
-
-          // Generate the Gomaps.pro URL
-          setGoogleMapsUrl(`https://www.google.com/maps/embed/v1/view?center=${latitude},${longitude}&zoom=14`);
-        }
       } catch (err) {
         setError(err.message);
       } finally {
@@ -87,15 +80,8 @@ const FoodDetails = () => {
           donorId: foodDetails._id,
           name: formData.name,
           contactNumber: formData.contactNumber,
-          address: {
-            street: formData.address.street,
-            city: formData.address.city,
-            state: formData.address.state,
-            postalCode: formData.address.postalCode,
-            country: formData.address.country,
-          },
-          latitude: formData.latitude || null,
-          longitude: formData.longitude || null,
+          address: formData.address,
+          location: formData.location,
           description: formData.description,
         }),
       });
@@ -113,8 +99,10 @@ const FoodDetails = () => {
             postalCode: '',
             country: '',
           },
-          latitude: '',
-          longitude: '',
+          location: {
+            latitude: '',
+            longitude: '',
+          },
           description: '',
         });
       } else {
@@ -122,6 +110,51 @@ const FoodDetails = () => {
       }
     } catch (error) {
       setErrorMessage('An error occurred while submitting the request.');
+    }
+  };
+
+  const handleUseLocation = () => {
+    if (navigator.geolocation) {
+      setLocationStatus('Acquiring location...');
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+          setFormData((prevData) => ({
+            ...prevData,
+            location: {
+              latitude,
+              longitude,
+            },
+          }));
+          setLocationStatus('Location acquired successfully!');
+
+          // Reverse geocoding
+          try {
+            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`);
+            const data = await response.json();
+            if (data && data.address) {
+              setFormData((prevData) => ({
+                ...prevData,
+                address: {
+                  street: data.address.road || '',
+                  city: data.address.city || data.address.town || data.address.village || '',
+                  state: data.address.state || '',
+                  postalCode: data.address.postcode || '',
+                  country: data.address.country || '',
+                },
+              }));
+            }
+          } catch (error) {
+            console.error('Error fetching address:', error);
+          }
+        },
+        (error) => {
+          console.error('Error obtaining location:', error);
+          setLocationStatus('Failed to acquire location.');
+        }
+      );
+    } else {
+      setLocationStatus('Geolocation is not supported by this browser.');
     }
   };
 
@@ -139,7 +172,7 @@ const FoodDetails = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="flex justify-center items-center bg-gray-100 rounded-lg shadow-lg p-8">
           <img
-            src="https://via.placeholder.com/400x300" // Replace this with an actual image URL
+            src="https://via.placeholder.com/400x300" // Replace with an actual image URL
             alt="Food Item"
             className="rounded-lg"
           />
@@ -162,20 +195,6 @@ const FoodDetails = () => {
           ))}
 
           <p className="text-gray-600 mb-2"><strong>Available Until:</strong> {new Date(foodDetails.availableUntil).toLocaleDateString()}</p>
-
-          {/* Gomaps.pro Integration */}
-          {googleMapsUrl && (
-            <div className="mt-4">
-              <iframe
-                src={googleMapsUrl}
-                width="600"
-                height="450"
-                style={{ border: 0 }}
-                allowFullScreen=""
-                loading="lazy"
-              ></iframe>
-            </div>
-          )}
         </div>
       </div>
 
@@ -191,11 +210,12 @@ const FoodDetails = () => {
 
       {/* Request Form */}
       {showRequestForm && (
-        <form onSubmit={handleRequestSubmit} className="mt-6 bg-white p-6 shadow-lg rounded-lg">
+        <div className="flex justify-center items-center min-h-screen">
+        <form onSubmit={handleRequestSubmit} className="p-3 w-1/2 align-middle rounded-lg">
           <h3 className="text-2xl font-bold mb-4">Request Form</h3>
           {errorMessage && <p className="text-red-500">{errorMessage}</p>}
           {successMessage && <p className="text-green-500">{successMessage}</p>}
-
+      
           <input
             type="text"
             name="name"
@@ -203,9 +223,9 @@ const FoodDetails = () => {
             value={formData.name}
             onChange={handleInputChange}
             required
-            className="border rounded w-full p-2 mb-4"
+            className="border-2 rounded-full border-teal-600 w-full p-2 mb-4"
           />
-
+      
           <input
             type="tel"
             name="contactNumber"
@@ -213,34 +233,33 @@ const FoodDetails = () => {
             value={formData.contactNumber}
             onChange={handleInputChange}
             required
-            className="border rounded w-full p-2 mb-4"
+            className="border-2 rounded-full border-teal-600 w-full p-2 mb-4"
           />
-
+      
           <div className="mb-4">
             <label className="block mb-2">Location Method:</label>
-            <div>
-              <label className="inline-flex items-center">
-                <input
-                  type="radio"
-                  value="manual"
-                  checked={locationMethod === 'manual'}
-                  onChange={() => setLocationMethod('manual')}
-                />
-                <span className="ml-2">Manual Entry</span>
-              </label>
-              <label className="inline-flex items-center ml-6">
-                <input
-                  type="radio"
-                  value="auto"
-                  checked={locationMethod === 'auto'}
-                  onChange={() => setLocationMethod('auto')}
-                />
-                <span className="ml-2">Use My Location</span>
-              </label>
+            <div className="flex gap-4 mb-2">
+              <button
+                type="button"
+                onClick={() => setLocationMethod('manual')}
+                className={`p-3 rounded-full ${locationMethod === 'manual' ? 'bg-teal-600 text-white' : 'bg-gray-200'}`}
+              >
+                Manual Entry
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setLocationMethod('auto');
+                  handleUseLocation();
+                }}
+                className={`p-3 rounded-full ${locationMethod === 'auto' ? 'bg-teal-600 text-white' : 'bg-gray-200'}`}
+              >
+                Use My Location
+              </button>
             </div>
             <p className="text-gray-600">{locationStatus}</p>
           </div>
-
+      
           {locationMethod === 'manual' && (
             <>
               <input
@@ -250,7 +269,7 @@ const FoodDetails = () => {
                 value={formData.address.street}
                 onChange={handleInputChange}
                 required
-                className="border rounded w-full p-2 mb-4"
+                className="border-2 rounded-full border-teal-600 w-full p-2 mb-4"
               />
               <input
                 type="text"
@@ -259,7 +278,7 @@ const FoodDetails = () => {
                 value={formData.address.city}
                 onChange={handleInputChange}
                 required
-                className="border rounded w-full p-2 mb-4"
+                className="border-2 rounded-full border-teal-600 w-full p-2 mb-4"
               />
               <input
                 type="text"
@@ -268,7 +287,7 @@ const FoodDetails = () => {
                 value={formData.address.state}
                 onChange={handleInputChange}
                 required
-                className="border rounded w-full p-2 mb-4"
+                className="border-2 rounded-full border-teal-600 w-full p-2 mb-4"
               />
               <input
                 type="text"
@@ -277,7 +296,7 @@ const FoodDetails = () => {
                 value={formData.address.postalCode}
                 onChange={handleInputChange}
                 required
-                className="border rounded w-full p-2 mb-4"
+                className="border-2 rounded-full border-teal-600 w-full p-2 mb-4"
               />
               <input
                 type="text"
@@ -286,23 +305,24 @@ const FoodDetails = () => {
                 value={formData.address.country}
                 onChange={handleInputChange}
                 required
-                className="border rounded w-full p-2 mb-4"
+                className="border-2 rounded-full border-teal-600 w-full p-2 mb-4"
               />
             </>
           )}
-
+      
           <textarea
             name="description"
             placeholder="Additional Description (optional)"
             value={formData.description}
             onChange={handleInputChange}
-            className="border rounded w-full p-2 mb-4"
+            className="border-2 rounded-lg border-teal-600 w-full p-2 mb-4"
           ></textarea>
-
+      
           <button type="submit" className="bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 px-6 rounded-lg">
             Submit Request
           </button>
         </form>
+      </div>
       )}
     </div>
   );
