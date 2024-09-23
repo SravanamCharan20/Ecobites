@@ -17,6 +17,7 @@ import Managefood from './pages/Managefood';
 import MyRequests from './pages/MyRequests';
 import Logo from './components/Logo';
 import SignupButton from './components/SIgnupbutton';
+import UpdateProfile from './pages/UpdateProfile';
 
 function App() {
   const dispatch = useDispatch();
@@ -43,6 +44,7 @@ function App() {
           <Route path='/addfood' element={<Addfood />} />
           <Route path='/managefood' element={<Managefood />} />
           <Route path="/donor/requests/:userId" element={<PrivateRoute element={MyRequests} />} />
+          <Route path='/update-profile' element={<UpdateProfile/>} />
         </Routes>
       </BrowserRouter>
     </Provider>

@@ -46,3 +46,41 @@ export const signin = async (req, res, next) => {
     next(error);
   }
 };
+
+export const updateUser = async (req, res, next) => {
+  const { oldPassword, username, newPassword } = req.body;
+  const userId = req.user.id;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    const isMatch = bcryptjs.compareSync(oldPassword, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ success: false, message: 'Old password is incorrect' });
+    }
+
+    const updates = {};
+    if (username) {
+      updates.username = username;
+    }
+
+    if (newPassword) {
+      updates.password = bcryptjs.hashSync(newPassword, 10); 
+    }
+    if (req.file) {
+      updates.profilePicture = `/${req.file.filename}`;
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(userId, { $set: updates }, { new: true });
+
+    const { password: hashedPassword, ...rest } = updatedUser._doc; 
+    res.status(200).json({ success: true, user: { ...rest, profilePicture: updatedUser.profilePicture } });
+    } catch (error) {
+    console.error('Error updating user:', error);
+    res.status(500).json({ success: false, message: 'An error occurred while updating the profile' });
+    next(error); 
+  }
+};

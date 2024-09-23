@@ -5,13 +5,14 @@ import userRouter from './routes/user.route.js'
 import authRouter from './routes/auth.route.js'
 import DonorForm from './routes/donor.route.js';
 import Donor from '../backend/models/donor.model.js'
+import path from 'path';
 
 dotenv.config();
 const PORT = 6001;
 const app = express();
 
 app.use(express.json());
-
+app.use('/uploads', express.static(path.resolve('uploads')));
 app.use('/api/user',userRouter);
 app.use('/api/auth',authRouter);
 app.use('/api/donor',DonorForm)
