@@ -70,6 +70,11 @@ const UpdateProfile = () => {
           />
         </div>
       )}
+      {currentUser && (
+        <div className="text-center text-lg font-semibold mb-4">
+          {currentUser.username}
+        </div>
+      )}
 
       <form onSubmit={handleUpdate}>
         <div className="mb-4">

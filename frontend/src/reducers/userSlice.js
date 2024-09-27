@@ -30,10 +30,12 @@ const userSlice = createSlice({
           state.currentUser = { ...user, token: action.payload.token, profilePicture: action.payload.profilePicture }; 
           state.isAuthenticated = true;
           localStorage.setItem('access_token', action.payload.token);
+          localStorage.setItem('user_data', JSON.stringify(state.currentUser)); 
         } else {
           console.warn('Token has expired');
           state.isAuthenticated = false;
           localStorage.removeItem('access_token');
+          localStorage.removeItem('user_data'); 
         }
       }
     },
@@ -41,20 +43,24 @@ const userSlice = createSlice({
       state.currentUser = null;
       state.isAuthenticated = false;
       localStorage.removeItem('access_token');
+      localStorage.removeItem('user_data'); 
     },
     initializeUser(state) {
       const token = localStorage.getItem('access_token');
-      if (token) {
+      const userData = localStorage.getItem('user_data'); 
+
+      if (token && userData) {
         const decoded = parseJwt(token);
         const currentTime = Date.now() / 1000;
 
         if (decoded && decoded.exp > currentTime) {
-          state.currentUser = { ...decoded, token };
+          state.currentUser = { ...decoded, token, ...JSON.parse(userData) }; 
           state.isAuthenticated = true;
         } else {
           console.warn('Token has expired during initialization');
           state.isAuthenticated = false;
-          localStorage.removeItem('access_token'); // Remove expired token
+          localStorage.removeItem('access_token'); 
+          localStorage.removeItem('user_data'); 
         }
       } else {
         state.isAuthenticated = false;
