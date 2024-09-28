@@ -48,10 +48,14 @@ export const donationform = async (req, res) => {
 
 export const avldatalist = async (req, res) => {
   try {
-    const donatedFoodItems = await Donor.find({isAccepted: false});
-    res.json(donatedFoodItems);
+    const donatedFoodItems = await Donor.find({ isAccepted: false });
+    if (donatedFoodItems.length === 0) {
+      return res.status(404).json({ message: 'No donated food items found.' });
+    }
+    res.status(200).json(donatedFoodItems);
   } catch (error) {
-    res.status(500).json({ message: 'Failed to fetch donated food items.', error });
+    console.error('Error fetching donated food items:', error); 
+    res.status(500).json({ message: 'Failed to fetch donated food items.', error: error.message });
   }
 };
 
@@ -92,7 +96,6 @@ export const requestFood = async (req, res) => {
   try {
     const { donorId, name, contactNumber, address, latitude, longitude, description } = req.body;
 
-    // Validation
     if (!donorId || !name || !contactNumber || !address) {
       return res.status(400).json({ message: 'All required fields must be provided.' });
     }

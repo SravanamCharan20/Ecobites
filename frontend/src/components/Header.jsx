@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { FaCaretDown } from 'react-icons/fa'; // Icon for dropdown
@@ -7,15 +7,29 @@ const Header = () => {
   const location = useLocation();
   const { currentUser } = useSelector((state) => state.user);
   const [showDropdown, setShowDropdown] = useState(false); // Dropdown state
+  const dropdownRef = useRef(null); // Reference for dropdown
 
   const userId = currentUser?.id;
 
+  // Effect for handling clicks outside the dropdown
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
+    
+    // Add event listener for mouse down events
+    document.addEventListener('mousedown', handleClickOutside);
+
+    // Cleanup event listener on component unmount
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   const toggleDropdown = () => {
     setShowDropdown((prev) => !prev);
-  };
-
-  const closeDropdown = () => {
-    setShowDropdown(false);
   };
 
   return (
@@ -29,7 +43,7 @@ const Header = () => {
         </Link>
 
         {/* Dropdown Wrapper */}
-        <div className="relative">
+        <div className="relative" ref={dropdownRef}>
           <button
             onClick={toggleDropdown}
             className={`flex items-center px-3 md:px-4 py-1 md:py-2 rounded-md ${location.pathname === '/donate' ? 'text-black' : 'text-gray-500 hover:text-black'}`}
@@ -43,14 +57,14 @@ const Header = () => {
               <Link
                 to="/addfood"
                 className="block px-4 py-2 text-base rounded-full text-gray-600 hover:text-black transition duration-200 ease-in-out"
-                onClick={closeDropdown}
+                onClick={() => setShowDropdown(false)} // Close dropdown on link click
               >
                 Add Food
               </Link>
               <Link
                 to="/managefood"
                 className="block px-4 py-2 text-base rounded-full text-gray-600 hover:text-black transition duration-200 ease-in-out"
-                onClick={closeDropdown}
+                onClick={() => setShowDropdown(false)} // Close dropdown on link click
               >
                 Manage Food
               </Link>
@@ -75,7 +89,7 @@ const Header = () => {
         </Link>
       </div>
 
-      {showDropdown && <div className="fixed inset-0 z-30" onClick={closeDropdown}></div>}
+      {showDropdown && <div className="fixed inset-0 z-30" onClick={() => setShowDropdown(false)}></div>}
     </header>
   );
 };

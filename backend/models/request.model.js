@@ -12,8 +12,10 @@ const requestSchema = new Schema({
     postalCode: { type: String, required: false },
     country: { type: String, required: false },
   },
-  latitude: { type: Number, required: false },
-  longitude: { type: Number, required: false },
+  location: {
+    latitude: { type: Number, required: false }, 
+    longitude: { type: Number, required: false }, 
+  },
   description: { type: String, required: false },
   status: { type: String, enum: ['Pending', 'Accepted', 'Rejected'], default: 'Pending' } 
 });

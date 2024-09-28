@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';  // Import leaflet CSS
 
 const FoodDetails = () => {
   const { id } = useParams();
@@ -128,7 +130,6 @@ const FoodDetails = () => {
           }));
           setLocationStatus('Location acquired successfully!');
 
-          // Reverse geocoding
           try {
             const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`);
             const data = await response.json();
@@ -170,15 +171,27 @@ const FoodDetails = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="flex justify-center items-center bg-gray-100 rounded-lg shadow-lg p-8">
-          <img
-            src="https://via.placeholder.com/400x300" // Replace with an actual image URL
-            alt="Food Item"
-            className="rounded-lg"
-          />
+      <div className="flex bg-cover bg-origin-content p-2 items-center rounded-lg shadow-sm border border-slate-200 transition-transform duration-300 hover:scale-105">
+          <MapContainer
+            center={[foodDetails.location.latitude || 51.505, foodDetails.location.longitude || -0.09]}
+            zoom={13}
+            style={{ height: '400px', width: '100%', borderRadius: '8px' }} 
+          >
+            <TileLayer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            />
+            {foodDetails.location.latitude && foodDetails.location.longitude && (
+              <Marker position={[foodDetails.location.latitude, foodDetails.location.longitude]}>
+                <Popup>
+                  Donor Location: {foodDetails.location.city}, {foodDetails.location.state}
+                </Popup>
+              </Marker>
+            )}
+          </MapContainer>
         </div>
 
-        <div className="bg-white shadow-lg rounded-lg p-6">
+        <div className="rounded-lg shadow-sm border border-slate-200 p-6">
           <h2 className="text-2xl font-bold text-gray-800 mb-4">Food Details</h2>
           <p className="text-gray-600 mb-2"><strong>Donor Name:</strong> {foodDetails.name}</p>
           <p className="text-gray-600 mb-2"><strong>Contact Number:</strong> {foodDetails.contactNumber}</p>
@@ -195,20 +208,18 @@ const FoodDetails = () => {
           ))}
 
           <p className="text-gray-600 mb-2"><strong>Available Until:</strong> {new Date(foodDetails.availableUntil).toLocaleDateString()}</p>
+          <div className="mt-6">
+            <button
+              className="border-2 border-teal-600 hover:bg-teal-600 text-gray-800 hover:text-white font-bold py-3 px-6 rounded-lg"
+              onClick={() => setShowRequestForm(!showRequestForm)}
+            >
+              {showRequestForm ? 'Cancel Request' : 'Request This Food'}
+            </button>
+          </div>
+
         </div>
       </div>
 
-      {/* Request Button */}
-      <div className="text-center mt-12">
-        <button
-          className="bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 px-6 rounded-lg"
-          onClick={() => setShowRequestForm(!showRequestForm)}
-        >
-          {showRequestForm ? 'Cancel Request' : 'Request This Food'}
-        </button>
-      </div>
-
-      {/* Request Form */}
       {showRequestForm && (
         <div className="flex justify-center items-center min-h-screen">
         <form onSubmit={handleRequestSubmit} className="p-3 w-1/2 align-middle rounded-lg">

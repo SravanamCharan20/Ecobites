@@ -26,23 +26,23 @@ const donorSchema = new Schema({
   address: {
     street: {
       type: String,
-      required: false,  // Make this optional
+      required: false, 
     },
     city: {
       type: String,
-      required: false,  // Make this optional
+      required: false,
     },
     state: {
       type: String,
-      required: false,  // Make this optional
+      required: false, 
     },
     postalCode: {
       type: String,
-      required: false,  // Make this optional
+      required: false,  
     },
     country: {
       type: String,
-      required: false,  // Make this optional
+      required: false,  
     },
   },
   location: {

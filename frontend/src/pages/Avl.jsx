@@ -12,7 +12,7 @@ const AvailableFoodList = () => {
   const navigate = useNavigate();
 
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
-    const R = 6371;
+    const R = 6371; // Radius of Earth in km
     const dLat = (lat2 - lat1) * Math.PI / 180;
     const dLon = (lon2 - lon1) * Math.PI / 180;
     const a =
@@ -20,7 +20,7 @@ const AvailableFoodList = () => {
       Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
       Math.sin(dLon / 2) * Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c;
+    return R * c; // Distance in km
   };
 
   const getCoordinatesFromAddress = async (address) => {
@@ -29,7 +29,7 @@ const AvailableFoodList = () => {
       return null;
     }
 
-    const query = `${address.street ? address.street + ' ' : ''}${address.city} ${address.state} ${address.country}`;
+    const query = `${address.street ? address.street + ' ' : ''}${address.city}, ${address.state}, ${address.country}`;
     const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1`;
 
     try {
@@ -90,7 +90,6 @@ const AvailableFoodList = () => {
     if (!userLocation || foodItems.length === 0) return;
 
     setLoadingDistances(true);
-
     const currentDate = new Date();
 
     const sortedItems = await Promise.all(
@@ -122,11 +121,7 @@ const AvailableFoodList = () => {
 
     const sorted = sortedItems
       .filter(item => item !== null)
-      .sort((a, b) => {
-        const expiryA = new Date(a.foodItems[0].expiryDate);
-        const expiryB = new Date(b.foodItems[0].expiryDate);
-        return expiryA - expiryB;
-      });
+      .sort((a, b) => new Date(a.foodItems[0].expiryDate) - new Date(b.foodItems[0].expiryDate));
 
     setSortedFoodItems(sorted);
     setLoadingDistances(false);
@@ -155,7 +150,7 @@ const AvailableFoodList = () => {
 
   const formatFullAddress = (address) => {
     const { street, city, state, postalCode, country } = address || {};
-    return `${street}, ${city}, ${state} - ${postalCode}, ${country}`;
+    return `${street ? street + ', ' : ''}${city}, ${state} - ${postalCode}, ${country}`;
   };
 
   return (
@@ -177,46 +172,46 @@ const AvailableFoodList = () => {
 
       {/* Professional Table format for food items */}
       {sortedFoodItems.length > 0 && (
-       <table id="target-section" className="min-w-full border-collapse mt-4 rounded-lg overflow-hidden">
-       <thead>
-         <tr className="bg-teal-700 text-white text-left rounded-t-lg">
-           <th className="px-4 py-3 border-b-2 border-gray-300">Donor</th>
-           <th className="px-4 py-3 border-b-2 border-gray-300">Food Items</th>
-           <th className="px-4 py-3 border-b-2 border-gray-300">Expiry Date</th>
-           <th className="px-4 py-3 border-b-2 border-gray-300">Distance (km)</th>
-           <th className="px-4 py-3 border-b-2 border-gray-300">Address</th>
-           <th className="px-4 py-3 border-b-2 border-gray-300 rounded-tr-lg">Actions</th>
-         </tr>
-       </thead>
-       <tbody>
-         {sortedFoodItems.map((item, index) => (
-           <tr
-             key={item._id}
-             className={`border-t border-gray-300 ${index === sortedFoodItems.length - 1 ? 'rounded-b-lg' : ''}`}
-           >
-             <td className="px-4 py-4">{item.name}</td>
-             <td className="px-4 py-4">
-               <ul>
-                 {item.foodItems.map((food, i) => (
-                   <li key={i}>{food.name}</li>
-                 ))}
-               </ul>
-             </td>
-             <td className="px-4 py-4">{formatDate(item.foodItems[0].expiryDate)}</td>
-             <td className="px-4 py-4">{item.distance ? item.distance.toFixed(2) : 'N/A'}</td>
-             <td className="px-4 py-4">{formatFullAddress(item.address)}</td>
-             <td className="px-4 py-4">
-               <button
-                 onClick={() => handleViewDetails(item._id)}
-                 className="bg-gray-800 text-white p-3 rounded-full hover:bg-teal-600 transition duration-300"
-               >
-                 View Details
-               </button>
-             </td>
-           </tr>
-         ))}
-       </tbody>
-     </table>
+        <table className="min-w-full border-collapse mt-4 rounded-lg overflow-hidden">
+          <thead>
+            <tr className="bg-teal-700 text-white text-left rounded-t-lg">
+              <th className="px-4 py-3 border-b-2 border-gray-300">Donor</th>
+              <th className="px-4 py-3 border-b-2 border-gray-300">Food Items</th>
+              <th className="px-4 py-3 border-b-2 border-gray-300">Expiry Date</th>
+              <th className="px-4 py-3 border-b-2 border-gray-300">Distance (km)</th>
+              <th className="px-4 py-3 border-b-2 border-gray-300">Address</th>
+              <th className="px-4 py-3 border-b-2 border-gray-300 rounded-tr-lg">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sortedFoodItems.map((item, index) => (
+              <tr
+                key={item._id}
+                className={`border-t border-gray-300 ${index === sortedFoodItems.length - 1 ? 'rounded-b-lg' : ''}`}
+              >
+                <td className="px-4 py-4">{item.name}</td>
+                <td className="px-4 py-4">
+                  <ul>
+                    {item.foodItems.map((food, i) => (
+                      <li key={i}>{food.name}</li>
+                    ))}
+                  </ul>
+                </td>
+                <td className="px-4 py-4">{formatDate(item.foodItems[0].expiryDate)}</td>
+                <td className="px-4 py-4">{item.distance ? item.distance.toFixed(2) : 'N/A'}</td>
+                <td className="px-4 py-4">{formatFullAddress(item.address)}</td>
+                <td className="px-4 py-4">
+                  <button
+                    onClick={() => handleViewDetails(item._id)}
+                    className="bg-gray-800 text-white p-3 rounded-full hover:bg-teal-600 transition duration-300"
+                  >
+                    View Details
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       )}
     </div>
   );
