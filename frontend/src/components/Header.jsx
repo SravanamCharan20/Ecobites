@@ -64,22 +64,13 @@ const Header = () => {
               <Link
                 to="/managefood"
                 className="block px-4 py-2 text-base rounded-full text-gray-600 hover:text-black transition duration-200 ease-in-out"
-                onClick={() => setShowDropdown(false)} // Close dropdown on link click
+                onClick={() => setShowDropdown(false)} 
               >
                 Manage Food
               </Link>
             </div>
           )}
         </div>
-
-        {currentUser && (
-          <Link
-            to={`/donor/requests/${userId}`}
-            className={`px-3 md:px-4 py-1 md:py-2 rounded-md ${location.pathname === `/donor/requests/${userId}` ? 'text-black' : 'text-gray-500 hover:text-black'}`}
-          >
-            My Requests
-          </Link>
-        )}
 
         <Link
           to="/about"
