@@ -10,7 +10,7 @@ const ManageFood = () => {
   const [locationMethod, setLocationMethod] = useState('manual');
   const [locationStatus, setLocationStatus] = useState('');
   const [dropdown, setDropdown] = useState(null);
-  const [searchName, setSearchName] = useState('');
+  const [searchItemName, setSearchItemName] = useState(''); // Changed to searchItemName
 
   useEffect(() => {
     const fetchDonations = async () => {
@@ -43,9 +43,11 @@ const ManageFood = () => {
     fetchDonations();
   }, []);
 
-  // Filter donations based on name search
+  // Filter donations based on food item name search
   const filteredDonations = donations.filter(donation =>
-    donation.name.toLowerCase().includes(searchName.toLowerCase())
+    donation.foodItems.some(item => 
+      item.name.toLowerCase().includes(searchItemName.toLowerCase())
+    )
   );
 
   const handleDropdownToggle = (dropdownName) => {
@@ -132,7 +134,7 @@ const ManageFood = () => {
         },
         (error) => {
           console.error('Error obtaining location:', error);
-          setLocationStatus('Failed to acquire location.');
+          setLocationStatus('Failed to acquire location. Please enable location services.');
         },
         {
           timeout: 10000,
@@ -196,9 +198,9 @@ const ManageFood = () => {
           <FiSearch className="mr-2" />
           <input
             type="text"
-            placeholder="Search By Donor Name"
-            value={searchName}
-            onChange={(e) => setSearchName(e.target.value)}
+            placeholder="Search By Food Item Name" // Updated placeholder
+            value={searchItemName} // Updated to searchItemName
+            onChange={(e) => setSearchItemName(e.target.value)} // Updated state change
             className="outline-none w-full"
           />
         </div>
@@ -208,7 +210,7 @@ const ManageFood = () => {
         ) : (
           <ul className="grid grid-cols-1 gap-4">
             {filteredDonations.map((donation) => (
-              <li key={donation._id} className="border p-4 mb-4 rounded">
+              <li key={donation._id} className="border p-4 mb-4 rounded shadow-lg hover:shadow-xl transition-shadow">
                 {editMode === donation._id ? (
                   <form onSubmit={(e) => { e.preventDefault(); handleSave(); }}>
                     <input
@@ -239,71 +241,26 @@ const ManageFood = () => {
                     <div className="flex gap-4 mb-2">
                       <button
                         type="button"
-                        onClick={() => handleLocationMethodChange('manual')}
-                        className={`border-2 rounded-md p-2 ${locationMethod === 'manual' ? 'bg-teal-500 text-white' : 'bg-white text-black'}`}
-                      >
-                        Manual Location
-                      </button>
-                      <button
-                        type="button"
                         onClick={() => handleLocationMethodChange('auto')}
-                        className={`border-2 rounded-md p-2 ${locationMethod === 'auto' ? 'bg-teal-500 text-white' : 'bg-white text-black'}`}
+                        className={`border-2 rounded-full p-2 ${locationMethod === 'auto' ? 'bg-teal-500 text-gray-200' : 'bg-gray-200 text-black'} transition-colors duration-300`}
                       >
-                        Auto Location
+                        Use Current location
                       </button>
+                      
                     </div>
-                    {locationStatus && <p>{locationStatus}</p>}
-                    <input
-                      type="text"
-                      name="address.street"
-                      placeholder="Street Address"
-                      value={currentDonor.address?.street || ''}
-                      onChange={handleChange}
-                      className="border-2 border-teal-600 p-3 rounded text-black focus:outline-none focus:ring-2 mb-2 w-full"
-                    />
-                    <input
-                      type="text"
-                      name="address.city"
-                      placeholder="City"
-                      value={currentDonor.address?.city || ''}
-                      onChange={handleChange}
-                      className="border-2 border-teal-600 p-3 rounded text-black focus:outline-none focus:ring-2 mb-2 w-full"
-                    />
-                    <input
-                      type="text"
-                      name="address.state"
-                      placeholder="State"
-                      value={currentDonor.address?.state || ''}
-                      onChange={handleChange}
-                      className="border-2 border-teal-600 p-3 rounded text-black focus:outline-none focus:ring-2 mb-2 w-full"
-                    />
-                    <input
-                      type="text"
-                      name="address.postalCode"
-                      placeholder="Postal Code"
-                      value={currentDonor.address?.postalCode || ''}
-                      onChange={handleChange}
-                      className="border-2 border-teal-600 p-3 rounded text-black focus:outline-none focus:ring-2 mb-2 w-full"
-                    />
-                    <input
-                      type="text"
-                      name="address.country"
-                      placeholder="Country"
-                      value={currentDonor.address?.country || ''}
-                      onChange={handleChange}
-                      className="border-2 border-teal-600 p-3 rounded text-black focus:outline-none focus:ring-2 mb-2 w-full"
-                    />
 
-                    <h2 className='text-lg mt-4'>Food Items:</h2>
+                    {locationStatus && <p className="text-teal-600 mb-4">{locationStatus}</p>}
+
+                    <h2 className="text-xl font-semibold mb-2">Food Items</h2>
                     {currentDonor.foodItems.map((item, index) => (
-                      <div key={index} className="border-b border-gray-300 pb-2 mb-2">
+                      <div key={index} className="mb-4 border p-3 rounded-lg">
                         <input
                           type="text"
                           name="name"
                           placeholder="Food Item Name"
                           value={item.name}
                           onChange={(e) => handleFoodItemChange(index, e)}
-                          className="border-2 border-teal-600 p-3 rounded mb-2 w-full"
+                          className="border p-2 rounded w-full mb-2"
                         />
                         <input
                           type="number"
@@ -311,27 +268,20 @@ const ManageFood = () => {
                           placeholder="Quantity"
                           value={item.quantity}
                           onChange={(e) => handleFoodItemChange(index, e)}
-                          className="border-2 border-teal-600 p-3 rounded mb-2 w-full"
-                        />
-                        <input
-                          type="text"
-                          name="unit"
-                          placeholder="Unit"
-                          value={item.unit}
-                          onChange={(e) => handleFoodItemChange(index, e)}
-                          className="border-2 border-teal-600 p-3 rounded mb-2 w-full"
+                          className="border p-2 rounded w-full mb-2"
                         />
                         <input
                           type="date"
                           name="expiryDate"
+                          placeholder="Expiry Date"
                           value={item.expiryDate}
                           onChange={(e) => handleFoodItemChange(index, e)}
-                          className="border-2 border-teal-600 p-3 rounded mb-2 w-full"
+                          className="border p-2 rounded w-full mb-2"
                         />
                         <button
                           type="button"
                           onClick={() => removeFoodItem(index)}
-                          className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 focus:outline-none focus:ring-2"
+                          className="text-white border-2 p-2 rounded-full bg-red-400 hover:bg-red-600"
                         >
                           Remove Food Item
                         </button>
@@ -340,42 +290,44 @@ const ManageFood = () => {
                     <button
                       type="button"
                       onClick={addFoodItem}
-                      className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 focus:outline-none focus:ring-2"
+                      className="bg-teal-500 text-white p-2 rounded-full mb-4"
                     >
                       Add Food Item
                     </button>
+
                     <button
                       type="submit"
-                      className="bg-blue-500 text-white py-2 px-4 rounded mt-4 hover:bg-blue-600 focus:outline-none focus:ring-2"
+                      className="bg-teal-500 rounded-full text-white p-2 ml-2"
                     >
-                      Save
+                      Save Changes
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditMode(null)}
+                      className="bg-gray-300 text-black p-2 rounded-full ml-2"
+                    >
+                      Cancel
                     </button>
                   </form>
                 ) : (
                   <>
-                    <p className='text-black mt-1'><strong>Name:</strong> {donation.name}</p>
-                    <p className='text-black mt-1'><strong>Email:</strong> {donation.email}</p>
-                    <p className='text-black mt-1'><strong>Contact Number:</strong> {donation.contactNumber}</p>
-                    <p className='text-black mt-1'><strong>Address:</strong> {donation.address?.street}, {donation.address?.city}, {donation.address?.state}, {donation.address?.postalCode}, {donation.address?.country}</p>
-                    <p className='text-black mt-1'><strong>Available Until:</strong> {donation.availableUntil}</p>
-                    
-                    <h1 className='font-serif mt-4 border-t-2 text-lg text-black'>Food Items:</h1>
-                    <div className="flex flex-col space-y-2">
+                    <h2 className="text-lg font-semibold">{donation.name}</h2>
+                    <p>Email: {donation.email}</p>
+                    <p>Contact: {donation.contactNumber}</p>
+                    <p>Address: {donation.address.street}, {donation.address.city}, {donation.address.state}, {donation.address.postalCode}, {donation.address.country}</p>
+                    <h3 className="text-lg font-semibold mt-2">Food Items:</h3>
+                    <ul>
                       {donation.foodItems.map((item, index) => (
-                        <div key={index} className="border-b border-gray-300 pb-2 mb-2">
-                          <p className='text-black mt-1'><strong>Food Item Name:</strong> {item.name}</p>
-                          <p className='text-black mt-1'><strong>Quantity:</strong> {item.quantity} {item.unit}</p>
-                          <p className='text-black mt-1'><strong>Expiry Date:</strong> {item.expiryDate}</p>
-                        </div>
+                        <li key={index}>
+                          {item.name} - {item.quantity} {item.unit} (Expiry: {item.expiryDate})
+                        </li>
                       ))}
-                    </div>
-                    
+                    </ul>
                     <button
-                      type="button"
                       onClick={() => handleEditClick(donation)}
-                      className="bg-yellow-500 text-black py-2 px-4 rounded-full hover:bg-yellow-600 focus:outline-none focus:ring-2 mt-2"
+                      className="bg-teal-500 text-white p-2 rounded-lg mt-2"
                     >
-                      Edit
+                      Edit Food
                     </button>
                   </>
                 )}
