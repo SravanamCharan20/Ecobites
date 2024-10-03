@@ -166,8 +166,13 @@ const FoodDetails = () => {
   return (
     <div className="max-w-6xl mx-auto p-6">
       <div className="text-center">
-        <h1 className="text-4xl font-bold text-gray-800 mb-6">Food Item: {foodDetails.foodItems[0]?.name}</h1>
-        <p className="text-xl text-gray-600 mb-12">Explore the details and request this item if you need it!</p>
+        <h1 className="text-4xl font-bold text-gray-800 mb-6">Food Items:</h1>
+        <ul className="text-xl text-gray-600">
+          {foodDetails.foodItems.map((item, index) => (
+            <li key={index} className="mb-2">{item.name}</li> 
+          ))}
+        </ul>
+        <p className="text-xl text-gray-600 mb-12">Explore the details and request any item if you need it!</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
