@@ -96,8 +96,8 @@ const AvailableFoodList = () => {
       foodItems.map(async (item) => {
         let itemCoords;
 
-        if (item.address.latitude && item.address.longitude) {
-          itemCoords = { lat: item.address.latitude, lon: item.address.longitude };
+        if (item.location.latitude && item.location.longitude) {
+          itemCoords = { lat: item.location.latitude, lon: item.location.longitude };
         } else {
           itemCoords = await getCoordinatesFromAddress(item.address);
         }

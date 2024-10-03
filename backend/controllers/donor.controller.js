@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import twilio from 'twilio';
+import Request from '../models/request.model.js'
 
 dotenv.config();
 
@@ -108,6 +109,101 @@ export const getUserDonations = async (req, res) => {
   } catch (error) {
     console.error('Error fetching user donations:', error);
     res.status(500).json({ message: 'Failed to fetch donations.', error });
+  }
+};
+
+export const requestFood = async (req, res) => {
+  try {
+    const { donorId, name, contactNumber, address, latitude, longitude, description } = req.body;
+
+    if (!donorId || !name || !contactNumber || !address) {
+      return res.status(400).json({ message: 'All required fields must be provided.' });
+    }
+
+    const donor = await Donor.findById(donorId);
+    if (!donor) {
+      return res.status(404).json({ message: 'Donor not found.' });
+    }
+
+    const existingRequest = await Request.findOne({ donorId, contactNumber });
+    if (existingRequest) {
+      return res.status(400).json({ message: 'You have already requested this food item.' });
+    }
+
+    const newRequest = new Request({
+      donorId,
+      userId: donor.userId, 
+      requesterName: name,
+      contactNumber,
+      address: {
+        street: address.street,
+        city: address.city,
+        state: address.state,
+        postalCode: address.postalCode,
+        country: address.country,
+      },
+      latitude: latitude || null,
+      longitude: longitude || null,
+      description,
+    });
+
+    await newRequest.save();
+    const message = `New request from ${name} for your food item. Contact them at ${contactNumber}.`;
+    await sendSmsNotification(donor.contactNumber, message);
+    res.status(200).json({ message: 'Request submitted successfully.' });
+  } catch (error) {
+    console.error('Error submitting request:', error);
+    res.status(500).json({ message: 'Failed to submit request.', error });
+  }
+};
+
+export const getRequestsForDonor = async (req, res) => {
+  try {
+    const { userId } = req.params; 
+    const requests = await Request.find({ userId });
+
+    res.status(200).json(requests);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch requests', error });
+  }
+};
+
+export const getStatus = async (req, res) => {
+  const { requestId } = req.params;
+  const { status } = req.body;
+
+  try {
+    // Update the request status
+    const request = await Request.findByIdAndUpdate(
+      requestId,
+      { status },
+      { new: true }
+    );
+
+    if (!request) {
+      return res.status(404).json({ message: 'Request not found' });
+    }
+
+    // Determine message to send based on status
+    let message;
+    if (status === 'Accepted') {
+      const donorId = request.donorId;
+      const updatedDonation = await Donor.findByIdAndUpdate(
+        donorId,
+        {isAccepted: true},
+        {new: true}
+      );
+      message = `Hi ${request.requesterName}, your food request has been accepted!`;
+    } else if (status === 'Rejected') {
+      message = `Hi ${request.requesterName}, your food request has been rejected.`;
+    }
+
+    // Send SMS notification using Twilio
+    await sendSmsNotification(request.contactNumber, message);
+
+    res.json(request);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to update request status and send SMS' });
   }
 };
 

@@ -73,6 +73,12 @@ const Header = () => {
         </div>
 
         <Link
+          to="/myrequests/:userId"
+          className={`px-3 md:px-4 py-1 md:py-2 rounded-md ${location.pathname === '/myrequests/:userId' ? 'text-black' : 'text-gray-500 hover:text-black'}`}
+        >
+          MyRequests
+        </Link>
+        <Link
           to="/about"
           className={`px-3 md:px-4 py-1 md:py-2 rounded-md ${location.pathname === '/about' ? 'text-black' : 'text-gray-500 hover:text-black'}`}
         >

@@ -17,6 +17,7 @@ import Managefood from './pages/Managefood';
 import Logo from './components/Logo';
 import SignupButton from './components/SIgnupbutton';
 import UpdateProfile from './pages/UpdateProfile';
+import MyRequests from './pages/MyRequests';
 
 function App() {
   const dispatch = useDispatch();
@@ -43,6 +44,7 @@ function App() {
           <Route path='/addfood' element={<Addfood />} />
           <Route path='/managefood' element={<Managefood />} />
           <Route path='/update-profile' element={<UpdateProfile/>} />
+          <Route path='/myrequests/:userId' element={<MyRequests/>} />
         </Routes>
       </BrowserRouter>
     </Provider>

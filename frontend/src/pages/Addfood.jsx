@@ -250,13 +250,7 @@ const AddFood = () => {
           >
             Use Current Location
           </button>
-          <button
-            type="button"
-            onClick={() => handleLocationMethodChange('manual')}
-            className={`p-3 rounded-full ${locationMethod === 'manual' ? 'bg-teal-600 text-white border-2' : 'border-2 text-black'}`}
-          >
-            Enter Address Manually
-          </button>
+          
         </div>
 
         {/* Address Fields */}

@@ -27,7 +27,7 @@ const SignupButton = () => {
   };
 
   return (
-    <div className="fixed top-5 right-10 z-50">
+    <div className="fixed top-8 right-10 z-50">
       {currentUser ? (
         <div className="relative" ref={dropdownRef}>
           <button
