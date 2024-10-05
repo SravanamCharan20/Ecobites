@@ -16,8 +16,8 @@ import Addfood from './pages/Addfood';
 import Managefood from './pages/Managefood';
 import UpdateProfile from './pages/UpdateProfile';
 import MyRequests from './pages/MyRequests';
-import AvlNF from './pages/avlnf';
 import AddNonFood from './pages/AddNonFood';
+import AvailableNonFood from './pages/AvailableNonFood';
 
 function App() {
   const dispatch = useDispatch();
@@ -37,7 +37,7 @@ function App() {
           <Route path='/signin' element={<Signin />} />
           <Route path='/' element={<Home />} />
           <Route path='/avl' element={<AvailableFoodList />} />
-          <Route path='/avlnf' element={<AvlNF />} />
+          <Route path='/avlnf' element={<AvailableNonFood />} />
           <Route path='/donate' element={<DonorForm />} />
           <Route path='/food-details/:id' element={<Fooddetails />} />
           <Route path='/addfood' element={<Addfood />} />
