@@ -27,7 +27,7 @@ const SignupButton = () => {
   };
 
   return (
-    <div className="fixed top-8 right-10 z-50">
+    <div className="fixed  right-10 z-50">
       {currentUser ? (
         <div className="relative" ref={dropdownRef}>
           <button
@@ -44,7 +44,7 @@ const SignupButton = () => {
           {/* Dropdown Menu */}
           {showDropdown && (
             <div
-              className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg overflow-hidden z-50"
+              className="absolute right-0 mt-2 w-48 border border-black shadow-lg rounded-lg overflow-hidden z-50"
             >
               <Link
                 to="/update-profile"

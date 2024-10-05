@@ -12,7 +12,7 @@ const AvailableFoodList = () => {
   const navigate = useNavigate();
 
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
-    const R = 6371; // Radius of Earth in km
+    const R = 6371; 
     const dLat = (lat2 - lat1) * Math.PI / 180;
     const dLon = (lon2 - lon1) * Math.PI / 180;
     const a =
@@ -20,7 +20,7 @@ const AvailableFoodList = () => {
       Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
       Math.sin(dLon / 2) * Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c; // Distance in km
+    return R * c; 
   };
 
   const getCoordinatesFromAddress = async (address) => {
@@ -179,6 +179,7 @@ const AvailableFoodList = () => {
               <th className="px-4 py-3 border-b-2 border-gray-300">Food Items</th>
               <th className="px-4 py-3 border-b-2 border-gray-300">Expiry Date</th>
               <th className="px-4 py-3 border-b-2 border-gray-300">Distance (km)</th>
+              <th className="px-4 py-3 border-b-2 border-gray-300">Price</th> 
               <th className="px-4 py-3 border-b-2 border-gray-300">Address</th>
               <th className="px-4 py-3 border-b-2 border-gray-300 rounded-tr-lg">Actions</th>
             </tr>
@@ -199,6 +200,7 @@ const AvailableFoodList = () => {
                 </td>
                 <td className="px-4 py-4">{formatDate(item.foodItems[0].expiryDate)}</td>
                 <td className="px-4 py-4">{item.distance ? item.distance.toFixed(2) : 'N/A'}</td>
+                <td className="px-4 py-4">{item.price ? item.price.toFixed(2) : 'Free'}</td>
                 <td className="px-4 py-4">{formatFullAddress(item.address)}</td>
                 <td className="px-4 py-4">
                   <button

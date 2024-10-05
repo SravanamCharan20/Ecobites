@@ -314,7 +314,7 @@ const ManageFood = () => {
                     <h2 className="text-lg font-semibold">{donation.name}</h2>
                     <p>Email: {donation.email}</p>
                     <p>Contact: {donation.contactNumber}</p>
-                    <p>Address: {donation.address.street}, {donation.address.city}, {donation.address.state}, {donation.address.postalCode}, {donation.address.country}</p>
+                    <p>Address: {donation.address?.street || 'N/A'}, {donation.address?.city || 'N/A'}, {donation.address?.state || 'N/A'}, {donation.address?.postalCode || 'N/A'}, {donation.address?.country || 'N/A'}</p>
                     <h3 className="text-lg font-semibold mt-2">Food Items:</h3>
                     <ul>
                       {donation.foodItems.map((item, index) => (

@@ -21,11 +21,13 @@ const AddFood = () => {
         type: 'Perishable',
         name: '',
         quantity: '',
-        unit: 'kg',
+        unit: 'kg', // Added unit field to the initial state
         expiryDate: '',
       },
     ],
     availableUntil: '',
+    donationType: 'free', // New state for donation type
+    price: '', // New state for price
   };
 
   const [formData, setFormData] = useState(initialFormData);
@@ -129,7 +131,7 @@ const AddFood = () => {
           type: 'Perishable',
           name: '',
           quantity: '',
-          unit: 'kg',
+          unit: 'kg', // Set default value for unit
           expiryDate: '',
         },
       ],
@@ -147,13 +149,12 @@ const AddFood = () => {
     });
   };
 
-  const handleFoodItemChange = (index, e) => {
-    const { name, value } = e.target;
+  const handleFoodItemChange = (index, field, value) => {
     setFormData((prevData) => {
       const updatedFoodItems = [...prevData.foodItems];
       updatedFoodItems[index] = {
         ...updatedFoodItems[index],
-        [name]: value,
+        [field]: value,
       };
       return {
         ...prevData,
@@ -170,6 +171,9 @@ const AddFood = () => {
       if (!item.name || !item.quantity || !item.expiryDate) {
         return 'Please fill out all food item fields.';
       }
+    }
+    if (formData.donationType === 'priced' && !formData.price) {
+      return 'Please specify a price for the donation.';
     }
     if (locationMethod === 'auto' && (!formData.location.latitude || !formData.location.longitude)) {
       return 'Please wait until the location is acquired.';
@@ -214,7 +218,7 @@ const AddFood = () => {
     <div className="flex justify-center items-center min-h-screen">
       <div className="p-6 max-w-4xl w-full text-gray-800 rounded-lg grid grid-cols-2 gap-4">
         <h1 className="col-span-2 text-3xl text-gray-800 font-semibold mb-6 text-center">Donor Form</h1>
-        
+
         {/* Personal Information */}
         <input
           type="text"
@@ -241,6 +245,36 @@ const AddFood = () => {
           className="col-span-2 border-2 border-teal-600 p-3 rounded text-black focus:outline-none focus:ring-2"
         />
 
+        {/* Donation Type Selection */}
+        <div className="col-span-2 flex gap-4 mb-4">
+          <button
+            type="button"
+            onClick={() => setFormData({ ...formData, donationType: 'free' })}
+            className={`p-3 rounded-full ${formData.donationType === 'free' ? 'bg-teal-600 text-white border-2' : 'border-2 text-black'}`}
+          >
+            Donate for Free
+          </button>
+          <button
+            type="button"
+            onClick={() => setFormData({ ...formData, donationType: 'priced' })}
+            className={`p-3 rounded-full ${formData.donationType === 'priced' ? 'bg-teal-600 text-white border-2' : 'border-2 text-black'}`}
+          >
+            Donate for Price
+          </button>
+        </div>
+
+        {/* Price Input */}
+        {formData.donationType === 'priced' && (
+          <input
+            type="number"
+            name="price"
+            placeholder="Price"
+            value={formData.price}
+            onChange={handleInputChange}
+            className="col-span-2 border-2 border-teal-600 p-3 rounded text-black focus:outline-none focus:ring-2"
+          />
+        )}
+
         {/* Location Method Selection */}
         <div className="col-span-2 flex gap-4 mb-4">
           <button
@@ -248,150 +282,98 @@ const AddFood = () => {
             onClick={() => handleLocationMethodChange('auto')}
             className={`p-3 rounded-full ${locationMethod === 'auto' ? 'bg-teal-600 text-white border-2' : 'border-2 text-black'}`}
           >
-            Use Current Location
+            Use My Location
           </button>
-          
         </div>
 
-        {/* Address Fields */}
-        {locationMethod === 'manual' && (
-          <>
-            <input
-              type="text"
-              name="street"
-              placeholder="Street"
-              value={formData.address.street}
-              onChange={handleInputChange}
-              className="col-span-2 border-2 border-teal-600 p-3 rounded text-gray-800 focus:outline-none focus:ring-2"
-            />
-            <input
-              type="text"
-              name="city"
-              placeholder="City"
-              value={formData.address.city}
-              onChange={handleInputChange}
-              className="border-2 border-teal-600 p-3 rounded text-gray-800 focus:outline-none focus:ring-2"
-            />
-            <input
-              type="text"
-              name="state"
-              placeholder="State"
-              value={formData.address.state}
-              onChange={handleInputChange}
-              className="border-2 border-teal-600 p-3 rounded text-gray-800 focus:outline-none focus:ring-2"
-            />
-            <input
-              type="text"
-              name="postalCode"
-              placeholder="Postal Code"
-              value={formData.address.postalCode}
-              onChange={handleInputChange}
-              className="border-2 border-teal-600 p-3 rounded text-gray-800 focus:outline-none focus:ring-2"
-            />
-            <input
-              type="text"
-              name="country"
-              placeholder="Country"
-              value={formData.address.country}
-              onChange={handleInputChange}
-              className="border-2 border-teal-600 p-3 rounded text-gray-800 focus:outline-none focus:ring-2"
-            />
-          </>
+        {/* Location Status */}
+        {locationMethod === 'auto' && locationStatus && (
+          <div className="col-span-2 text-center mt-2">{locationStatus}</div>
         )}
 
-        {locationMethod === 'auto' && (
-          <>
-            <p className="text-sm col-span-2">{locationStatus}</p>
-          </>
-        )}
-
-        {/* Food Items Section */}
+        {/* Food Items */}
         <div className="col-span-2">
           {formData.foodItems.map((item, index) => (
-            <div key={index} className="p-4 mb-4 rounded-lg border-2 border-teal-600">
-              <h3 className="mb-2 text-lg font-semibold">Food Item {index + 1}</h3>
+            <div key={index} className="grid grid-cols-2 gap-4 mb-4">
+              <select
+                value={item.type}
+                onChange={(e) => handleFoodItemChange(index, 'type', e.target.value)}
+                className="border-2 border-teal-600 p-3 rounded text-black focus:outline-none focus:ring-2"
+              >
+                <option value="Perishable">Perishable</option>
+                <option value="Non-Perishable">Non-Perishable</option>
+              </select>
               <input
                 type="text"
-                name="name"
                 placeholder="Food Name"
                 value={item.name}
-                onChange={(e) => handleFoodItemChange(index, e)}
-                className="p-3 border-2 border-teal-600 rounded w-full mb-2 text-gray-800 focus:outline-none focus:ring-2"
+                onChange={(e) => handleFoodItemChange(index, 'name', e.target.value)}
+                className="border-2 border-teal-600 p-3 rounded text-black focus:outline-none focus:ring-2"
               />
-              <div className="flex gap-4">
-                <input
-                  type="number"
-                  name="quantity"
-                  placeholder="Quantity"
-                  value={item.quantity}
-                  onChange={(e) => handleFoodItemChange(index, e)}
-                  className="p-3 border-2 border-teal-600 rounded w-full mb-2 text-gray-800 focus:outline-none focus:ring-2"
-                />
-                <select
-                  name="unit"
-                  value={item.unit}
-                  onChange={(e) => handleFoodItemChange(index, e)}
-                  className="p-3 border-2 border-teal-600 rounded w-full mb-2 text-gray-800 focus:outline-none focus:ring-2"
-                >
-                  <option value="kg">kg</option>
-                  <option value="g">g</option>
-                  <option value="liters">liters</option>
-                  <option value="ml">ml</option>
-                  <option value="pieces">pieces</option>
-                </select>
-              </div>
+              <input
+                type="number"
+                placeholder="Quantity"
+                value={item.quantity}
+                onChange={(e) => handleFoodItemChange(index, 'quantity', e.target.value)}
+                className="border-2 border-teal-600 p-3 rounded text-black focus:outline-none focus:ring-2"
+              />
+              <select
+                value={item.unit}
+                onChange={(e) => handleFoodItemChange(index, 'unit', e.target.value)}
+                className="border-2 border-teal-600 p-3 rounded text-black focus:outline-none focus:ring-2"
+              >
+                <option value="kg">kg</option>
+                <option value="liters">liters</option>
+                <option value="units">units</option>
+              </select>
               <input
                 type="date"
-                name="expiryDate"
                 placeholder="Expiry Date"
                 value={item.expiryDate}
-                onChange={(e) => handleFoodItemChange(index, e)}
-                className="p-3 border-2 border-teal-600 rounded w-full mb-2 text-gray-800 focus:outline-none focus:ring-2"
+                onChange={(e) => handleFoodItemChange(index, 'expiryDate', e.target.value)}
+                className="col-span-2 border-2 border-teal-600 p-3 rounded text-black focus:outline-none focus:ring-2"
               />
               <button
                 type="button"
                 onClick={() => removeFoodItem(index)}
-                className="mt-4 bg-red-600 border-2 text-white py-2 px-4 rounded-full hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+                className="col-span-2 bg-red-500 text-white p-2 rounded"
               >
-                Remove
+                Remove Food Item
               </button>
             </div>
           ))}
         </div>
+        <button
+          type="button"
+          onClick={addFoodItem}
+          className="col-span-2 bg-green-500 text-white p-2 rounded"
+        >
+          Add Another Food Item
+        </button>
 
-        <div className="col-span-2 flex justify-center">
-          <button
-            type="button"
-            onClick={addFoodItem}
-            className="bg-teal-600 align-middle text-white py-2 px-4 rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2"
-          >
-            Add Another Food Item
-          </button>
-        </div>
-
-        {/* Availability Date */}
+        {/* Available Until */}
         <input
-          type="date"
+          type="datetime-local"
           name="availableUntil"
           placeholder="Available Until"
           value={formData.availableUntil}
           onChange={handleInputChange}
           className="col-span-2 border-2 border-teal-600 p-3 rounded text-black focus:outline-none focus:ring-2"
         />
-        
-        {/* Messages */}
-        {successMessage && <p className="col-span-2 text-teal-800 mt-4">{successMessage}</p>}
-        {errorMessage && <p className="col-span-2 text-red-500 mt-4">{errorMessage}</p>}
-        
-        {/* Submit Button */}
+
+        {/* Submit */}
         <button
           type="submit"
           onClick={handleSubmit}
-          className="col-span-2 bg-teal-600 text-white py-3 rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2"
+          className="col-span-2 bg-teal-600 text-white p-3 rounded mt-4 disabled:opacity-50"
           disabled={loading}
         >
           {loading ? 'Submitting...' : 'Submit'}
         </button>
+
+        {/* Success and Error Messages */}
+        {successMessage && <div className="col-span-2 text-green-500 text-center mt-4">{successMessage}</div>}
+        {errorMessage && <div className="col-span-2 text-red-500 text-center mt-4">{errorMessage}</div>}
       </div>
     </div>
   );

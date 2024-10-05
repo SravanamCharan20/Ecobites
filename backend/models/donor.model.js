@@ -1,11 +1,26 @@
 import mongoose, { Schema, model } from 'mongoose';
 
 const foodItemSchema = new Schema({
-  type: String,
-  name: String,
-  quantity: String,
-  unit: String,
-  expiryDate: Date,
+  type: {
+    type: String,
+    required: true, 
+  },
+  name: {
+    type: String,
+    required: true, 
+  },
+  quantity: {
+    type: String,
+    required: true, 
+  },
+  unit: {
+    type: String,
+    required: false,
+  },
+  expiryDate: {
+    type: Date,
+    required: true, 
+  },
 });
 
 const donorSchema = new Schema({
@@ -17,7 +32,8 @@ const donorSchema = new Schema({
   },
   email: {
     type: String,
-    required: true
+    required: true,
+    trim: true,
   },
   contactNumber: {
     type: String,
@@ -26,7 +42,7 @@ const donorSchema = new Schema({
   address: {
     street: {
       type: String,
-      required: false, 
+      required: false,
     },
     city: {
       type: String,
@@ -34,15 +50,15 @@ const donorSchema = new Schema({
     },
     state: {
       type: String,
-      required: false, 
+      required: false,
     },
     postalCode: {
       type: String,
-      required: false,  
+      required: false,
     },
     country: {
       type: String,
-      required: false,  
+      required: false,
     },
   },
   location: {
@@ -70,10 +86,19 @@ const donorSchema = new Schema({
     type: Date,
     required: false,
   },
+  donationType: {
+    type: String,
+    enum: ['free', 'priced'], 
+    required: true,
+  },
+  price: {
+    type: Number,
+    required: function () { return this.donationType === 'priced'; }, 
+  },
   isAccepted: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
 }, { timestamps: true });
 
 export default model('Donor', donorSchema);

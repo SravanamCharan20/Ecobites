@@ -14,10 +14,10 @@ import AvailableFoodList from './pages/Avl';
 import Fooddetails from './pages/Fooddetails';
 import Addfood from './pages/Addfood';
 import Managefood from './pages/Managefood';
-import Logo from './components/Logo';
-import SignupButton from './components/SIgnupbutton';
 import UpdateProfile from './pages/UpdateProfile';
 import MyRequests from './pages/MyRequests';
+import AvlNF from './pages/avlnf';
+import AddNonFood from './pages/AddNonFood';
 
 function App() {
   const dispatch = useDispatch();
@@ -29,19 +29,19 @@ function App() {
   return (
     <Provider store={store}>
       <BrowserRouter>
-      <div className='mb-24'>
-          <Logo />
-          <Header />
-          <SignupButton />
-        </div>
+      <div className='mb-16'>
+      <Header/>
+      </div>
         <Routes>
           <Route path='/signup' element={<Signup />} />
           <Route path='/signin' element={<Signin />} />
           <Route path='/' element={<Home />} />
           <Route path='/avl' element={<AvailableFoodList />} />
+          <Route path='/avlnf' element={<AvlNF />} />
           <Route path='/donate' element={<DonorForm />} />
           <Route path='/food-details/:id' element={<Fooddetails />} />
           <Route path='/addfood' element={<Addfood />} />
+          <Route path='/addnonfood' element={<AddNonFood />} />
           <Route path='/managefood' element={<Managefood />} />
           <Route path='/update-profile' element={<UpdateProfile/>} />
           <Route path='/myrequests/:userId' element={<MyRequests/>} />
