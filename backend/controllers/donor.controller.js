@@ -6,6 +6,7 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import twilio from 'twilio';
 import Request from '../models/request.model.js'
+import NonFoodDonation from '../models/nonfood.model.js';
 
 dotenv.config();
 
@@ -50,6 +51,18 @@ export const donationform = async (req, res) => {
 export const avldatalist = async (req, res) => {
   try {
     const donatedFoodItems = await Donor.find({ isAccepted: false });
+    if (donatedFoodItems.length === 0) {
+      return res.status(404).json({ message: 'No donated food items found.' });
+    }
+    res.status(200).json(donatedFoodItems);
+  } catch (error) {
+    console.error('Error fetching donated food items:', error); 
+    res.status(500).json({ message: 'Failed to fetch donated food items.', error: error.message });
+  }
+};
+export const avlnonfooddatalist = async (req, res) => {
+  try {
+    const donatedFoodItems = await NonFoodDonation.find();
     if (donatedFoodItems.length === 0) {
       return res.status(404).json({ message: 'No donated food items found.' });
     }
@@ -207,3 +220,46 @@ export const getStatus = async (req, res) => {
   }
 };
 
+export const nonfooddonorform = async (req, res) => {
+  const {
+    name,
+    email,
+    contactNumber,
+    location,
+    nonFoodItems,
+    availableUntil,
+    donationType,
+    price,
+  } = req.body;
+
+  if (!name || !email || !contactNumber || !location || !nonFoodItems || !availableUntil || !donationType) {
+    return res.status(400).json({ message: 'All required fields must be filled.' });
+  }
+
+  // Validate non-food items
+  for (const item of nonFoodItems) {
+    if (!item.name || !item.quantity || !item.type || !item.condition) {
+      return res.status(400).json({ message: 'All non-food item fields must be filled.' });
+    }
+  }
+
+  // Create new non-food donation
+  try {
+    const newNonFoodDonation = new NonFoodDonation({
+      name,
+      email,
+      contactNumber,
+      location,
+      nonFoodItems,
+      availableUntil,
+      donationType,
+      price: donationType === 'priced' ? price : null,
+    });
+
+    await newNonFoodDonation.save();
+    res.status(201).json({ message: 'Donation form submitted successfully.' });
+  } catch (error) {
+    console.error('Error saving donation:', error);
+    res.status(500).json({ message: 'Internal server error. Please try again later.' });
+  }
+}
