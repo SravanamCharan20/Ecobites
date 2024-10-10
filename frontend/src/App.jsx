@@ -18,6 +18,7 @@ import UpdateProfile from './pages/UpdateProfile';
 import MyRequests from './pages/MyRequests';
 import AddNonFood from './pages/AddNonFood';
 import AvailableNonFood from './pages/AvailableNonFood';
+import NonFoodDetails from './pages/NonFoodDetails';
 
 function App() {
   const dispatch = useDispatch();
@@ -40,6 +41,7 @@ function App() {
           <Route path='/avlnf' element={<AvailableNonFood />} />
           <Route path='/donate' element={<DonorForm />} />
           <Route path='/food-details/:id' element={<Fooddetails />} />
+          <Route path='/nonfood-details/:id' element={<NonFoodDetails />} />
           <Route path='/addfood' element={<Addfood />} />
           <Route path='/addnonfood' element={<AddNonFood />} />
           <Route path='/managefood' element={<Managefood />} />

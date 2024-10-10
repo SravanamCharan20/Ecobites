@@ -11,17 +11,17 @@ import {
   getStatus,
   nonfooddonorform,
   avlnonfooddatalist,
+  getnonid,
 } from '../controllers/donor.controller.js';
 
 const router = express.Router();
-
-// router.get('/nfdonorfor',avlnonfooddatalist)
 
 
 router.post('/donorform', donationform);
 router.get('/donorform', avldatalist); 
 router.get('/userdonations/:userId', getDonationsByUserId);
 router.get('/get-donor/:id', getid);
+router.get('/get-nondonor/:id', getnonid);
 router.put('/:id', updateDonor);
 router.get('/userdonations/:userId', getUserDonations); 
 router.post('/request', requestFood);

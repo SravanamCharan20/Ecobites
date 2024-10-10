@@ -35,11 +35,22 @@ const AddNonFood = () => {
     setSuccessMessage('');
     setErrorMessage('');
     setLocationStatus('');
-
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+  
+    // Check if the input is for latitude or longitude
+    if (name === 'latitude' || name === 'longitude') {
+      setFormData((prevData) => ({
+        ...prevData,
+        location: {
+          ...prevData.location,
+          [name]: value, // Update latitude or longitude
+        },
+      }));
+    } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value, // Update other fields
+      }));
+    }
   };
 
   const handleLocationMethodChange = (method) => {
@@ -214,6 +225,13 @@ const AddNonFood = () => {
           >
             Donate for Price
           </button>
+          <button
+            type="button"
+            onClick={() => setFormData({ ...formData, donationType: 'borrow' })}
+            className={`p-3 rounded-full ${formData.donationType === 'borrow' ? 'bg-teal-600 text-white border-2' : 'border-2 text-black'}`}
+          >
+            Borrow Items
+          </button>
         </div>
 
         {/* Non-Food Items */}
@@ -261,20 +279,19 @@ const AddNonFood = () => {
             {formData.donationType === 'priced' && (
               <input
                 type="number"
-                placeholder="Price (if priced)"
+                placeholder="Price"
                 value={item.price}
                 onChange={(e) => handleNonFoodItemChange(index, 'price', e.target.value)}
                 className="border-2 border-teal-600 p-3 rounded text-black focus:outline-none focus:ring-2"
               />
             )}
 
-            {/* Remove Button */}
             <button
               type="button"
               onClick={() => removeNonFoodItem(index)}
-              className="col-span-2 bg-red-500 text-white p-2 rounded"
+              className="bg-red-500 text-white p-2 rounded-full"
             >
-              Remove Item
+              Remove
             </button>
           </div>
         ))}
@@ -284,12 +301,12 @@ const AddNonFood = () => {
           onClick={addNonFoodItem}
           className="col-span-2 bg-teal-600 text-white p-3 rounded"
         >
-          Add Another Item
+          Add Another Non-Food Item
         </button>
 
-        {/* Location Selection */}
-        <div className="col-span-2 mb-4">
-          <p className="mb-2">Location Method:</p>
+        {/* Location Method */}
+        <div className="col-span-2">
+          <p className="text-lg mb-2">Choose Location Input Method:</p>
           <div className="flex gap-4">
             <button
               type="button"
@@ -303,73 +320,55 @@ const AddNonFood = () => {
               onClick={() => handleLocationMethodChange('auto')}
               className={`p-3 rounded-full ${locationMethod === 'auto' ? 'bg-teal-600 text-white border-2' : 'border-2 text-black'}`}
             >
-              Use Current Location
+              Use My Location
             </button>
           </div>
 
           {locationMethod === 'manual' && (
-            <div className="grid grid-cols-2 gap-4 mt-4">
+            <div className="mt-4 grid grid-cols-2 gap-4">
               <input
-                type="number"
+                type="text"
                 name="latitude"
                 placeholder="Latitude"
                 value={formData.location.latitude}
-                onChange={(e) =>
-                  setFormData((prevData) => ({
-                    ...prevData,
-                    location: { ...prevData.location, latitude: e.target.value },
-                  }))
-                }
+                onChange={handleInputChange}
                 className="border-2 border-teal-600 p-3 rounded text-black focus:outline-none focus:ring-2"
               />
               <input
-                type="number"
+                type="text"
                 name="longitude"
                 placeholder="Longitude"
                 value={formData.location.longitude}
-                onChange={(e) =>
-                  setFormData((prevData) => ({
-                    ...prevData,
-                    location: { ...prevData.location, longitude: e.target.value },
-                  }))
-                }
+                onChange={handleInputChange}
                 className="border-2 border-teal-600 p-3 rounded text-black focus:outline-none focus:ring-2"
               />
             </div>
           )}
 
-          {locationStatus && (
-            <p className="mt-2 text-sm text-gray-500">{locationStatus}</p>
-          )}
+          {locationStatus && <p className="mt-2 text-sm">{locationStatus}</p>}
         </div>
 
-        {/* Availability */}
+        {/* Available Until */}
         <input
-          type="date"
+          type="datetime-local"
           name="availableUntil"
-          placeholder="Available Until"
           value={formData.availableUntil}
           onChange={handleInputChange}
           className="col-span-2 border-2 border-teal-600 p-3 rounded text-black focus:outline-none focus:ring-2"
         />
 
-        {/* Submit Button */}
+        {/* Submit */}
         <button
           type="submit"
           onClick={handleSubmit}
-          disabled={loading}
-          className="col-span-2 bg-teal-600 text-white p-3 rounded mt-4"
+          className="col-span-2 bg-teal-600 text-white p-3 rounded"
         >
           {loading ? 'Submitting...' : 'Submit'}
         </button>
 
-        {/* Error & Success Messages */}
-        {errorMessage && (
-          <p className="col-span-2 text-red-500 mt-4">{errorMessage}</p>
-        )}
-        {successMessage && (
-          <p className="col-span-2 text-green-500 mt-4">{successMessage}</p>
-        )}
+        {/* Success/Error Messages */}
+        {successMessage && <p className="col-span-2 text-green-500">{successMessage}</p>}
+        {errorMessage && <p className="col-span-2 text-red-500">{errorMessage}</p>}
       </div>
     </div>
   );

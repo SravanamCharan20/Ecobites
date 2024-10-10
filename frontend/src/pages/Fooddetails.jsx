@@ -33,7 +33,7 @@ const FoodDetails = () => {
   useEffect(() => {
     const fetchFoodDetails = async () => {
       try {
-        const response = await fetch(`/api/donor/${id}`);
+        const response = await fetch(`/api/donor/get-donor/${id}`);
         if (!response.ok) {
           throw new Error('Failed to fetch food details.');
         }

@@ -84,6 +84,17 @@ export const getid = async (req, res) => {
     res.status(500).json({ message: 'Server error.', error });
   }
 };
+export const getnonid = async (req, res) => {
+  try {
+    const donor = await NonFoodDonation.findById(req.params.id);
+    if (!donor) {
+      return res.status(404).json({ message: 'Donor not found.' });
+    }
+    res.json(donor);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error.', error });
+  }
+};
 
 export const updateDonor = async (req, res) => {
   try {
@@ -174,7 +185,7 @@ export const getRequestsForDonor = async (req, res) => {
   try {
     const { userId } = req.params; 
     const requests = await Request.find({ userId });
-
+    console.log(requests)
     res.status(200).json(requests);
   } catch (error) {
     res.status(500).json({ message: 'Failed to fetch requests', error });
@@ -186,7 +197,6 @@ export const getStatus = async (req, res) => {
   const { status } = req.body;
 
   try {
-    // Update the request status
     const request = await Request.findByIdAndUpdate(
       requestId,
       { status },

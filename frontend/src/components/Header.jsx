@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { FaCaretDown } from 'react-icons/fa'; // Icon for dropdown
-import SignupButton from './SIgnupbutton';
+import SignupButton from './SignupButton';
 
 const Header = () => {
   const location = useLocation();
@@ -83,7 +83,7 @@ const Header = () => {
               >
                 EcoBites
               </Link></div>
-      <div className='justify-around ml-60'>
+      <div className='justify-around ml-64'>
       <div className="flex items-center space-x-8">
         <Link
           to="/avl"
@@ -132,7 +132,7 @@ const Header = () => {
                 Add Non-Food Item
               </Link>
               <Link
-                to="/managefood"
+                to="/managenonfood"
                 className="block px-2 py-1 text-sm text-white hover:underline"
                 onClick={() => setShowFoodDropdown(false)} 
               >
@@ -141,50 +141,37 @@ const Header = () => {
             </div>
           )}
         </div>
-
-        {/* Non-Food Dropdown Wrapper */}
+        
+        {/* My Requests Dropdown */}
         <div className="relative" ref={nonFoodDropdownRef}>
           <button
             onClick={toggleNonFoodDropdown}
-            className={`text-sm flex items-center hover:underline`}
+            className={`text-sm flex items-center ${location.pathname.startsWith(`/myrequests/${userId}`) ? 'font-semibold' : 'hover:underline'}`}
           >
-            Non-Food Items <FaCaretDown className={`ml-2 ${showNonFoodDropdown ? 'rotate-180' : 'rotate-0'}`} />
+            My Requests <FaCaretDown className={`ml-2 ${showNonFoodDropdown ? 'rotate-180' : 'rotate-0'}`} />
           </button>
 
-          {/* Non-Food Dropdown Menu */}
+          {/* My Requests Dropdown Menu */}
           {showNonFoodDropdown && (
-            <div className="absolute left-0 mt-2 border text-black border-black rounded-lg w-40 p-2">
+            <div className="absolute left-0 mt-4 bg-teal-600 text-white rounded-lg w-48 p-2">
               <Link
-                to="/nonfood/free"
+                to={`/myrequests/${userId}`}
                 className="block px-2 py-1 text-sm hover:underline"
                 onClick={() => setShowNonFoodDropdown(false)} // Close dropdown on link click
               >
-                Free
+                Food Requests
               </Link>
               <Link
-                to="/nonfood/buy"
+                to={`/mynonfoodrequests/${userId}`}
                 className="block px-2 py-1 text-sm hover:underline"
-                onClick={() => setShowNonFoodDropdown(false)}
+                onClick={() => setShowNonFoodDropdown(false)} // Close dropdown on link click
               >
-                Buy
-              </Link>
-              <Link
-                to="/nonfood/borrow"
-                className="block px-2 py-1 text-sm hover:underline"
-                onClick={() => setShowNonFoodDropdown(false)}
-              >
-                Borrow
+                Non-Food Requests
               </Link>
             </div>
           )}
         </div>
 
-        <Link
-          to={`/myrequests/${userId}`}
-          className={`text-sm ${location.pathname === `/myrequests/${userId}` ? 'font-semibold' : 'hover:underline'}`}
-        >
-          MyRequests
-        </Link>
         <Link
           to="/about"
           className={`text-sm ${location.pathname === '/about' ? 'font-semibold' : 'hover:underline'}`}
