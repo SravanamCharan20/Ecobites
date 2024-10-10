@@ -225,13 +225,6 @@ const AddNonFood = () => {
           >
             Donate for Price
           </button>
-          <button
-            type="button"
-            onClick={() => setFormData({ ...formData, donationType: 'borrow' })}
-            className={`p-3 rounded-full ${formData.donationType === 'borrow' ? 'bg-teal-600 text-white border-2' : 'border-2 text-black'}`}
-          >
-            Borrow Items
-          </button>
         </div>
 
         {/* Non-Food Items */}
