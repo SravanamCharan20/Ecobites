@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose';
+import mongoose, { Schema, model } from 'mongoose';
 
 const locationSchema = new Schema({
   latitude: { type: String, required: true },
@@ -14,6 +14,7 @@ const nonFoodItemSchema = new Schema({
 });
 
 const nonFoodDonationSchema = new Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   name: { type: String, required: true },
   email: { type: String, required: true },
   contactNumber: { type: String, required: true },

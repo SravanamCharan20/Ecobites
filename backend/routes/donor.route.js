@@ -12,6 +12,9 @@ import {
   nonfooddonorform,
   avlnonfooddatalist,
   getnonid,
+  nonfoodrequestFood,
+  getNonFoodRequestsForDonor,
+  getnonfoodStatus,
 } from '../controllers/donor.controller.js';
 
 const router = express.Router();
@@ -25,10 +28,13 @@ router.get('/get-nondonor/:id', getnonid);
 router.put('/:id', updateDonor);
 router.get('/userdonations/:userId', getUserDonations); 
 router.post('/request', requestFood);
-router.get('/requests/:donorId', getRequestsForDonor);
+router.get('/requests/:userId', getRequestsForDonor);
 router.patch('/requests/:requestId/status', getStatus);
 router.post('/nfdonorform',nonfooddonorform);
-router.get('/nfdonorform',avlnonfooddatalist)
+router.get('/nfdonorform',avlnonfooddatalist);
+router.post('/request-nonfood', nonfoodrequestFood);
+router.get('/requests-nonfood/:userId', getNonFoodRequestsForDonor);
+router.patch('/requests-nonfood/:requestId/status', getnonfoodStatus);
 
 
 export default router;

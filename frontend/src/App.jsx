@@ -19,6 +19,7 @@ import MyRequests from './pages/MyRequests';
 import AddNonFood from './pages/AddNonFood';
 import AvailableNonFood from './pages/AvailableNonFood';
 import NonFoodDetails from './pages/NonFoodDetails';
+import MyNonFoodRequests from './pages/MyNonFoodRequests';
 
 function App() {
   const dispatch = useDispatch();
@@ -47,6 +48,7 @@ function App() {
           <Route path='/managefood' element={<Managefood />} />
           <Route path='/update-profile' element={<UpdateProfile/>} />
           <Route path='/myrequests/:userId' element={<MyRequests/>} />
+          <Route path='/requests-nonfood/:userId' element={<MyNonFoodRequests/>} />
         </Routes>
       </BrowserRouter>
     </Provider>

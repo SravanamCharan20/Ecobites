@@ -162,7 +162,7 @@ const Header = () => {
                 Food Requests
               </Link>
               <Link
-                to={`/mynonfoodrequests/${userId}`}
+                to={`/requests-nonfood/${userId}`}
                 className="block px-2 py-1 text-sm hover:underline"
                 onClick={() => setShowNonFoodDropdown(false)} // Close dropdown on link click
               >

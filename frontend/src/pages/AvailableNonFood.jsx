@@ -109,13 +109,9 @@ const AvailableNonFoodList = () => {
     if (!userLocation || nonFoodItems.length === 0) return;
 
     setLoadingDistances(true);
-    const currentDate = new Date();
 
     const sortedItems = await Promise.all(
       nonFoodItems.map(async (item) => {
-        const itemAvailableUntil = new Date(item.availableUntil);
-        if (itemAvailableUntil < currentDate) return null;
-
         let itemCoords;
 
         if (item.location.latitude && item.location.longitude) {
@@ -226,7 +222,7 @@ const AvailableNonFoodList = () => {
                     ))}
                   </ul>
                 </td>
-                <td className="px-4 py-4">{item.distance ? item.distance.toFixed(2) : 'N/A'}</td>
+                <td className="px-4 py-4">{item.distance !== null ? item.distance.toFixed(2) : 'Calculating...'}</td>
                 <td className="px-4 py-4">
                   <ul>
                     {item.nonFoodItems.map((nonFood, i) => (

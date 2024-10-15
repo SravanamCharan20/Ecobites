@@ -113,7 +113,7 @@ const AddFood = () => {
           setLocationStatus('Failed to acquire location.');
         },
         {
-          timeout: 10000,
+          timeout: 100000,
           maximumAge: 0,
         }
       );
