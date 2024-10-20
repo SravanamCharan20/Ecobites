@@ -127,6 +127,22 @@ export const updateDonor = async (req, res) => {
   }
 };
 
+export const updatenonfoodDonor = async (req, res) => {
+  try {
+    const donor = await NonFoodDonation.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    if (!donor) {
+      return res.status(404).json({ message: 'Donor not found.' });
+    }
+    res.json(donor);
+  } catch (error) {
+    console.error('Update error:', error);
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ message: 'Validation error', errors: error.errors });
+    }
+    res.status(500).json({ message: 'Failed to update donation.', error });
+  }
+};
+
 export const getDonationsByUserId = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -145,6 +161,24 @@ export const getUserDonations = async (req, res) => {
 
   try {
     const donations = await Donor.find({ userId });
+    if (!donations.length) {
+      return res.status(404).json({ message: 'No donations found for this user.' });
+    }
+    res.status(200).json(donations);
+  } catch (error) {
+    console.error('Error fetching user donations:', error);
+    res.status(500).json({ message: 'Failed to fetch donations.', error });
+  }
+};
+export const getUsernonfoodDonations = async (req, res) => {
+  const { userId } = req.params;
+  
+  if (!userId) {
+    return res.status(400).json({ message: 'User ID is required.' });
+  }
+
+  try {
+    const donations = await NonFoodDonation.find({ userId });
     if (!donations.length) {
       return res.status(404).json({ message: 'No donations found for this user.' });
     }

@@ -73,7 +73,7 @@ const Header = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 w-full bg-teal-800 text-white h-12 flex items-center px-6 z-50 border-b transition-transform duration-300 ${
+      className={`fixed top-0 left-0 w-full bg-[#fff] text-black h-12 flex items-center px-6 z-50 transition-transform duration-300 ${
         isVisible ? 'translate-y-0' : '-translate-y-12'
       }`}
     >
@@ -93,7 +93,7 @@ const Header = () => {
         </Link>
         <Link
           to="/avlnf"
-          className={`text-sm ${location.pathname === '/avl' ? 'font-semibold' : 'hover:underline'}`}
+          className={`text-sm ${location.pathname === '/avlnf' ? 'font-semibold' : 'hover:underline'}`}
         >
           Available Non-Food Items
         </Link>

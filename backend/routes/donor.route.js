@@ -15,6 +15,8 @@ import {
   nonfoodrequestFood,
   getNonFoodRequestsForDonor,
   getnonfoodStatus,
+  getUsernonfoodDonations,
+  updatenonfoodDonor,
 } from '../controllers/donor.controller.js';
 
 const router = express.Router();
@@ -26,7 +28,9 @@ router.get('/userdonations/:userId', getDonationsByUserId);
 router.get('/get-donor/:id', getid);
 router.get('/get-nondonor/:id', getnonid);
 router.put('/:id', updateDonor);
+router.put('/nonfood/:id', updatenonfoodDonor);
 router.get('/userdonations/:userId', getUserDonations); 
+router.get('/usernonfooddonations/:userId', getUsernonfoodDonations); 
 router.post('/request', requestFood);
 router.get('/requests/:userId', getRequestsForDonor);
 router.patch('/requests/:requestId/status', getStatus);
