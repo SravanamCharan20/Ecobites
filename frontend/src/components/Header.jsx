@@ -73,7 +73,7 @@ const Header = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 w-full bg-[#fff] text-black h-12 flex items-center px-6 z-50 transition-transform duration-300 ${
+      className={`fixed top-0 left-0 w-full bg-[#fff] text-black h-10 flex items-center px-5 z-50 transition-transform duration-300 ${
         isVisible ? 'translate-y-0' : '-translate-y-12'
       }`}
     >
@@ -109,7 +109,7 @@ const Header = () => {
 
           {/* Food Dropdown Menu */}
           {showFoodDropdown && (
-            <div className="absolute left-0 mt-4 bg-teal-600 text-white rounded-lg w-48 p-2">
+            <div className="absolute left-0 mt-4 bg-[#fff]  text-gray-800 border border-black rounded-lg w-48 p-2">
               <Link
                 to="/addfood"
                 className="block px-2 py-1 text-sm hover:underline"
@@ -119,21 +119,21 @@ const Header = () => {
               </Link>
               <Link
                 to="/managefood"
-                className="block px-2 py-1 text-sm text-white hover:underline"
+                className="block px-2 py-1 text-sm text-gray-800 hover:underline"
                 onClick={() => setShowFoodDropdown(false)} 
               >
                 Manage Food Item
               </Link>
               <Link
                 to="/addnonfood"
-                className="block px-2 py-1 text-sm text-white hover:underline"
+                className="block px-2 py-1 text-sm text-gray-800 hover:underline"
                 onClick={() => setShowFoodDropdown(false)} 
               >
                 Add Non-Food Item
               </Link>
               <Link
                 to="/managenonfood"
-                className="block px-2 py-1 text-sm text-white hover:underline"
+                className="block px-2 py-1 text-sm text-gray-800 hover:underline"
                 onClick={() => setShowFoodDropdown(false)} 
               >
                 Manage Non-Food Item
@@ -142,35 +142,37 @@ const Header = () => {
           )}
         </div>
         
-        {/* My Requests Dropdown */}
-        <div className="relative" ref={nonFoodDropdownRef}>
-          <button
-            onClick={toggleNonFoodDropdown}
-            className={`text-sm flex items-center ${location.pathname.startsWith(`/myrequests/${userId}`) ? 'font-semibold' : 'hover:underline'}`}
-          >
-            My Requests <FaCaretDown className={`ml-2 ${showNonFoodDropdown ? 'rotate-180' : 'rotate-0'}`} />
-          </button>
+        {/* Render My Requests only if the user is present */}
+        {currentUser && (
+          <div className="relative" ref={nonFoodDropdownRef}>
+            <button
+              onClick={toggleNonFoodDropdown}
+              className={`text-sm flex items-center ${location.pathname.startsWith(`/myrequests/${userId}`) ? 'font-semibold' : 'hover:underline'}`}
+            >
+              My Requests <FaCaretDown className={`ml-2 ${showNonFoodDropdown ? 'rotate-180' : 'rotate-0'}`} />
+            </button>
 
-          {/* My Requests Dropdown Menu */}
-          {showNonFoodDropdown && (
-            <div className="absolute left-0 mt-4 bg-teal-600 text-white rounded-lg w-48 p-2">
-              <Link
-                to={`/myrequests/${userId}`}
-                className="block px-2 py-1 text-sm hover:underline"
-                onClick={() => setShowNonFoodDropdown(false)} // Close dropdown on link click
-              >
-                Food Requests
-              </Link>
-              <Link
-                to={`/requests-nonfood/${userId}`}
-                className="block px-2 py-1 text-sm hover:underline"
-                onClick={() => setShowNonFoodDropdown(false)} // Close dropdown on link click
-              >
-                Non-Food Requests
-              </Link>
-            </div>
-          )}
-        </div>
+            {/* My Requests Dropdown Menu */}
+            {showNonFoodDropdown && (
+              <div className="absolute left-0 mt-4 border bg-[#fff] border-black  text-gray-800 rounded-lg w-48 p-2">
+                <Link
+                  to={`/myrequests/${userId}`}
+                  className="block px-2 py-1 text-sm hover:underline"
+                  onClick={() => setShowNonFoodDropdown(false)} // Close dropdown on link click
+                >
+                  Food Requests
+                </Link>
+                <Link
+                  to={`/requests-nonfood/${userId}`}
+                  className="block px-2 py-1 text-sm hover:underline"
+                  onClick={() => setShowNonFoodDropdown(false)} // Close dropdown on link click
+                >
+                  Non-Food Requests
+                </Link>
+              </div>
+            )}
+          </div>
+        )}
 
         <Link
           to="/about"

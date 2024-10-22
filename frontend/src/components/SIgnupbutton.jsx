@@ -44,7 +44,7 @@ const SignupButton = () => {
           {/* Dropdown Menu */}
           {showDropdown && (
             <div
-              className="absolute right-0 mt-2 w-48 border border-black shadow-lg rounded-lg overflow-hidden z-50"
+              className="absolute right-0 mt-2 w-48 border bg-[#fff] border-black shadow-lg rounded-lg overflow-hidden z-50"
             >
               <Link
                 to="/update-profile"
@@ -60,10 +60,10 @@ const SignupButton = () => {
       ) : (
         <Link
           to="/signup"
-          className={`px-5 py-4 rounded-full ${
+          className={`px-3 py-2 rounded-full ${
             location.pathname === '/signup'
-              ? 'bg-gray-500 text-white'
-              : 'bg-gray-500 text-white hover:bg-black hover:translate-x-1 hover:translate-y-1'
+              ? 'bg-green-500 text-white'
+              : 'bg-green-500 text-white hover:bg-black hover:translate-x-1 hover:translate-y-1'
           }`}
         >
           Signup

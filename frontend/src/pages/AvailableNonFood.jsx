@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { HiArrowSmRight } from 'react-icons/hi';
 import { useNavigate } from 'react-router-dom';
 
 const AvailableNonFoodList = () => {
@@ -199,7 +200,7 @@ const AvailableNonFoodList = () => {
       {sortedNonFoodItems.length > 0 && (
         <table className="min-w-full border-collapse mt-4 rounded-lg overflow-hidden">
           <thead>
-            <tr className="bg-teal-700 text-white text-left rounded-t-lg">
+            <tr className="bg-gray-700 text-white text-left rounded-t-lg">
               <th className="px-4 py-3 border-b-2 border-gray-300">Donor</th>
               <th className="px-4 py-3 border-b-2 border-gray-300">Non-Food Items</th>
               <th className="px-4 py-3 border-b-2 border-gray-300">Distance (km)</th>
@@ -238,9 +239,9 @@ const AvailableNonFoodList = () => {
                 <td className="px-4 py-4">
                   <button
                     onClick={() => handleViewDetails(item._id)}
-                    className="bg-slate-700 text-white py-2 px-4 rounded-full hover:bg-teal-600"
+                    className="bg-gray-700 text-white rounded-3xl py-2 px-4 flex items-center justify-center hover:bg-slate-950"
                   >
-                    View Details
+                    More<HiArrowSmRight className='ml-2'/>
                   </button>
                 </td>
               </tr>

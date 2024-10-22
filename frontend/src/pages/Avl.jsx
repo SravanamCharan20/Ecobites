@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { HiArrowSmRight } from "react-icons/hi";
+
 
 const AvailableFoodList = () => {
   const [foodItems, setFoodItems] = useState([]);
@@ -174,7 +176,7 @@ const AvailableFoodList = () => {
       {sortedFoodItems.length > 0 && (
         <table className="min-w-full border-collapse mt-4 rounded-lg overflow-hidden">
           <thead>
-            <tr className="bg-teal-700 text-white text-left rounded-t-lg">
+            <tr className="bg-gray-700 text-white text-left rounded-t-lg">
               <th className="px-4 py-3 border-b-2 border-gray-300">Donor</th>
               <th className="px-4 py-3 border-b-2 border-gray-300">Food Items</th>
               <th className="px-4 py-3 border-b-2 border-gray-300">Expiry Date</th>
@@ -205,9 +207,9 @@ const AvailableFoodList = () => {
                 <td className="px-4 py-4">
                   <button
                     onClick={() => handleViewDetails(item._id)}
-                    className="bg-gray-800 text-white p-3 rounded-full hover:bg-teal-600 transition duration-300"
+                    className="bg-gray-700 text-white rounded-3xl py-2 px-4 flex items-center justify-center hover:bg-slate-950"
                   >
-                    View Details
+                    More<HiArrowSmRight className='ml-2'/>
                   </button>
                 </td>
               </tr>

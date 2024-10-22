@@ -53,7 +53,7 @@ export default function SignIn() {
           type='email'
           placeholder='Email'
           id='email'
-          className='text-gray-900 p-3 rounded-full border-2 border-teal-600 focus:outline-none transition-all duration-1000 ease-out'
+          className='text-gray-900 p-4 rounded-md border-2 border-gray-300 focus:outline-none transition-all duration-300 ease-out'
           onChange={handleChange}
           required
           aria-label='Email'
@@ -62,14 +62,14 @@ export default function SignIn() {
           type='password'
           placeholder='Password'
           id='password'
-          className='text-gray-900 p-3 rounded-full border-2 border-teal-600 focus:outline-none transition-all duration-1000 ease-out'
+          className='text-gray-900 p-4 rounded-md border-2 border-gray-300 focus:outline-none transition-all duration-300 ease-out'
           onChange={handleChange}
           required
           aria-label='Password'
         />
         <button
           disabled={loading}
-          className='bg-teal-600 text-white p-3 mt-1 rounded-lg uppercase hover:opacity-95 disabled:opacity-80'
+          className='bg-gray-800 text-white p-4 mt-1 rounded-md uppercase hover:opacity-95 disabled:opacity-80'
         >
           {loading ? <SyncLoader size={6} color="#fff" /> : 'Sign In'}
         </button>
@@ -77,7 +77,7 @@ export default function SignIn() {
       <div className='flex gap-2 mt-5'>
         <p className='text-gray-800'>Don't have an account?</p>
         <Link to='/signup'>
-          <span className='text-teal-800 hover:underline'>Sign Up</span>
+          <span className='text-gray-600 hover:underline'>Sign Up</span>
         </Link>
       </div>
       {message && <p className='text-red-700 mt-5' aria-live='assertive'>{message}</p>}
