@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { FiSearch } from 'react-icons/fi';
+import { FiEdit2 } from "react-icons/fi";
+import { IoIosAddCircle, IoIosRemoveCircle } from "react-icons/io";
+import { HiArrowSmRight } from "react-icons/hi";
+import { MdCancelPresentation } from "react-icons/md";
+import { CiLocationArrow1 } from "react-icons/ci";
 
 const ManageNonFood = () => {
   const [donations, setDonations] = useState([]);
@@ -152,7 +157,7 @@ const ManageNonFood = () => {
                       placeholder="Name"
                       value={currentDonor.name}
                       onChange={handleChange}
-                      className="border-2 border-teal-600 p-3 rounded text-black focus:outline-none focus:ring-2 mb-2 w-full"
+                      className="border-2 border-gray-600 p-3 rounded text-black focus:outline-none focus:ring-2 mb-2 w-full"
                     />
                     <input
                       type="email"
@@ -160,7 +165,7 @@ const ManageNonFood = () => {
                       placeholder="Email"
                       value={currentDonor.email}
                       onChange={handleChange}
-                      className="border-2 border-teal-600 p-3 rounded text-black focus:outline-none focus:ring-2 mb-2 w-full"
+                      className="border-2 border-gray-600 p-3 rounded text-black focus:outline-none focus:ring-2 mb-2 w-full"
                     />
                     <input
                       type="tel"
@@ -168,8 +173,9 @@ const ManageNonFood = () => {
                       placeholder="Contact Number"
                       value={currentDonor.contactNumber}
                       onChange={handleChange}
-                      className="border-2 border-teal-600 p-3 rounded text-black focus:outline-none focus:ring-2 mb-2 w-full"
+                      className="border-2 border-gray-600 p-3 rounded text-black focus:outline-none focus:ring-2 mb-2 w-full"
                     />
+
                     <h2 className="text-xl font-semibold mb-2">Non-Food Items</h2>
                     {currentDonor.nonFoodItems.map((item, index) => (
                       <div key={index} className="mb-4 border p-3 rounded-lg">
@@ -192,32 +198,32 @@ const ManageNonFood = () => {
                         <button
                           type="button"
                           onClick={() => removeNonFoodItem(index)}
-                          className="text-white border-2 p-2 rounded-full bg-red-400 hover:bg-red-600"
+                          className="text-white border-2 p-2 rounded-full bg-red-500 px-3 hover:bg-red-700"
                         >
-                          Remove Non-Food Item
+                          Remove Non-Food Item <IoIosRemoveCircle className="inline ml-1" />
                         </button>
                       </div>
                     ))}
                     <button
                       type="button"
                       onClick={addNonFoodItem}
-                      className="bg-teal-500 text-white p-2 rounded-full mb-4"
+                      className="bg-green-500 text-white p-2 px-3 rounded-full mb-4"
                     >
-                      Add Non-Food Item
+                      Add Non-Food Item <IoIosAddCircle className="inline ml-1" />
                     </button>
 
                     <button
                       type="submit"
-                      className="bg-teal-500 rounded-full text-white p-2 ml-2"
+                      className="bg-gray-800 hover:bg-black rounded-full text-white p-2 px-3 ml-2"
                     >
-                      Save Changes
+                      Save Changes <HiArrowSmRight className="inline ml-1" />
                     </button>
                     <button
                       type="button"
                       onClick={() => setEditMode(null)}
-                      className="bg-gray-300 text-black p-2 rounded-full ml-2"
+                      className="bg-gray-300 text-black p-2 px-3 rounded-full ml-2"
                     >
-                      Cancel
+                      Cancel <MdCancelPresentation className="inline ml-1" />
                     </button>
                   </form>
                 ) : (
@@ -236,9 +242,9 @@ const ManageNonFood = () => {
                     </ul>
                     <button
                       onClick={() => handleEditClick(donation)}
-                      className="bg-teal-500 text-white p-2 rounded-lg mt-2"
+                      className="bg-amber-300 text-black p-2 rounded-lg mt-2"
                     >
-                      Edit Non-Food
+                      Edit Non-Food <FiEdit2 className="inline ml-1" />
                     </button>
                   </>
                 )}

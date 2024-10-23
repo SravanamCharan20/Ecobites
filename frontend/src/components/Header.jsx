@@ -13,10 +13,10 @@ const Header = () => {
   const nonFoodDropdownRef = useRef(null); // Reference for non-food dropdown
 
   const userId = currentUser?.id;
-  
+
   const [scrollY, setScrollY] = useState(0); // To track scroll position
   const [isVisible, setIsVisible] = useState(true); // To control navbar visibility
-  
+
   // Effect for handling clicks outside the dropdowns
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -77,110 +77,110 @@ const Header = () => {
         isVisible ? 'translate-y-0' : '-translate-y-12'
       }`}
     >
-      <div><Link
-                to="/"
-                className="text-1xl"
-              >
-                EcoBites
-              </Link></div>
-      <div className='justify-around ml-64'>
-      <div className="flex items-center space-x-8">
-        <Link
-          to="/avl"
-          className={`text-sm ${location.pathname === '/avl' ? 'font-semibold' : 'hover:underline'}`}
-        >
-          Available Food Items
+      <div>
+        <Link to="/" className="text-1xl">
+          EcoBites
         </Link>
-        <Link
-          to="/avlnf"
-          className={`text-sm ${location.pathname === '/avlnf' ? 'font-semibold' : 'hover:underline'}`}
-        >
-          Available Non-Food Items
-        </Link>
-
-        {/* Food Dropdown Wrapper */}
-        <div className="relative" ref={foodDropdownRef}>
-          <button
-            onClick={toggleFoodDropdown}
-            className={`text-sm flex items-center ${location.pathname === '/donate' ? 'font-semibold' : 'hover:underline'}`}
+      </div>
+      <div className='flex flex-grow justify-center'>
+        <div className="flex items-center space-x-8">
+          <Link
+            to="/avl"
+            className={`text-sm ${location.pathname === '/avl' ? 'font-semibold' : 'hover:underline'}`}
           >
-            Donate <FaCaretDown className={`ml-2 ${showFoodDropdown ? 'rotate-180' : 'rotate-0'}`} />
-          </button>
+            Available Food Items
+          </Link>
+          <Link
+            to="/avlnf"
+            className={`text-sm ${location.pathname === '/avlnf' ? 'font-semibold' : 'hover:underline'}`}
+          >
+            Available Non-Food Items
+          </Link>
 
-          {/* Food Dropdown Menu */}
-          {showFoodDropdown && (
-            <div className="absolute left-0 mt-4 bg-[#fff]  text-gray-800 border border-black rounded-lg w-48 p-2">
-              <Link
-                to="/addfood"
-                className="block px-2 py-1 text-sm hover:underline"
-                onClick={() => setShowFoodDropdown(false)} // Close dropdown on link click
-              >
-                Add Food Item
-              </Link>
-              <Link
-                to="/managefood"
-                className="block px-2 py-1 text-sm text-gray-800 hover:underline"
-                onClick={() => setShowFoodDropdown(false)} 
-              >
-                Manage Food Item
-              </Link>
-              <Link
-                to="/addnonfood"
-                className="block px-2 py-1 text-sm text-gray-800 hover:underline"
-                onClick={() => setShowFoodDropdown(false)} 
-              >
-                Add Non-Food Item
-              </Link>
-              <Link
-                to="/managenonfood"
-                className="block px-2 py-1 text-sm text-gray-800 hover:underline"
-                onClick={() => setShowFoodDropdown(false)} 
-              >
-                Manage Non-Food Item
-              </Link>
-            </div>
-          )}
-        </div>
-        
-        {/* Render My Requests only if the user is present */}
-        {currentUser && (
-          <div className="relative" ref={nonFoodDropdownRef}>
+          {/* Food Dropdown Wrapper */}
+          <div className="relative" ref={foodDropdownRef}>
             <button
-              onClick={toggleNonFoodDropdown}
-              className={`text-sm flex items-center ${location.pathname.startsWith(`/myrequests/${userId}`) ? 'font-semibold' : 'hover:underline'}`}
+              onClick={toggleFoodDropdown}
+              className={`text-sm flex items-center ${location.pathname === '/donate' ? 'font-semibold' : 'hover:underline'}`}
             >
-              My Requests <FaCaretDown className={`ml-2 ${showNonFoodDropdown ? 'rotate-180' : 'rotate-0'}`} />
+              Donate <FaCaretDown className={`ml-2 ${showFoodDropdown ? 'rotate-180' : 'rotate-0'}`} />
             </button>
 
-            {/* My Requests Dropdown Menu */}
-            {showNonFoodDropdown && (
-              <div className="absolute left-0 mt-4 border bg-[#fff] border-black  text-gray-800 rounded-lg w-48 p-2">
+            {/* Food Dropdown Menu */}
+            {showFoodDropdown && (
+              <div className="absolute left-0 mt-4 bg-[#fff] text-gray-800 border border-black rounded-lg w-48 p-2">
                 <Link
-                  to={`/myrequests/${userId}`}
+                  to="/addfood"
                   className="block px-2 py-1 text-sm hover:underline"
-                  onClick={() => setShowNonFoodDropdown(false)} // Close dropdown on link click
+                  onClick={() => setShowFoodDropdown(false)} // Close dropdown on link click
                 >
-                  Food Requests
+                  Food Item
                 </Link>
                 <Link
-                  to={`/requests-nonfood/${userId}`}
-                  className="block px-2 py-1 text-sm hover:underline"
-                  onClick={() => setShowNonFoodDropdown(false)} // Close dropdown on link click
+                  to="/managefood"
+                  className="block px-2 py-1 text-sm text-gray-800 hover:underline"
+                  onClick={() => setShowFoodDropdown(false)} 
                 >
-                  Non-Food Requests
+                  Manage Food Item
+                </Link>
+                <Link
+                  to="/addnonfood"
+                  className="block px-2 py-1 text-sm text-gray-800 hover:underline"
+                  onClick={() => setShowFoodDropdown(false)} 
+                >
+                  Non-Food Item
+                </Link>
+                <Link
+                  to="/managenonfood"
+                  className="block px-2 py-1 text-sm text-gray-800 hover:underline"
+                  onClick={() => setShowFoodDropdown(false)} 
+                >
+                  Manage Non-Food Item
                 </Link>
               </div>
             )}
           </div>
-        )}
 
-        <Link
-          to="/about"
-          className={`text-sm ${location.pathname === '/about' ? 'font-semibold' : 'hover:underline'}`}
-        >
-          About
-        </Link>
-      </div>
+          {/* Render My Requests only if the user is present */}
+          {currentUser && (
+            <div className="relative" ref={nonFoodDropdownRef}>
+              <button
+                onClick={toggleNonFoodDropdown}
+                className={`text-sm flex items-center ${location.pathname.startsWith(`/myrequests/${userId}`) ? 'font-semibold' : 'hover:underline'}`}
+              >
+                Requests <FaCaretDown className={`ml-2 ${showNonFoodDropdown ? 'rotate-180' : 'rotate-0'}`} />
+              </button>
+
+              {/* My Requests Dropdown Menu */}
+              {showNonFoodDropdown && (
+                <div className="absolute left-0 mt-4 border bg-[#fff] border-black text-gray-800 rounded-lg w-48 p-2">
+                  <Link
+                    to={`/myrequests/${userId}`}
+                    className="block px-2 py-1 text-sm hover:underline"
+                    onClick={() => setShowNonFoodDropdown(false)} // Close dropdown on link click
+                  >
+                    Food Requests
+                  </Link>
+                  <Link
+                    to={`/requests-nonfood/${userId}`}
+                    className="block px-2 py-1 text-sm hover:underline"
+                    onClick={() => setShowNonFoodDropdown(false)} // Close dropdown on link click
+                  >
+                    Non-Food Requests
+                  </Link>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Uncomment if needed */}
+          {/* <Link
+            to="/about"
+            className={`text-sm ${location.pathname === '/about' ? 'font-semibold' : 'hover:underline'}`}
+          >
+            About
+          </Link> */}
+        </div>
       </div>
       <SignupButton />
     </header>

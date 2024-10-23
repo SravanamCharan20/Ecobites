@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
+import { HiArrowSmRight } from 'react-icons/hi';
+import { CiLocationArrow1 } from "react-icons/ci";
+
 
 const NonFoodDetails = () => {
   const { id } = useParams();
@@ -163,157 +166,114 @@ const NonFoodDetails = () => {
   if (!nonFoodDetails) return <p className="text-center text-gray-500">No details available for this item.</p>;
 
   return (
-    <div className="max-w-6xl mx-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div className="h-96">
-        <MapContainer center={[nonFoodDetails.location.latitude, nonFoodDetails.location.longitude]} zoom={13} scrollWheelZoom={false} className="h-full">
-          <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-          />
-          <Marker position={[nonFoodDetails.location.latitude, nonFoodDetails.location.longitude]}>
-            <Popup>{nonFoodDetails.name}</Popup>
-          </Marker>
-        </MapContainer>
+    <div className="max-w-6xl mx-auto p-6">
+      <div className="text-center mb-8">
+        <p className="text-xl text-gray-600 mb-12">Explore the details and request any item if you need it!</p>
       </div>
-      <div>
-        <h1 className="text-4xl font-bold text-gray-800 mb-6">Non-Food Donation Details</h1>
-        <p className="text-xl text-gray-600 mb-2"><strong>Donor Name:</strong> {nonFoodDetails.name}</p>
-        <p className="text-xl text-gray-600 mb-2"><strong>Contact Number:</strong> {nonFoodDetails.contactNumber}</p>
-        <p className="text-xl text-gray-600 mb-2">
-          <strong>Location:</strong> {nonFoodDetails.location ? `${nonFoodDetails.location.latitude}, ${nonFoodDetails.location.longitude}` : 'N/A'}
-        </p>
-        <h3 className="text-xl font-bold text-gray-800 mt-6 mb-4">Non-Food Items</h3>
-        {nonFoodDetails.nonFoodItems && nonFoodDetails.nonFoodItems.map((item, index) => (
-          <div key={index} className="mb-4">
-            <p className="text-gray-600 mb-2"><strong>Name:</strong> {item.name}</p>
-            <p className="text-gray-600 mb-2"><strong>Type:</strong> {item.type}</p>
-            <p className="text-gray-600 mb-2"><strong>Condition:</strong> {item.condition}</p>
-            <p className="text-gray-600 mb-2"><strong>Quantity:</strong> {item.quantity}</p>
-            <p className="text-gray-600 mb-2"><strong>Price:</strong> {item.price}</p>
-          </div>
-        ))}
-        <p className="text-gray-600 mb-2"><strong>Available Until:</strong> {new Date(nonFoodDetails.availableUntil).toLocaleDateString()}</p>
-        <div className="mt-6">
-          <button
-            className="border-2 border-teal-600 hover:bg-teal-600 text-gray-800 hover:text-white font-bold py-3 px-6 rounded-lg"
-            onClick={() => setShowRequestForm(!showRequestForm)}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="rounded-lg shadow-lg border border-slate-200 transition-transform duration-300 hover:scale-105">
+          <MapContainer
+            center={[nonFoodDetails.location.latitude || 51.505, nonFoodDetails.location.longitude || -0.09]}
+            zoom={13}
+            style={{ height: '400px', width: '100%', borderRadius: '8px' }}
           >
-            {showRequestForm ? 'Cancel Request' : 'Request This Item'}
-          </button>
+            <TileLayer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            />
+            {nonFoodDetails.location.latitude && nonFoodDetails.location.longitude && (
+              <Marker position={[nonFoodDetails.location.latitude, nonFoodDetails.location.longitude]}>
+                <Popup>
+                  Donor Location: {nonFoodDetails.location.city}, {nonFoodDetails.location.state}
+                </Popup>
+              </Marker>
+            )}
+          </MapContainer>
         </div>
-        
-        {showRequestForm && (
-          <form onSubmit={handleRequestSubmit} className="mt-4">
-            <h3 className="text-lg font-bold text-gray-800 mb-4">Request Form</h3>
+
+        <div className="rounded-lg shadow-lg border-2 border-lime-200 p-6 bg-lime-100">
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">Non-Food Details</h2>
+          <p className="text-gray-600 mb-2"><strong>Donor Name:</strong> {nonFoodDetails.name}</p>
+          <p className="text-gray-600 mb-2"><strong>Contact Number:</strong> {nonFoodDetails.contactNumber}</p>
+          <p className="text-gray-600 mb-2"><strong>Location:</strong> {nonFoodDetails.location ? `${nonFoodDetails.location.latitude}, ${nonFoodDetails.location.longitude}` : 'N/A'}</p>
+
+          <h3 className="text-xl font-bold text-gray-800 mt-6 mb-4">Non-Food Items</h3>
+          {nonFoodDetails.nonFoodItems && nonFoodDetails.nonFoodItems.map((item, index) => (
+            <div key={index} className="mb-4 border-t border-gray-300 pt-2">
+              <p className="text-gray-600 mb-1"><strong>Name:</strong> {item.name}</p>
+              <p className="text-gray-600 mb-1"><strong>Type:</strong> {item.type}</p>
+              <p className="text-gray-600 mb-1"><strong>Condition:</strong> {item.condition}</p>
+              <p className="text-gray-600 mb-1"><strong>Quantity:</strong> {item.quantity}</p>
+              <p className="text-gray-600 mb-1"><strong>Price:</strong> {item.price}</p>
+            </div>
+          ))}
+          <p className="text-gray-600 mb-2"><strong>Available Until:</strong> {new Date(nonFoodDetails.availableUntil).toLocaleDateString()}</p>
+
+          <div className="mt-6">
+            <button
+              className="bg-gray-700 text-white rounded-3xl py-2 px-4 flex items-center justify-center hover:bg-slate-950"
+              onClick={() => setShowRequestForm(!showRequestForm)}
+            >
+              {showRequestForm ? 'Cancel Request' : 'Request Item '}<HiArrowSmRight className='ml-2'/>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {showRequestForm && (
+        <form onSubmit={handleRequestSubmit} className="mt-8 rounded-lg shadow-lg border-2 border-pink-200 p-6 bg-pink-100">
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">Request Form</h2>
+          <div className="mb-4">
+            <label className="block text-gray-700 mb-1" htmlFor="name">Name:</label>
             <input
+              className="w-full border border-gray-300 rounded-lg p-2"
               type="text"
+              id="name"
               name="name"
-              placeholder="Your Name"
               value={formData.name}
               onChange={handleInputChange}
               required
-              className="border border-gray-300 rounded-lg p-2 mb-4 w-full"
             />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700 mb-1" htmlFor="contactNumber">Contact Number:</label>
             <input
+              className="w-full border border-gray-300 rounded-lg p-2"
               type="text"
+              id="contactNumber"
               name="contactNumber"
-              placeholder="Your Contact Number"
               value={formData.contactNumber}
               onChange={handleInputChange}
               required
-              className="border border-gray-300 rounded-lg p-2 mb-4 w-full"
             />
-            <div className="flex mb-4">
-              <div className="flex-grow mr-2">
-                <input
-                  type="text"
-                  name="street"
-                  placeholder="Street"
-                  value={formData.address.street}
-                  onChange={handleInputChange}
-                  required
-                  className="border border-gray-300 rounded-lg p-2 w-full"
-                />
-              </div>
-              <div className="flex-grow mr-2">
-                <input
-                  type="text"
-                  name="city"
-                  placeholder="City"
-                  value={formData.address.city}
-                  onChange={handleInputChange}
-                  required
-                  className="border border-gray-300 rounded-lg p-2 w-full"
-                />
-              </div>
-            </div>
-            <div className="flex mb-4">
-              <div className="flex-grow mr-2">
-                <input
-                  type="text"
-                  name="state"
-                  placeholder="State"
-                  value={formData.address.state}
-                  onChange={handleInputChange}
-                  required
-                  className="border border-gray-300 rounded-lg p-2 w-full"
-                />
-              </div>
-              <div className="flex-grow mr-2">
-                <input
-                  type="text"
-                  name="postalCode"
-                  placeholder="Postal Code"
-                  value={formData.address.postalCode}
-                  onChange={handleInputChange}
-                  required
-                  className="border border-gray-300 rounded-lg p-2 w-full"
-                />
-              </div>
-              <div className="flex-grow">
-                <input
-                  type="text"
-                  name="country"
-                  placeholder="Country"
-                  value={formData.address.country}
-                  onChange={handleInputChange}
-                  required
-                  className="border border-gray-300 rounded-lg p-2 w-full"
-                />
-              </div>
-            </div>
-            <div className="flex mb-4">
-              <div className="flex-grow mr-2">
-                <button
-                  type="button"
-                  onClick={handleUseLocation}
-                  className="border-2 border-teal-600 hover:bg-teal-600 text-gray-800 hover:text-white font-bold py-2 px-4 rounded-lg"
-                >
-                  Use My Location
-                </button>
-              </div>
-              <div className="flex-grow">
-                <input
-                  type="text"
-                  name="description"
-                  placeholder="Additional Description"
-                  value={formData.description}
-                  onChange={handleInputChange}
-                  className="border border-gray-300 rounded-lg p-2 w-full"
-                />
-              </div>
-            </div>
-            <button
-              type="submit"
-              className="bg-teal-600 text-white font-bold py-2 px-4 rounded-lg"
-            >
-              Submit Request
-            </button>
-            {errorMessage && <p className="text-red-500 mt-2">{errorMessage}</p>}
-            {successMessage && <p className="text-green-500 mt-2">{successMessage}</p>}
-          </form>
-        )}
-      </div>
+          </div>
+
+          <h3 className="text-xl font-bold text-gray-800 mb-4">Location</h3>
+          <p className="mb-2">{locationStatus}</p>
+          <button type="button" onClick={handleUseLocation} className="bg-blue-400 mb-4 text-white rounded-3xl py-2 px-4 flex items-center justify-center hover:bg-blue-500">
+            Use My Location<CiLocationArrow1 className='ml-2'/>
+          </button>
+
+          <div className="mb-4">
+            <label className="block text-gray-700 mb-1">Description</label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleInputChange}
+              required
+              className="border border-gray-300 p-2 rounded-lg w-full"
+            />
+          </div>
+
+        
+          {successMessage && <p className="text-green-500">{successMessage}</p>}
+          {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+          <button type="submit" className="bg-gray-700 mb-4 mt-4 text-white rounded-3xl py-2 px-4 flex items-center justify-center hover:bg-slate-950">
+            Submit<HiArrowSmRight className='ml-2'/>
+          </button>
+        </form>
+      )}
     </div>
   );
 };

@@ -19,37 +19,16 @@ const Footer = () => {
       </div>
 
       {/* Footer Content */}
-      <div className="relative z-10 container mx-auto grid grid-cols-3 gap-8">
-        {/* Left Section */}
-        <div>
-          <ul className="space-y-2">
-            <li><a href="/contact" className="hover:underline">Contact Us</a></li>
-            <li><a href="/changelog" className="hover:underline">Change Log</a></li>
-            <li><a href="/affiliate" className="hover:underline">Become Affiliate</a></li>
-          </ul>
-        </div>
-
-        {/* Center Section */}
-        <div>
-          <ul className="space-y-2">
-            <li><a href="/solo-pack" className="hover:underline">Buy Solo Pack</a></li>
-            <li><a href="/team-pack" className="hover:underline">Buy Team Pack</a></li>
-            <li><a href="/download" className="hover:underline">Download Free</a></li>
-            <li><a href="/license" className="hover:underline">License Agreement</a></li>
-          </ul>
-        </div>
-
-        {/* Right Section: Social Links */}
-        <div className="flex space-x-4">
-          <a href="https://linkedin.com" className="hover:underline">LinkedIn</a>
-          <a href="https://twitter.com" className="hover:underline">Twitter</a>
-        </div>
+      <div className="relative overflow-hidden h-32 bg-gray-900">
+        <h1 className="absolute text-white text-[150px] font-bold leading-none" style={{ bottom: '50%', left: '50%', transform: 'translate(-50%, 50%)' }}>
+          Ecobites
+        </h1>
       </div>
 
       {/* Footer Bottom Section */}
       <div className="mt-8 border-t border-gray-700 pt-6 text-sm flex justify-between">
         <span>© Ecobites 2024</span>
-        <span>Made by [Your Name]</span>
+        <span>Made by Sravanam Charan</span>
       </div>
     </footer>
   );

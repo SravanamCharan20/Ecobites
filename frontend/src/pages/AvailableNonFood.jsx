@@ -116,7 +116,7 @@ const AvailableNonFoodList = () => {
         let itemCoords;
 
         if (item.location.latitude && item.location.longitude) {
-          itemCoords = { lat: item.location.latitude, lon: item.location.longitude };
+          itemCoords = { lat: parseFloat(item.location.latitude), lon: parseFloat(item.location.longitude) };
         } else {
           itemCoords = await getCoordinatesFromAddress(item.address);
         }
@@ -132,14 +132,9 @@ const AvailableNonFoodList = () => {
 
         const addressFromCoords = await getAddressFromCoordinates(itemCoords.lat, itemCoords.lon);
         
-        const validNonFoodItems = item.nonFoodItems.filter(nonFood => nonFood.condition !== 'Used');
-        
-        if (validNonFoodItems.length === 0) return null;
-
         return { 
           ...item, 
           distance, 
-          nonFoodItems: validNonFoodItems,
           address: addressFromCoords || item.address
         };
       })
@@ -182,7 +177,7 @@ const AvailableNonFoodList = () => {
 
   return (
     <div className="p-8 max-w-7xl mx-auto rounded-lg text-gray-800">
-      <h1 className="text-4xl text-gray-800 font-bold mb-2 text-center">Available Non-Food List</h1>
+      <h1 className="text-6xl text-gray-800 font-bold mb-2 text-center">Available Non-Food List</h1>
       {locationError ? (
         <p className="text-center text-red-500">{locationError}</p>
       ) : userLocation ? (

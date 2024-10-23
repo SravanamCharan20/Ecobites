@@ -1,4 +1,9 @@
 import React, { useState } from 'react';
+import { MdOutlinePriceChange } from "react-icons/md";
+import { CiLocationArrow1 } from "react-icons/ci";
+import { IoIosRemoveCircle } from "react-icons/io";
+import { IoIosAddCircle } from "react-icons/io";
+import { HiArrowSmRight } from "react-icons/hi";
 
 const AddNonFood = () => {
   const initialFormData = {
@@ -181,7 +186,7 @@ const AddNonFood = () => {
   return (
     <div className="flex justify-center items-center min-h-screen">
       <div className="p-6 max-w-4xl w-full text-gray-800 rounded-lg grid grid-cols-2 gap-4">
-        <h1 className="col-span-2 text-3xl text-gray-800 font-semibold mb-6 text-center">Non-Food Donor Form</h1>
+        <h1 className="col-span-2 text-6xl text-gray-800 font-semibold mb-6 text-center">Donate Non-Food</h1>
 
         {/* Personal Information */}
         <input
@@ -190,7 +195,7 @@ const AddNonFood = () => {
           placeholder="Name"
           value={formData.name}
           onChange={handleInputChange}
-          className="border-2 border-teal-600 p-3 rounded text-black focus:outline-none focus:ring-2"
+          className="border-2 border-gray-600 p-3 rounded text-black focus:outline-none focus:ring-2"
         />
         <input
           type="email"
@@ -198,7 +203,7 @@ const AddNonFood = () => {
           placeholder="Email"
           value={formData.email}
           onChange={handleInputChange}
-          className="border-2 border-teal-600 p-3 rounded text-black focus:outline-none focus:ring-2"
+          className="border-2 border-gray-600 p-3 rounded text-black focus:outline-none focus:ring-2"
         />
         <input
           type="tel"
@@ -206,7 +211,7 @@ const AddNonFood = () => {
           placeholder="Contact Number"
           value={formData.contactNumber}
           onChange={handleInputChange}
-          className="col-span-2 border-2 border-teal-600 p-3 rounded text-black focus:outline-none focus:ring-2"
+          className="col-span-2 border-2 border-gray-600 p-3 rounded text-black focus:outline-none focus:ring-2"
         />
 
         {/* Donation Type Selection */}
@@ -214,27 +219,41 @@ const AddNonFood = () => {
           <button
             type="button"
             onClick={() => setFormData({ ...formData, donationType: 'free' })}
-            className={`p-3 rounded-full ${formData.donationType === 'free' ? 'bg-teal-600 text-white border-2' : 'border-2 text-black'}`}
+            className={`p-3 rounded-full ${formData.donationType === 'free' ? 'bg-gray-800 text-white border border-black' : 'border border-black text-black'}`}
           >
             Donate for Free
           </button>
           <button
             type="button"
             onClick={() => setFormData({ ...formData, donationType: 'priced' })}
-            className={`p-3 rounded-full ${formData.donationType === 'priced' ? 'bg-teal-600 text-white border-2' : 'border-2 text-black'}`}
+            className={`p-3 rounded-full flex items-center gap-2 ${formData.donationType === 'priced' ? 'bg-gray-800 text-white border border-black' : 'border border-black text-black'}`}
           >
-            Donate for Price
+            Donate for Price <MdOutlinePriceChange />
+          </button>
+        </div>
+
+        {locationMethod === 'auto' && locationStatus && (
+          <div className="col-span-2 text-left mt-2">{locationStatus}</div>
+        )}
+
+        <div className="col-span-2 flex gap-4 mb-4">
+          <button
+            type="button"
+            onClick={() => handleLocationMethodChange('auto')}
+            className={`p-3 rounded-full flex items-center gap-2 ${locationMethod === 'auto' ? 'bg-blue-400 text-white border-2' : 'border-2 text-black'}`}
+          >
+            Use My Location <CiLocationArrow1 />
           </button>
         </div>
 
         {/* Non-Food Items */}
         {formData.nonFoodItems.map((item, index) => (
-          <div key={index} className="col-span-2 grid grid-cols-2 gap-4">
+          <div key={index} className="col-span-2 grid grid-cols-2 gap-4 mb-4">
             <select
               name="type"
               value={item.type}
               onChange={(e) => handleNonFoodItemChange(index, 'type', e.target.value)}
-              className="border-2 border-teal-600 p-3 rounded text-black focus:outline-none focus:ring-2"
+              className="border-2 border-gray-600 p-3 rounded text-black focus:outline-none focus:ring-2"
             >
               <option value="Clothing">Clothing</option>
               <option value="Furniture">Furniture</option>
@@ -249,13 +268,13 @@ const AddNonFood = () => {
               placeholder="Item Name"
               value={item.name}
               onChange={(e) => handleNonFoodItemChange(index, 'name', e.target.value)}
-              className="border-2 border-teal-600 p-3 rounded text-black focus:outline-none focus:ring-2"
+              className="border-2 border-gray-600 p-3 rounded text-black focus:outline-none focus:ring-2"
             />
 
             <select
               value={item.condition}
               onChange={(e) => handleNonFoodItemChange(index, 'condition', e.target.value)}
-              className="border-2 border-teal-600 p-3 rounded text-black focus:outline-none focus:ring-2"
+              className="border-2 border-gray-600 p-3 rounded text-black focus:outline-none focus:ring-2"
             >
               <option value="New">New</option>
               <option value="Used">Used</option>
@@ -266,7 +285,7 @@ const AddNonFood = () => {
               placeholder="Quantity"
               value={item.quantity}
               onChange={(e) => handleNonFoodItemChange(index, 'quantity', e.target.value)}
-              className="border-2 border-teal-600 p-3 rounded text-black focus:outline-none focus:ring-2"
+              className="border-2 border-gray-600 p-3 rounded text-black focus:outline-none focus:ring-2"
             />
 
             {formData.donationType === 'priced' && (
@@ -275,16 +294,16 @@ const AddNonFood = () => {
                 placeholder="Price"
                 value={item.price}
                 onChange={(e) => handleNonFoodItemChange(index, 'price', e.target.value)}
-                className="border-2 border-teal-600 p-3 rounded text-black focus:outline-none focus:ring-2"
+                className="border-2 border-gray-600 p-3 rounded text-black focus:outline-none focus:ring-2"
               />
             )}
 
             <button
               type="button"
               onClick={() => removeNonFoodItem(index)}
-              className="bg-red-500 text-white p-2 rounded-full"
+              className="col-span-3 bg-red-600 text-white p-3 w-1/3 rounded-3xl flex items-center gap-2"
             >
-              Remove
+              Remove Non-Food Item <IoIosRemoveCircle />
             </button>
           </div>
         ))}
@@ -292,54 +311,15 @@ const AddNonFood = () => {
         <button
           type="button"
           onClick={addNonFoodItem}
-          className="col-span-2 bg-teal-600 text-white p-3 rounded"
+          className="col-span-2 w-1/3 rounded-3xl bg-green-500 text-white p-3 flex items-center gap-2"
         >
-          Add Another Non-Food Item
+          Add Another Non-Food Item <IoIosAddCircle />
         </button>
 
         {/* Location Method */}
-        <div className="col-span-2">
-          <p className="text-lg mb-2">Choose Location Input Method:</p>
-          <div className="flex gap-4">
-            <button
-              type="button"
-              onClick={() => handleLocationMethodChange('manual')}
-              className={`p-3 rounded-full ${locationMethod === 'manual' ? 'bg-teal-600 text-white border-2' : 'border-2 text-black'}`}
-            >
-              Enter Manually
-            </button>
-            <button
-              type="button"
-              onClick={() => handleLocationMethodChange('auto')}
-              className={`p-3 rounded-full ${locationMethod === 'auto' ? 'bg-teal-600 text-white border-2' : 'border-2 text-black'}`}
-            >
-              Use My Location
-            </button>
-          </div>
+        
 
-          {locationMethod === 'manual' && (
-            <div className="mt-4 grid grid-cols-2 gap-4">
-              <input
-                type="text"
-                name="latitude"
-                placeholder="Latitude"
-                value={formData.location.latitude}
-                onChange={handleInputChange}
-                className="border-2 border-teal-600 p-3 rounded text-black focus:outline-none focus:ring-2"
-              />
-              <input
-                type="text"
-                name="longitude"
-                placeholder="Longitude"
-                value={formData.location.longitude}
-                onChange={handleInputChange}
-                className="border-2 border-teal-600 p-3 rounded text-black focus:outline-none focus:ring-2"
-              />
-            </div>
-          )}
-
-          {locationStatus && <p className="mt-2 text-sm">{locationStatus}</p>}
-        </div>
+       
 
         {/* Available Until */}
         <input
@@ -347,21 +327,22 @@ const AddNonFood = () => {
           name="availableUntil"
           value={formData.availableUntil}
           onChange={handleInputChange}
-          className="col-span-2 border-2 border-teal-600 p-3 rounded text-black focus:outline-none focus:ring-2"
+          className="col-span-2 border-2 border-gray-600 p-3 rounded text-black focus:outline-none focus:ring-2"
         />
 
-        {/* Submit */}
-        <button
-          type="submit"
-          onClick={handleSubmit}
-          className="col-span-2 bg-teal-600 text-white p-3 rounded"
-        >
-          {loading ? 'Submitting...' : 'Submit'}
-        </button>
+        {/* Success and Error Messages */}
+        {successMessage && <div className="col-span-2 text-green-500 text-center mt-4">{successMessage}</div>}
+        {errorMessage && <div className="col-span-2 text-red-500 text-center mt-4">{errorMessage}</div>}
 
-        {/* Success/Error Messages */}
-        {successMessage && <p className="col-span-2 text-green-500">{successMessage}</p>}
-        {errorMessage && <p className="col-span-2 text-red-500">{errorMessage}</p>}
+        <button
+        type="submit"
+        onClick={handleSubmit}
+        className="col-span-2 bg-gray-800 hover:bg-black w-1/3 text-white p-2 rounded-3xl mt-4 disabled:opacity-50 flex items-center justify-center"
+        disabled={loading}
+      >
+        {loading ? 'Submitting...' : 'Submit'}
+        <HiArrowSmRight className="ml-2" />
+      </button>
       </div>
     </div>
   );

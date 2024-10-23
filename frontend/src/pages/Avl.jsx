@@ -157,7 +157,7 @@ const AvailableFoodList = () => {
 
   return (
     <div className="p-8 max-w-7xl mx-auto rounded-lg text-gray-800">
-      <h1 className="text-4xl text-gray-800 font-bold mb-2 text-center">Available Food List</h1>
+      <h1 className="text-6xl text-gray-800 font-bold mb-2 text-center">Available Food List</h1>
       {locationError ? (
         <p className="text-center text-red-500">{locationError}</p>
       ) : userLocation ? (

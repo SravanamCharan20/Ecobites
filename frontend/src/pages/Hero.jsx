@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 
 const HeroSection = () => {
   return (
-    <section className="w-full h-screen bg-[#fff] flex items-center justify-center relative overflow-hidden">
+    <section className="w-full mt-32 bg-[#fff] flex items-center rounded-full justify-center relative overflow-hidden">
       {/* Background Circles */}
       <motion.div
         className="absolute top-0 left-0 w-full h-full opacity-20"
@@ -38,9 +38,6 @@ const HeroSection = () => {
         <div className="flex justify-center space-x-6">
           <button className="bg-blue-600 text-white px-6 py-3 rounded-full shadow-md hover:bg-blue-700 transition duration-300 transform hover:scale-105">
             Get Started
-          </button>
-          <button className="bg-transparent border-2 border-blue-600 text-blue-600 px-6 py-3 rounded-full shadow-md hover:bg-blue-600 hover:text-white transition duration-300 transform hover:scale-105">
-            Learn More
           </button>
         </div>
       </motion.div>

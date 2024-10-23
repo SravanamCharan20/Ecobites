@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setUser } from '../reducers/userSlice';
 import axios from 'axios';
+import { SyncLoader } from 'react-spinners'; 
 
 const UpdateProfile = () => {
   const dispatch = useDispatch();
@@ -12,6 +13,7 @@ const UpdateProfile = () => {
   const [newPassword, setNewPassword] = useState('');
   const [profilePicture, setProfilePicture] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
 
   useEffect(() => {
     if (currentUser) {
@@ -23,6 +25,7 @@ const UpdateProfile = () => {
   const handleUpdate = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setMessage('');
     const formData = new FormData();
     formData.append('username', username);
     formData.append('oldPassword', oldPassword);
@@ -45,85 +48,65 @@ const UpdateProfile = () => {
           profilePicture: response.data.user.profilePicture,
           username: response.data.user.username,
         }));
-        alert('Profile updated successfully');
+        setMessage('Profile updated successfully');
       } else {
-        alert('Failed to update profile');
+        setMessage('Failed to update profile');
       }
     } catch (error) {
       console.error('Error updating profile:', error);
-      alert('Failed to update profile');
+      setMessage('Failed to update profile');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-lg mx-auto mt-10 bg-white p-6 rounded-lg shadow-lg">
-      <h2 className="text-2xl font-bold mb-4 text-center">Update Profile</h2>
-
-      {currentUser?.profilePicture && (
-        <div className="flex justify-center mb-4">
-          <img
-            src={`${import.meta.env.VITE_API_URL}/uploads/${currentUser.profilePicture}`}
-            alt="Profile"
-            className="w-32 h-32 rounded-full object-cover"
-          />
-        </div>
-      )}
-      {currentUser && (
-        <div className="text-center text-lg font-semibold mb-4">
-          {currentUser.username}
-        </div>
-      )}
-
-      <form onSubmit={handleUpdate}>
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">Username</label>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            placeholder="Enter new username"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">Old Password</label>
-          <input
-            type="password"
-            value={oldPassword}
-            onChange={(e) => setOldPassword(e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            placeholder="Enter old password"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">New Password</label>
-          <input
-            type="password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            placeholder="Enter new password"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">Profile Picture</label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => setProfilePicture(e.target.files[0])}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </div>
+    <div className='p-3 max-w-lg mx-auto'>
+      <h1 className='text-3xl text-gray-800 text-center font-semibold my-11'>Update Profile</h1>
+      <form onSubmit={handleUpdate} className='flex flex-col gap-4'>
+        <input
+          type='text'
+          placeholder='Enter new username'
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          className='text-gray-900 p-4 rounded-md border-2 border-gray-300 focus:outline-none transition-all duration-300 ease-out'
+          aria-label='Username'
+          required
+        />
+        <input
+          type='password'
+          placeholder='Enter old password'
+          value={oldPassword}
+          onChange={(e) => setOldPassword(e.target.value)}
+          className='text-gray-900 p-4 rounded-md border-2 border-gray-300 focus:outline-none transition-all duration-300 ease-out'
+          aria-label='Old password'
+          required
+        />
+        <input
+          type='password'
+          placeholder='Enter new password'
+          value={newPassword}
+          onChange={(e) => setNewPassword(e.target.value)}
+          className='text-gray-900 p-4 rounded-md border-2 border-gray-300 focus:outline-none transition-all duration-300 ease-out'
+          aria-label='New password'
+          required
+        />
+        <input
+          type='file'
+          accept='image/*'
+          onChange={(e) => setProfilePicture(e.target.files[0])}
+          className='text-gray-900 p-4 rounded-md border-2 border-gray-300 focus:outline-none transition-all duration-300 ease-out'
+          aria-label='Profile Picture'
+        />
         <button
-          type="submit"
-          className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+          type='submit'
           disabled={loading}
+          className='bg-gray-800 text-white p-4 mt-1 rounded-md uppercase hover:opacity-95 disabled:opacity-80'
         >
-          {loading ? 'Updating...' : 'Update Profile'}
+          {loading ? <SyncLoader size={6} color="#fff" /> : 'Update Profile'}
         </button>
       </form>
+      {message && <p className='text-red-700 mt-5' aria-live='assertive'>{message}</p>}
     </div>
   );
 };

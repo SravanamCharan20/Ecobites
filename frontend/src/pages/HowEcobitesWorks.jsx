@@ -6,7 +6,7 @@ const HowEcobitesWorks = () => {
     {
       title: 'BRIEFING',
       description: 'We connect donors and requesters to make food and non-food donations easy and accessible for everyone. Understanding your needs is our first step. Whether you’re looking to give or receive, we facilitate a seamless process tailored to your requirements.',
-      color: '#FF5722', // Bright orange for the briefing step
+      color: '#01dddd', // Bright orange for the briefing step
     },
     {
       title: 'DONATE ITEMS',
@@ -16,28 +16,31 @@ const HowEcobitesWorks = () => {
     {
       title: 'REQUEST ESSENTIALS',
       description: 'If you need food or non-food items, you can submit a request to receive assistance from local donors in your area. Our system allows you to specify what you need, and we match your request with available donations nearby, making help just a click away.',
-      color: '#3F51B5', // Bright blue for the request essentials step
+      color: '#ff598f', // Bright blue for the request essentials step
     },
     {
       title: 'EXPLORE DONATIONS',
       description: 'Browse through a variety of available food and non-food items from your neighbors and claim what you need. Our platform ensures that you can see real-time updates on available donations, allowing you to choose what best fits your situation.',
-      color: '#4CAF50', // Bright green for the explore donations step
+      color: '#e0e300', // Bright green for the explore donations step
     },
   ];
 
   const [currentStep, setCurrentStep] = useState(0);
 
+  // Implement looping in nextStep and prevStep
   const nextStep = () => {
-    setCurrentStep((prevStep) => (prevStep < steps.length - 1 ? prevStep + 1 : prevStep));
+    setCurrentStep((prevStep) => (prevStep + 1) % steps.length); // Looping forward
   };
 
   const prevStep = () => {
-    setCurrentStep((prevStep) => (prevStep > 0 ? prevStep - 1 : prevStep));
+    setCurrentStep((prevStep) => (prevStep - 1 + steps.length) % steps.length); // Looping backward
   };
 
   return (
     <section className="w-full bg-[#fff] px-6 md:px-12 mx-auto mb-20 flex flex-col items-center">
-      <div className="text-6xl mt-28 text-center mb-10 w-full"><h1>How EcoBites Works?</h1></div>
+      <div className="text-6xl mt-28 text-center mb-10 w-full">
+        <h1>How EcoBites Works?</h1>
+      </div>
 
       <div className="relative max-w-3xl w-full mb-10">
         {/* Step Indicator and Navigation */}
@@ -57,15 +60,13 @@ const HowEcobitesWorks = () => {
           <div className="flex space-x-4">
             <button
               onClick={prevStep}
-              className={`w-12 h-12 rounded-full bg-[#e0ff63] flex justify-center items-center ${currentStep === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
-              disabled={currentStep === 0}
+              className={`w-12 h-12 rounded-full bg-[#e0ff63] flex justify-center items-center ${currentStep === 0 ? '' : ''}`}
             >
               <span>&larr;</span>
             </button>
             <button
               onClick={nextStep}
-              className={`w-12 h-12 rounded-full bg-[#e0ff63] flex justify-center items-center ${currentStep === steps.length - 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
-              disabled={currentStep === steps.length - 1}
+              className={`w-12 h-12 rounded-full bg-[#e0ff63] flex justify-center items-center ${currentStep === steps.length - 1 ? '' : ''}`}
             >
               <span>&rarr;</span>
             </button>
@@ -86,7 +87,6 @@ const HowEcobitesWorks = () => {
           <p className="text-[#0a1f44]">{steps[currentStep].description}</p>
         </motion.div>
       </div>
-
     </section>
   );
 };

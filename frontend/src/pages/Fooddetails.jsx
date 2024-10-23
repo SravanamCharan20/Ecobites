@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';  // Import leaflet CSS
+import { HiArrowSmRight } from 'react-icons/hi';
+import { CiLocationArrow1 } from "react-icons/ci";
+
 
 const FoodDetails = () => {
   const { id } = useParams();
@@ -165,22 +168,16 @@ const FoodDetails = () => {
 
   return (
     <div className="max-w-6xl mx-auto p-6">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold text-gray-800 mb-6">Food Items:</h1>
-        <ul className="text-xl text-gray-600">
-          {foodDetails.foodItems.map((item, index) => (
-            <li key={index} className="mb-2">{item.name}</li> 
-          ))}
-        </ul>
+      <div className="text-center mb-8">
         <p className="text-xl text-gray-600 mb-12">Explore the details and request any item if you need it!</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-      <div className="flex bg-cover bg-origin-content p-2 items-center rounded-lg shadow-sm border border-slate-200 transition-transform duration-300 hover:scale-105">
+        <div className="rounded-lg shadow-lg border border-slate-200 transition-transform duration-300 hover:scale-105">
           <MapContainer
             center={[foodDetails.location.latitude || 51.505, foodDetails.location.longitude || -0.09]}
             zoom={13}
-            style={{ height: '400px', width: '100%', borderRadius: '8px' }} 
+            style={{ height: '400px', width: '100%', borderRadius: '8px' }}
           >
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -196,7 +193,7 @@ const FoodDetails = () => {
           </MapContainer>
         </div>
 
-        <div className="rounded-lg shadow-sm border border-slate-200 p-6">
+        <div className="rounded-lg shadow-lg border-2 border-lime-200 p-6 bg-lime-100">
           <h2 className="text-2xl font-bold text-gray-800 mb-4">Food Details</h2>
           <p className="text-gray-600 mb-2"><strong>Donor Name:</strong> {foodDetails.name}</p>
           <p className="text-gray-600 mb-2"><strong>Contact Number:</strong> {foodDetails.contactNumber}</p>
@@ -204,141 +201,76 @@ const FoodDetails = () => {
 
           <h3 className="text-xl font-bold text-gray-800 mt-6 mb-4">Food Items</h3>
           {foodDetails.foodItems.map((item) => (
-            <div key={item._id} className="mb-4">
-              <p className="text-gray-600 mb-2"><strong>Name:</strong> {item.name}</p>
-              <p className="text-gray-600 mb-2"><strong>Quantity:</strong> {item.quantity}</p>
-              <p className="text-gray-600 mb-2"><strong>Unit:</strong> {item.unit}</p>
-              <p className="text-gray-600 mb-2"><strong>Expiry Date:</strong> {new Date(item.expiryDate).toLocaleDateString()}</p>
+            <div key={item._id} className="mb-4 border-t border-gray-300 pt-2">
+              <p className="text-gray-600 mb-1"><strong>Name:</strong> {item.name}</p>
+              <p className="text-gray-600 mb-1"><strong>Quantity:</strong> {item.quantity}</p>
+              <p className="text-gray-600 mb-1"><strong>Unit:</strong> {item.unit}</p>
+              <p className="text-gray-600 mb-1"><strong>Expiry Date:</strong> {new Date(item.expiryDate).toLocaleDateString()}</p>
             </div>
           ))}
 
           <p className="text-gray-600 mb-2"><strong>Available Until:</strong> {new Date(foodDetails.availableUntil).toLocaleDateString()}</p>
           <div className="mt-6">
             <button
-              className="border-2 border-teal-600 hover:bg-teal-600 text-gray-800 hover:text-white font-bold py-3 px-6 rounded-lg"
+              className="bg-gray-700 text-white rounded-3xl py-2 px-4 flex items-center justify-center hover:bg-slate-950"
               onClick={() => setShowRequestForm(!showRequestForm)}
             >
-              {showRequestForm ? 'Cancel Request' : 'Request This Food'}
+              {showRequestForm ? 'Cancel Request' : 'Request Item '}<HiArrowSmRight className='ml-2'/>
             </button>
           </div>
-
         </div>
       </div>
 
       {showRequestForm && (
-        <div className="flex justify-center items-center min-h-screen">
-        <form onSubmit={handleRequestSubmit} className="p-3 w-1/2 align-middle rounded-lg">
-          <h3 className="text-2xl font-bold mb-4">Request Form</h3>
+        <form onSubmit={handleRequestSubmit} className="mt-8 rounded-lg shadow-lg border-2 border-pink-200 p-6 bg-pink-100">
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">Request Form</h2>
+          <div className="mb-4">
+            <label className="block text-gray-700 mb-1">Your Name</label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleInputChange}
+              required
+              className="border border-gray-300 p-2 rounded-lg w-full"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700 mb-1">Contact Number</label>
+            <input
+              type="tel"
+              name="contactNumber"
+              value={formData.contactNumber}
+              onChange={handleInputChange}
+              required
+              className="border border-gray-300 p-2 rounded-lg w-full"
+            />
+          </div>
+
+          <h3 className="text-xl font-bold text-gray-800 mb-4">Location</h3>
+          <p className="mb-2">{locationStatus}</p>
+          <button type="button" onClick={handleUseLocation} className="bg-blue-400 mb-4 text-white rounded-3xl py-2 px-4 flex items-center justify-center hover:bg-blue-500">
+            Use My Location<CiLocationArrow1 className='ml-2'/>
+          </button>
+
+          <div className="mb-4">
+            <label className="block text-gray-700 mb-1">Description</label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleInputChange}
+              required
+              className="border border-gray-300 p-2 rounded-lg w-full"
+            />
+          </div>
+
           {errorMessage && <p className="text-red-500">{errorMessage}</p>}
           {successMessage && <p className="text-green-500">{successMessage}</p>}
-      
-          <input
-            type="text"
-            name="name"
-            placeholder="Your Name"
-            value={formData.name}
-            onChange={handleInputChange}
-            required
-            className="border-2 rounded-full border-teal-600 w-full p-2 mb-4"
-          />
-      
-          <input
-            type="tel"
-            name="contactNumber"
-            placeholder="Your Contact Number"
-            value={formData.contactNumber}
-            onChange={handleInputChange}
-            required
-            className="border-2 rounded-full border-teal-600 w-full p-2 mb-4"
-          />
-      
-          <div className="mb-4">
-            <label className="block mb-2">Location Method:</label>
-            <div className="flex gap-4 mb-2">
-              <button
-                type="button"
-                onClick={() => setLocationMethod('manual')}
-                className={`p-3 rounded-full ${locationMethod === 'manual' ? 'bg-teal-600 text-white' : 'bg-gray-200'}`}
-              >
-                Manual Entry
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setLocationMethod('auto');
-                  handleUseLocation();
-                }}
-                className={`p-3 rounded-full ${locationMethod === 'auto' ? 'bg-teal-600 text-white' : 'bg-gray-200'}`}
-              >
-                Use My Location
-              </button>
-            </div>
-            <p className="text-gray-600">{locationStatus}</p>
-          </div>
-      
-          {locationMethod === 'manual' && (
-            <>
-              <input
-                type="text"
-                name="street"
-                placeholder="Street"
-                value={formData.address.street}
-                onChange={handleInputChange}
-                required
-                className="border-2 rounded-full border-teal-600 w-full p-2 mb-4"
-              />
-              <input
-                type="text"
-                name="city"
-                placeholder="City"
-                value={formData.address.city}
-                onChange={handleInputChange}
-                required
-                className="border-2 rounded-full border-teal-600 w-full p-2 mb-4"
-              />
-              <input
-                type="text"
-                name="state"
-                placeholder="State"
-                value={formData.address.state}
-                onChange={handleInputChange}
-                required
-                className="border-2 rounded-full border-teal-600 w-full p-2 mb-4"
-              />
-              <input
-                type="text"
-                name="postalCode"
-                placeholder="Postal Code"
-                value={formData.address.postalCode}
-                onChange={handleInputChange}
-                required
-                className="border-2 rounded-full border-teal-600 w-full p-2 mb-4"
-              />
-              <input
-                type="text"
-                name="country"
-                placeholder="Country"
-                value={formData.address.country}
-                onChange={handleInputChange}
-                required
-                className="border-2 rounded-full border-teal-600 w-full p-2 mb-4"
-              />
-            </>
-          )}
-      
-          <textarea
-            name="description"
-            placeholder="Additional Description (optional)"
-            value={formData.description}
-            onChange={handleInputChange}
-            className="border-2 rounded-lg border-teal-600 w-full p-2 mb-4"
-          ></textarea>
-      
-          <button type="submit" className="bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 px-6 rounded-lg">
-            Submit Request
+          <button type="submit" className="bg-gray-700 mb-4 mt-4 text-white rounded-3xl py-2 px-4 flex items-center justify-center hover:bg-slate-950">
+            Submit<HiArrowSmRight className='ml-2'/>
           </button>
         </form>
-      </div>
       )}
     </div>
   );

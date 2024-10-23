@@ -7,7 +7,7 @@ import Footer from '../components/Footer';
 
 const Home = () => {
   return (
-    <>≈
+    <>
     <div className="min-h-screen bg-gradient-to-b from-[#fff] to-[#fff] flex flex-col items-center font-sans">
       <section>
         <HeroSection/>

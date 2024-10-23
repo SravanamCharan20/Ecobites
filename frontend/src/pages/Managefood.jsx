@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { FiSearch } from 'react-icons/fi';
+import { FiEdit2 } from "react-icons/fi";
+import { IoIosAddCircle, IoIosRemoveCircle } from "react-icons/io";
+import { HiArrowSmRight } from "react-icons/hi";
+import { MdCancelPresentation } from "react-icons/md";
+import { CiLocationArrow1 } from "react-icons/ci";
+
 
 const ManageFood = () => {
   const [donations, setDonations] = useState([]);
@@ -198,9 +204,9 @@ const ManageFood = () => {
           <FiSearch className="mr-2" />
           <input
             type="text"
-            placeholder="Search By Food Item Name" // Updated placeholder
-            value={searchItemName} // Updated to searchItemName
-            onChange={(e) => setSearchItemName(e.target.value)} // Updated state change
+            placeholder="Search By Food Item Name"
+            value={searchItemName}
+            onChange={(e) => setSearchItemName(e.target.value)}
             className="outline-none w-full"
           />
         </div>
@@ -219,7 +225,7 @@ const ManageFood = () => {
                       placeholder="Name"
                       value={currentDonor.name}
                       onChange={handleChange}
-                      className="border-2 border-teal-600 p-3 rounded text-black focus:outline-none focus:ring-2 mb-2 w-full"
+                      className="border-2 border-gray-600 p-3 rounded text-black focus:outline-none focus:ring-2 mb-2 w-full"
                     />
                     <input
                       type="email"
@@ -227,7 +233,7 @@ const ManageFood = () => {
                       placeholder="Email"
                       value={currentDonor.email}
                       onChange={handleChange}
-                      className="border-2 border-teal-600 p-3 rounded text-black focus:outline-none focus:ring-2 mb-2 w-full"
+                      className="border-2 border-gray-600 p-3 rounded text-black focus:outline-none focus:ring-2 mb-2 w-full"
                     />
                     <input
                       type="tel"
@@ -235,21 +241,19 @@ const ManageFood = () => {
                       placeholder="Contact Number"
                       value={currentDonor.contactNumber}
                       onChange={handleChange}
-                      className="border-2 border-teal-600 p-3 rounded text-black focus:outline-none focus:ring-2 mb-2 w-full"
+                      className="border-2 border-gray-600 p-3 rounded text-black focus:outline-none focus:ring-2 mb-2 w-full"
                     />
 
+                    {locationStatus && <p className="text-gray-800 mt-2 mb-2">{locationStatus}</p>}
                     <div className="flex gap-4 mb-2">
                       <button
                         type="button"
                         onClick={() => handleLocationMethodChange('auto')}
-                        className={`border-2 rounded-full p-2 ${locationMethod === 'auto' ? 'bg-teal-500 text-gray-200' : 'bg-gray-200 text-black'} transition-colors duration-300`}
+                        className={`border-2 rounded-full p-2 px-3 ${locationMethod === 'auto' ? 'bg-blue-400 text-white border-2' : 'border-2 text-black'} transition-colors duration-300`}
                       >
-                        Use Current location
+                        Use Current Location <CiLocationArrow1 className="inline ml-1" />
                       </button>
-                      
                     </div>
-
-                    {locationStatus && <p className="text-teal-600 mb-4">{locationStatus}</p>}
 
                     <h2 className="text-xl font-semibold mb-2">Food Items</h2>
                     {currentDonor.foodItems.map((item, index) => (
@@ -281,32 +285,32 @@ const ManageFood = () => {
                         <button
                           type="button"
                           onClick={() => removeFoodItem(index)}
-                          className="text-white border-2 p-2 rounded-full bg-red-400 hover:bg-red-600"
+                          className="text-white border-2 p-2 rounded-full bg-red-500 px-3 hover:bg-red-700"
                         >
-                          Remove Food Item
+                          Remove Food Item <IoIosRemoveCircle className="inline ml-1" />
                         </button>
                       </div>
                     ))}
                     <button
                       type="button"
                       onClick={addFoodItem}
-                      className="bg-teal-500 text-white p-2 rounded-full mb-4"
+                      className="bg-green-500 text-white p-2 px-3 rounded-full mb-4"
                     >
-                      Add Food Item
+                      Add Food Item <IoIosAddCircle className="inline ml-1" />
                     </button>
 
                     <button
                       type="submit"
-                      className="bg-teal-500 rounded-full text-white p-2 ml-2"
+                      className="bg-gray-800 hover:bg-black rounded-full text-white p-2 px-3 ml-2"
                     >
-                      Save Changes
+                      Save Changes <HiArrowSmRight className="inline ml-1" />
                     </button>
                     <button
                       type="button"
                       onClick={() => setEditMode(null)}
-                      className="bg-gray-300 text-black p-2 rounded-full ml-2"
+                      className="bg-gray-300 text-black p-2 px-3 rounded-full ml-2"
                     >
-                      Cancel
+                      Cancel <MdCancelPresentation className="inline ml-1" />
                     </button>
                   </form>
                 ) : (
@@ -325,9 +329,9 @@ const ManageFood = () => {
                     </ul>
                     <button
                       onClick={() => handleEditClick(donation)}
-                      className="bg-teal-500 text-white p-2 rounded-lg mt-2"
+                      className="bg-amber-300 text-black p-2 rounded-lg mt-2"
                     >
-                      Edit Food
+                      Edit Food <FiEdit2 className="inline ml-1" />
                     </button>
                   </>
                 )}

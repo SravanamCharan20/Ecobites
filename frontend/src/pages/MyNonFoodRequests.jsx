@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { FiSearch } from "react-icons/fi";
 import { motion } from 'framer-motion';
+import { MdPendingActions } from "react-icons/md";
+import { FcAcceptDatabase } from "react-icons/fc";
+import { ImCancelCircle } from "react-icons/im";
 
 const MyNonFoodRequests = () => {
   const { userId } = useParams();
@@ -97,24 +100,29 @@ const MyNonFoodRequests = () => {
             />
           </div>
         <div>
+        <div className='flex'>
           <button
             onClick={() => setFilter('pending')}
-            className={`px-4 py-2 rounded-full button-transition ${filter === 'pending' ? 'bg-amber-400 text-white' : ''}`}
+            className={`flex px-4 py-2 rounded-full button-transition ${filter === 'pending' ? 'bg-amber-400 text-white' : ''}`}
           >
+            <MdPendingActions className='mr-2 mt-1' />
             Pending
           </button>
           <button
             onClick={() => setFilter('accepted')}
-            className={`px-4 py-2 rounded-full button-transition ${filter === 'accepted' ? 'bg-teal-600 text-white' : ''}`}
+            className={`flex px-4 py-2 rounded-full button-transition ${filter === 'accepted' ? 'bg-teal-600 text-white' : ''}`}
           >
+            <FcAcceptDatabase className='mr-2 mt-1' />
             Accepted
           </button>
           <button
             onClick={() => setFilter('rejected')}
-            className={`px-4 py-2 rounded-full button-transition ${filter === 'rejected' ? 'bg-red-500 text-white' : ''}`}
+            className={`flex px-4 py-2 ml-4 rounded-full button-transition ${filter === 'rejected' ? 'bg-red-500 text-white' : ''}`}
           >
+            <ImCancelCircle className='mr-2 mt-1' />
             Rejected
           </button>
+        </div>
           
         </div>
       </div>
