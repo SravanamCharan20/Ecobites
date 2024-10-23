@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import Logout from './Logout';
+import { FiLogIn } from "react-icons/fi";
+
 
 const SignupButton = () => {
   const location = useLocation();
@@ -60,13 +62,13 @@ const SignupButton = () => {
       ) : (
         <Link
           to="/signup"
-          className={`px-3 py-2 rounded-full ${
+          className={`px-3 py-2 mt-1 flex rounded-full ${
             location.pathname === '/signup'
-              ? 'bg-green-500 text-white'
-              : 'bg-green-500 text-white hover:bg-black hover:translate-x-1 hover:translate-y-1'
+              ? 'bg-gray-800 text-white'
+              : ' text-black'
           }`}
         >
-          Signup
+          Signup<FiLogIn className='ml-2 mt-1'/>
         </Link>
       )}
     </div>
