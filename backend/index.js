@@ -38,12 +38,10 @@ app.use((err, req, res, next) => {
 });
 // Serve static files from the frontend/dist directory
 if (process.env.NODE_ENV === "production") {
-    // Serve static files from the frontend/dist directory
-    app.use("/", express.static(path.join(__dirname, "frontend", "dist")));
+    app.use("/", express.static(path.join(__dirname, "../frontend", "dist")));
 
-    // Handle all other requests by serving the index.html file
     app.get("*", (req, res) => {
-        res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
+        res.sendFile(path.resolve(__dirname, "../frontend", "dist", "index.html"));
     });
 }
 mongoose.connect(process.env.MONGO)
