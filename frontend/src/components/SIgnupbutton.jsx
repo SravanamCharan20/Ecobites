@@ -37,7 +37,7 @@ const SignupButton = () => {
             className="focus:outline-none flex items-center space-x-2"
           >
             <img
-              src={currentUser.profilePicture ? `${import.meta.env.VITE_API_URL}/uploads/${currentUser.profilePicture}` : '/default profile.jpg'}
+              src={currentUser.profilePicture ? `${import.meta.env.VITE_API_URL}/uploads/${currentUser.profilePicture}` : '/dist/default profile.jpg'}
               alt="Profile"
               className="w-10 h-10 rounded-full object-cover"
             />

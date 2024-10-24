@@ -37,12 +37,12 @@ app.use((err, req, res, next) => {
   });
 });
 // Serve static files from the frontend/dist directory
-app.use(express.static(path.join(__dirname, 'frontend', 'dist')));
+app.use(express.static(path.join(__dirname, '/frontend/dist')));
 console.log('Serving files from:', path.join(__dirname, 'frontend', 'dist'));
 
 
 // SPA Handling - Route to serve index.html
-app.get('/', (req, res) => {
+app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'frontend', 'dist', 'index.html'));
 });
 
