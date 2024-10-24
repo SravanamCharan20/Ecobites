@@ -37,7 +37,7 @@ app.use((err, req, res, next) => {
   });
 });
 // Serve static files from the frontend/dist directory
-app.use(express.static(path.join(__dirname, '/frontend/dist')));
+app.use(express.static(path.join(__dirname, '../frontend/dist')));
 console.log('Serving files from:', path.join(__dirname, 'frontend', 'dist'));
 
 
