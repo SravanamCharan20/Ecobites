@@ -2,7 +2,7 @@
   "name": "ecobites",
   "version": "1.0.0",
   "description": "",
-  "main": "backend/index.js",
+  "main": "src/index.js",
   "type": "module",
   "scripts": {
     "start": "node backend/index.js",
