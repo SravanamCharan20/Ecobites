@@ -37,15 +37,15 @@ app.use((err, req, res, next) => {
   });
 });
 // Serve static files from the frontend/dist directory
-app.use(express.static(path.join(__dirname, '../frontend/dist')));
-console.log('Serving files from:', path.join(__dirname, 'frontend', 'dist'));
+if (process.env.NODE_ENV === "production") {
+    // Serve static files from the frontend/dist directory
+    app.use("/", express.static(path.join(__dirname, "frontend", "dist")));
 
-
-// SPA Handling - Route to serve index.html
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'frontend', 'dist', 'index.html'));
-});
-
+    // Handle all other requests by serving the index.html file
+    app.get("*", (req, res) => {
+        res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
+    });
+}
 mongoose.connect(process.env.MONGO)
   .then(() => console.log("Connected to DB"))
   .catch((err) => console.error("Database connection error: ", err));
