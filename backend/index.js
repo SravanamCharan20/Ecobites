@@ -36,7 +36,7 @@ app.use((err, req, res, next) => {
       statusCode,
   });
 });
-app.use(express.static(path.join(__dirname, 'frontend', 'dist')));
+app.use(express.static(path.join(__dirname, '/frontend/dist')));
 
 // SPA Handling
 app.get('*', (req, res) => {
