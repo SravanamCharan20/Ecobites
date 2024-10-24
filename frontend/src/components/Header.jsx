@@ -78,7 +78,7 @@ const Header = () => {
       }`}
     >
       <div>
-        <Link to="/" className="text-1xl">
+        <Link to="/" className="text-1xl font-bold ">
           EcoBites
         </Link>
       </div>

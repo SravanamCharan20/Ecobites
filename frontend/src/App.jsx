@@ -21,6 +21,7 @@ import AvailableNonFood from './pages/AvailableNonFood';
 import NonFoodDetails from './pages/NonFoodDetails';
 import MyNonFoodRequests from './pages/MyNonFoodRequests';
 import About from './pages/About';
+import UserProfile from './pages/UserProfile';
 import ManageNonFood from './pages/ManageNonFood';
 
 function App() {
@@ -49,6 +50,7 @@ function App() {
           <Route path='/addfood' element={<Addfood />} />
           <Route path='/addnonfood' element={<AddNonFood />} />
           <Route path='/managefood' element={<Managefood />} />
+          <Route path='/userprofile' element={<UserProfile />} />
           <Route path='/managenonfood' element={<ManageNonFood />} />
           <Route path='/update-profile' element={<UpdateProfile/>} />
           <Route path='/myrequests/:userId' element={<MyRequests/>} />

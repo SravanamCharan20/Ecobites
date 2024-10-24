@@ -68,19 +68,44 @@ export const updateUser = async (req, res, next) => {
     }
 
     if (newPassword) {
-      updates.password = bcryptjs.hashSync(newPassword, 10); 
+      updates.password = bcryptjs.hashSync(newPassword, 10);
     }
+
+    // Handle image upload to Imgur
     if (req.file) {
-      updates.profilePicture = `/${req.file.filename}`;
+      const imgurResponse = await axios.post('https://api.imgur.com/3/image', req.file.buffer, {
+        headers: {
+          Authorization: `82712046c7d5144`, // Replace with your Imgur Client ID
+          'Content-Type': 'application/json',
+        },
+      });
+      updates.profilePicture = imgurResponse.data.data.link; // Get the image link from Imgur
     }
 
     const updatedUser = await User.findByIdAndUpdate(userId, { $set: updates }, { new: true });
 
-    const { password: hashedPassword, ...rest } = updatedUser._doc; 
+    if (!updatedUser) {
+      return res.status(404).json({ success: false, message: 'Update failed' });
+    }
+
+    const { password: hashedPassword, ...rest } = updatedUser._doc;
     res.status(200).json({ success: true, user: { ...rest, profilePicture: updatedUser.profilePicture } });
-    } catch (error) {
-    console.error('Error updating user:', error);
+  } catch (error) {
+    console.error('Error updating user:', error.message);
     res.status(500).json({ success: false, message: 'An error occurred while updating the profile' });
-    next(error); 
+    next(error);
+  }
+};
+
+export const userProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select('-password'); // Exclude password
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+    res.status(200).json({ success: true, user });
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    res.status(500).json({ success: false, message: 'An error occurred' });
   }
 };

@@ -9,6 +9,10 @@ module.exports = {
         'custom-teal': '#00615f',
         "white":'#f9f3f0'
       },
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+        serif: ['Merriweather', 'serif'],
+      },
       animation: {
         'oscillate': 'oscillate 3s ease-in-out infinite',
       },

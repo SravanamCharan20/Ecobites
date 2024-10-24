@@ -49,8 +49,15 @@ const SignupButton = () => {
               className="absolute right-0 mt-2 w-48 border bg-[#fff] border-black shadow-lg rounded-lg overflow-hidden z-50"
             >
               <Link
+                to="/userprofile"
+                className="block px-4 py-2 text-sm text-gray-700 hover:text-black"
+                onClick={() => setShowDropdown(false)}
+              >
+                Profile
+              </Link>
+              <Link
                 to="/update-profile"
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                className="block px-4 py-2 text-sm text-gray-700 hover:text-black"
                 onClick={() => setShowDropdown(false)}
               >
                 Update Profile
