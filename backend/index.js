@@ -36,14 +36,15 @@ app.use((err, req, res, next) => {
       statusCode,
   });
 });
-app.use(express.static(path.join(__dirname, '/frontend/dist')));
+app.use(express.static(path.join(__dirname, 'frontend', 'dist')));
 
 // SPA Handling
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'frontend', 'dist', 'index.html'));
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend', 'dist', 'index.html'));
 });
+  
 
-mongoose.connect(process.env.MONGO, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(process.env.MONGO)
   .then(() => console.log("Connected to DB"))
   .catch((err) => console.error("Database connection error: ", err));
   
