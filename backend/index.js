@@ -9,7 +9,7 @@ import cors from 'cors';
 
 dotenv.config();
 
-const PORT = 6001;
+const port = process.env.PORT;
 const app = express();
 
 const __dirname = path.resolve();
@@ -46,6 +46,6 @@ mongoose.connect(process.env.MONGO)
   .then(() => console.log("Connected to DB"))
   .catch((err) => console.error("Database connection error: ", err));
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
 });
