@@ -1,7 +1,18 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { motion } from 'framer-motion';
+import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 
 const HeroSection = () => {
+  const { currentUser } = useSelector((state) => state.user);
+  const bottomRef = useRef(null);
+
+  const handleGetStartedClick = () => {
+    if (currentUser) {
+      bottomRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <section className="w-full mt-32 bg-[#fff] flex items-center rounded-full justify-center relative overflow-hidden">
       {/* Background Circles */}
@@ -36,9 +47,21 @@ const HeroSection = () => {
           and support sustainable living. With Ecobites, giving back has never been easier.
         </p>
         <div className="flex justify-center space-x-6">
-          <button className="bg-blue-600 text-white px-6 py-3 rounded-full shadow-md hover:bg-blue-700 transition duration-300 transform hover:scale-105">
-            Get Started
-          </button>
+          {currentUser ? (
+            <button
+              onClick={handleGetStartedClick}
+              className="bg-blue-600 text-white px-6 py-3 rounded-full shadow-md hover:bg-blue-700 transition duration-300 transform hover:scale-105"
+            >
+              Get Started
+            </button>
+          ) : (
+            <Link
+              to="/signup"
+              className="bg-blue-600 text-white px-6 py-3 rounded-full shadow-md hover:bg-blue-700 transition duration-300 transform hover:scale-105"
+            >
+              Get Started
+            </Link>
+          )}
         </div>
       </motion.div>
 
@@ -72,6 +95,9 @@ const HeroSection = () => {
           <rect x="15" y="15" width="70" height="70" fill="#FF5722" />
         </svg>
       </motion.div>
+
+      {/* Bottom Section to Scroll To */}
+      <div ref={bottomRef} className="h-16"></div>
     </section>
   );
 };
