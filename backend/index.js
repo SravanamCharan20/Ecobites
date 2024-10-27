@@ -19,15 +19,11 @@ app.use('/api/user', userRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/donor', DonorForm);
 app.use(cors({
-    origin: 'http://localhost:5173', // Allow only this origin
+    origin: 'https://ecobites-dmwt.onrender.com',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
 }));
 
-// Add a route for the root URL
-app.get("/", (req, res) => {
-  res.send("Welcome to the Ecobites API");
-});
 
 app.use((err, req, res, next) => {
     const statusCode = err.statusCode || 500;
@@ -40,10 +36,9 @@ app.use((err, req, res, next) => {
 });
 
 if (process.env.NODE_ENV === "production") {
-    app.use("/", express.static(path.join(__dirname, '/frontend/dist')));
-
-    app.get("*", (req, res) => {
-        res.sendFile(path.resolve(__dirname, "../frontend", "dist", "index.html"));
+    app.use(express.static(path.join(__dirname, '/frontend/dist')));
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
     });
 }
 
