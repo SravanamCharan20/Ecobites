@@ -22,9 +22,9 @@ app.use('/api/user',userRouter);
 app.use('/api/auth',authRouter);
 app.use('/api/donor',DonorForm)
 app.use(cors({
-    origin: 'http://localhost:5173', // Allow only this origin
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
-    credentials: true, // Allow credentials (optional, based on your use case)
+    origin: process.env.CLIENT_URL || 'http://localhost:5173',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true,
 }));
 
 app.use((err, req, res, next) => {
